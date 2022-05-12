@@ -2,7 +2,7 @@
 # Crickostics <br><img src="https://user-images.githubusercontent.com/98028588/168039688-eebbd5d2-b619-4ed2-9a48-04cb6a919f5c.png" width="100">
 
 ## Objective
-I have created this app to analyse cricket statistics for users. It gives the user an experience of the current form and game of each player with respect to the Venue played, Team played against, Overall Match analysis for each team. Can be used extensively for deciding the playing 11 of your fantasy team, Know the patterns and variations for any cricket league.
+I have created this app to analyse cricket statistics for cricket lovers. It gives the user an experience of the current form and game of each player with respect to the Venue played, Team played against, Overall Match analysis for each team. Can be used extensively for deciding the playing 11 of your fantasy team, Know the patterns and variations for any cricket league.
 
 ## UI Screens
 <img src="https://user-images.githubusercontent.com/98028588/168053335-31b304b2-780b-4844-a857-41f362dd1966.JPG">
