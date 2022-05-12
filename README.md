@@ -5,9 +5,11 @@
 I have created this app to analyse cricket statistics for users. It gives the user an experience of the current form and game of each player with respect to the Venue played, Team played against, Overall Match analysis for each team. Can be used extensively for deciding the playing 11 of your fantasy team, Know the patterns and variations for any cricket league.
 
 ## UI Screens
-![Slide1](https://user-images.githubusercontent.com/98028588/168053335-31b304b2-780b-4844-a857-41f362dd1966.JPG)
+<img src="https://user-images.githubusercontent.com/98028588/168053335-31b304b2-780b-4844-a857-41f362dd1966.JPG">
 
-     <img src="https://user-images.githubusercontent.com/98028588/168045807-b7e7edf8-47d9-42f6-a00a-03437b5a0f53.gif" width="250">
+## UI Demo
+<img src="https://user-images.githubusercontent.com/98028588/168053858-6afb42ec-5e62-4e1f-b18d-d58d9baff27e.gif" width="250">
+
 
 ## Requirements
 - Flutter 
