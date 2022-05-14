@@ -70,6 +70,7 @@ class _AnalysisState extends State<Analysis> {
     'previous clashes'
   ];
   List<String> teamnames = [globals.team1_name, globals.team2_name];
+  List<String> teamlogos = ['logos/team1.png', 'logos/team2.png'];
 
   @override
   Widget build(BuildContext context) {
@@ -143,9 +144,13 @@ class _AnalysisState extends State<Analysis> {
                                 child: Row(
                                   children: [
                                     IconButton(
-                                        icon:
-                                            Image.asset('logos/' + i + '.png'),
+                                        icon: Image.asset(
+                                            teamlogos[teamnames.indexOf(i)]),
                                         onPressed: null),
+                                    // IconButton(
+                                    //     icon:
+                                    //         Image.asset('logos/' + i + '.png'),
+                                    //     onPressed: null),
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -234,9 +239,13 @@ class _AnalysisState extends State<Analysis> {
                                 child: Row(
                                   children: [
                                     IconButton(
-                                        icon:
-                                            Image.asset('logos/' + i + '.png'),
+                                        icon: Image.asset(
+                                            teamlogos[teamnames.indexOf(i)]),
                                         onPressed: null),
+                                    // IconButton(
+                                    //     icon:
+                                    //         Image.asset('logos/' + i + '.png'),
+                                    //     onPressed: null),
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -383,9 +392,13 @@ class _AnalysisState extends State<Analysis> {
                                 child: Row(
                                   children: [
                                     IconButton(
-                                        icon:
-                                            Image.asset('logos/' + i + '.png'),
+                                        icon: Image.asset(
+                                            teamlogos[teamnames.indexOf(i)]),
                                         onPressed: null),
+                                    // IconButton(
+                                    //     icon:
+                                    //         Image.asset('logos/' + i + '.png'),
+                                    //     onPressed: null),
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -496,39 +509,41 @@ class _AnalysisState extends State<Analysis> {
                                                       Colors.white60,
                                                     ],
                                                   )),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    '${capitalize(names[categories.indexOf(e)])}',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Cocosharp',
-                                                      fontSize: 20.0,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                              child: Expanded(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      '${capitalize(names[categories.indexOf(e)])}',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Cocosharp',
+                                                        fontSize: 15.0,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  Image.asset(
-                                                    'logos/' +
-                                                        '${names[categories.indexOf(e)]}' +
-                                                        '.png',
-                                                    color: Colors.black,
-                                                    width: 100,
-                                                    height: 100,
-                                                  ),
-                                                  Text(
-                                                    'In ${globals.ground}',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Cocosharp',
-                                                      fontSize: 20.0,
+                                                    Image.asset(
+                                                      'logos/' +
+                                                          '${names[categories.indexOf(e)]}' +
+                                                          '.png',
                                                       color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      width: 100,
+                                                      height: 100,
                                                     ),
-                                                  ),
-                                                ],
+                                                    Text(
+                                                      'In ${globals.ground}',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Cocosharp',
+                                                        fontSize: 15.0,
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                             e
@@ -792,8 +807,7 @@ class _AnalysisState extends State<Analysis> {
                                             Text(
                                               'Previous',
                                               style: TextStyle(
-                                                fontFamily:
-                                                    'BasicCommercialSRPro',
+                                                fontFamily: 'Cocosharp',
                                                 fontSize: 20.0,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.bold,
@@ -808,8 +822,7 @@ class _AnalysisState extends State<Analysis> {
                                             Text(
                                               'Clashes',
                                               style: TextStyle(
-                                                fontFamily:
-                                                    'BasicCommercialSRPro',
+                                                fontFamily: 'Cocosharp',
                                                 fontSize: 20.0,
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.bold,

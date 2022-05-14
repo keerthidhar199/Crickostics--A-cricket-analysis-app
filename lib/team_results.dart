@@ -60,6 +60,8 @@ class _team_resultsState extends State<team_results> {
                       globals.team1_name,
                       globals.team2_name
                     ];
+                    List<String> teamlogos = ['team1', 'team2'];
+
                     List<Widget> category = [];
 
                     for (int k = 0; k < thetwoteams.length; k++) {
@@ -148,7 +150,7 @@ class _team_resultsState extends State<team_results> {
                               children: [
                                 IconButton(
                                     icon: Image.asset(
-                                        'logos/' + thetwoteams[k] + '.png'),
+                                        'logos/' + teamlogos[k] + '.png'),
                                     onPressed: null),
                                 GestureDetector(
                                   behavior: HitTestBehavior.translucent,
@@ -375,22 +377,25 @@ class _team_resultsState extends State<team_results> {
     List<String> team_results_headings = [];
     // return Tuple2(teams_batting_headings, batting_playersdata1);
     var root = 'https://stats.espncricinfo.com';
-
-    var league_page = globals.league_page
-        .getElementsByClassName("RecordLinks")
-        .where(
-            (element) => element.attributes['href'].contains('match_results'));
-    print(league_page);
+    var edit_name = globals.team1_stats_link.split(';');
+    var webpage =
+        (root + edit_name[0].toString() + ';' + edit_name[2]).toString();
+    print('webpage $webpage');
+    var response = await http.Client().get(Uri.parse(webpage));
+    dom.Document document = parser.parse(response.body);
+    var league_page = document.getElementsByClassName("RecordLinks").where(
+        (element) => element.attributes['href'].contains('match_results'));
+    print('league_page $league_page');
     if (league_page.length != 0) {
       print('lqeu');
       print('league1 ${league_page.first.attributes["href"]}');
+      var team_result_info = await http.Client()
+          .get(Uri.parse(root + league_page.first.attributes["href"]));
+      var value3 =
+          await teams_results_info(team_result_info, globals.team1_name);
+      teams_results = value3.item2;
+      team_results_headings = value3.item1;
     }
-    var team_result_info = await http.Client()
-        .get(Uri.parse(root + league_page.first.attributes["href"]));
-
-    var value3 = await teams_results_info(team_result_info, globals.team1_name);
-    teams_results = value3.item2;
-    team_results_headings = value3.item1;
 
     List<Result> team_results = [];
     print('teams_results $teams_results');

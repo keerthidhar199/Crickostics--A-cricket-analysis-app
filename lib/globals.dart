@@ -10,4 +10,4 @@ var team1_link;
 var team2_link;
 String team1_stats_link;
 String team2_stats_link;
-dom.Document league_page;
+String league_page;
