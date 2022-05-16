@@ -36,6 +36,7 @@ dependencies:
   web_scraper: ^0.1.4
   video_player: ^2.2.3
   skeletons: ^0.0.3
+  pull_to_refresh: ^2.0.0
   
 
 dev_dependencies:

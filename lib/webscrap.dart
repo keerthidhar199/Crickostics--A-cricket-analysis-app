@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:datascrap/analysis.dart';
 import 'package:datascrap/skeleton.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,36 @@ class datascrap extends StatefulWidget {
 class _datascrapState extends State<datascrap> {
   var themecolor = Colors.white;
   var darkcolor = Colors.black;
+  Future<String> getlogos(String leaguename) async {
+    var response = await http.Client()
+        .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
+    dom.Document document = parser.parse(response.body);
+    var imglogosdata =
+        json.decode(document.getElementById('__NEXT_DATA__').innerHtml)['props']
+            ['editionDetails']['trendingMatches']['matches'];
+    String seriesname = '';
+    for (var i in imglogosdata) {
+      if (i['teams'][0]['team']['longName'].toString().trim() == leaguename) {
+        seriesname = i['teams'][0]['team']['image']['url'].toString();
+      } else if (i['teams'][1]['team']['longName'].toString().trim() ==
+          leaguename) {
+        seriesname = i['teams'][1]['team']['image']['url'].toString();
+      }
+    }
+    print('imglogosdata12 $seriesname');
+    return seriesname;
+  }
+
+  final GlobalKey<RefreshIndicatorState> _refreshIndicator =
+      new GlobalKey<RefreshIndicatorState>();
+  @override
+  void initState() {
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _refreshIndicator.currentState.show());
+
+    super.initState();
+  }
+
   Future<List<Map<String, String>>> getlivematches(String league) async {
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
@@ -87,13 +118,52 @@ class _datascrapState extends State<datascrap> {
                     .text; //teams 1 and 2
                 var teamscore = y.getElementsByClassName(
                     'ds-text-compact-s ds-text-typo-title');
-
                 var stauts = y.getElementsByClassName(
                     'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo-title')[0];
+                var response1 = await http.Client().get(Uri.parse(
+                    'https://www.espncricinfo.com/live-cricket-score'));
+                dom.Document document1 = parser.parse(response1.body);
+                var imglogosdata1 = json.decode(
+                        document1.getElementById('__NEXT_DATA__').text)['props']
+                    ['appPageProps']['data']['content']['matches'];
+                var imglogosdata = json.decode(
+                        document1.getElementById('__NEXT_DATA__').text)['props']
+                    ['editionDetails']['trendingMatches']['matches'];
+
+                for (var i in imglogosdata) {
+                  if ((i['teams'][0]['team']['longName']
+                          .toString()
+                          .trim()
+                          .contains(teams1)) &&
+                      (i['teams'][1]['team']['longName']
+                          .toString()
+                          .trim()
+                          .contains(teams2))) {
+                    iplmatch['team1logo'] =
+                        i['teams'][0]['team']['image']['url'].toString();
+                    iplmatch['team2logo'] =
+                        i['teams'][1]['team']['image']['url'].toString();
+                  } else {
+                    for (var i in imglogosdata1) {
+                      if ((i['teams'][0]['team']['longName']
+                              .toString()
+                              .trim()
+                              .contains(teams1)) &&
+                          (i['teams'][1]['team']['longName']
+                              .toString()
+                              .trim()
+                              .contains(teams2))) {
+                        iplmatch['team1logo'] =
+                            i['teams'][0]['team']['image']['url'].toString();
+                        iplmatch['team2logo'] =
+                            i['teams'][1]['team']['image']['url'].toString();
+                      }
+                    }
+                  }
+                }
                 print('hero team1: ${teams1}');
                 print('hero match_det: ${match_det.text}');
                 print('hero match_det1: ${match_det1.text}');
-
                 print('hero team2: ${teams2}');
                 // print('hero teamscore: ${teamscore[0].text}');
                 // print('hero teamscore: ${teamscore[1].text}');
@@ -105,9 +175,12 @@ class _datascrapState extends State<datascrap> {
                 iplmatch['MatchStarts'] = stauts.text;
                 iplmatch['Details'] = match_det1.text;
                 iplmatch['Ground'] = match_det1.text.split(',')[1].trim();
-                if (teamscore.isNotEmpty) {
+                if (teamscore.length == 2) {
                   iplmatch['team1_score'] = teamscore[0].text.trim();
                   iplmatch['team2_score'] = teamscore[1].text.trim();
+                } else if (teamscore.length == 1) {
+                  iplmatch['team1_score'] = teamscore[0].text.trim();
+                  iplmatch['team2_score'] = '';
                 } else {
                   iplmatch['team1_score'] = '';
                   iplmatch['team2_score'] = '';
@@ -167,8 +240,16 @@ class _datascrapState extends State<datascrap> {
     return matches.toSet().toList();
   }
 
+  Future<List<Map<String, String>>> variable;
+
   @override
   Widget build(BuildContext context) {
+    Future<void> _refresh() async {
+      setState(() {
+        variable = getlivematches(globals.league_page);
+      });
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -184,270 +265,328 @@ class _datascrapState extends State<datascrap> {
               Navigator.pop(context);
             }),
       ),
-      body: FutureBuilder<List<Map<String, String>>>(
-        future: getlivematches(globals.league_page), // async work
-        builder: (BuildContext context,
-            AsyncSnapshot<List<Map<String, String>>> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return Container(
-                  color: Color(0xff2B2B28),
-                  child: SkeletonTheme(
-                      shimmerGradient: LinearGradient(colors: [
-                        Color(0xff1A3263).withOpacity(0.8),
-                        Color(0xff1A3263),
-                        Color(0xff1A3263),
-                        Color(0xff1A3263).withOpacity(0.8),
-                      ]),
-                      child: ListView.builder(
-                        itemCount: 5,
-                        itemBuilder: (context, index) => NewsCardSkelton(),
-                      )));
-            default:
-              if (snapshot.hasError)
-                return Text('Error: ${snapshot.error}');
-              else {
-                if (snapshot.data.isEmpty) {
-                  return Container(
+      body: RefreshIndicator(
+        key: _refreshIndicator,
+        onRefresh: _refresh,
+        child: FutureBuilder<List<Map<String, String>>>(
+          future: variable, // async work
+          builder: (BuildContext context,
+              AsyncSnapshot<List<Map<String, String>>> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Container(
                     color: Color(0xff2B2B28),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('  Oh My CrickOh! ',
-                            style: TextStyle(
-                              fontFamily: 'Louisgeorge',
-                              fontSize: 20.0,
-                              color: Colors.white,
-                            )),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text('Stats not available. It may be because of :',
-                            style: TextStyle(
-                              fontFamily: 'Louisgeorge',
-                              fontSize: 20.0,
-                              color: Colors.white,
-                            )),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                                icon: Image.asset(
-                                  'logos/ball.png',
-                                ),
-                                onPressed: null),
-                            Flexible(
-                              child: Text(
-                                  'The league might started recently due to which enough data is not found',
+                    child: SkeletonTheme(
+                        shimmerGradient: LinearGradient(colors: [
+                          Color(0xff1A3263).withOpacity(0.8),
+                          Color(0xff1A3263),
+                          Color(0xff1A3263),
+                          Color(0xff1A3263).withOpacity(0.8),
+                        ]),
+                        child: ListView.builder(
+                          itemCount: 5,
+                          itemBuilder: (context, index) => NewsCardSkelton(),
+                        )));
+              default:
+                if (snapshot.hasError)
+                  return Text('Error: ${snapshot.error}');
+                else if (snapshot.data == null) {
+                  return Container(
+                      color: Color(0xff2B2B28),
+                      child: SkeletonTheme(
+                          shimmerGradient: LinearGradient(colors: [
+                            Color(0xff1A3263).withOpacity(0.8),
+                            Color(0xff1A3263),
+                            Color(0xff1A3263),
+                            Color(0xff1A3263).withOpacity(0.8),
+                          ]),
+                          child: ListView.builder(
+                            itemCount: 5,
+                            itemBuilder: (context, index) => NewsCardSkelton(),
+                          )));
+                } else {
+                  if (snapshot.data.isEmpty) {
+                    return Container(
+                      color: Color(0xff2B2B28),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('  Oh My CrickOh! ',
+                              style: TextStyle(
+                                fontFamily: 'Louisgeorge',
+                                fontSize: 20.0,
+                                color: Colors.white,
+                              )),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text('Stats not available. It may be because of :',
+                              style: TextStyle(
+                                fontFamily: 'Louisgeorge',
+                                fontSize: 20.0,
+                                color: Colors.white,
+                              )),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                  icon: Image.asset(
+                                    'logos/ball.png',
+                                  ),
+                                  onPressed: null),
+                              Flexible(
+                                child: Text(
+                                    'The league might started recently due to which enough data is not found',
+                                    style: TextStyle(
+                                      fontFamily: 'Louisgeorge',
+                                      fontSize: 15.0,
+                                      color: Colors.white,
+                                    )),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                  icon: Image.asset(
+                                    'logos/ball.png',
+                                  ),
+                                  onPressed: null),
+                              Text(
+                                  'Live Stream for this league is not available ',
                                   style: TextStyle(
                                     fontFamily: 'Louisgeorge',
                                     fontSize: 15.0,
                                     color: Colors.white,
                                   )),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                                icon: Image.asset(
-                                  'logos/ball.png',
-                                ),
-                                onPressed: null),
-                            Text(
-                                'Live Stream for this league is not available ',
-                                style: TextStyle(
-                                  fontFamily: 'Louisgeorge',
-                                  fontSize: 15.0,
-                                  color: Colors.white,
-                                )),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Container(
-                    color: Color(0xff2B2B28),
-                    height: MediaQuery.of(context).size.height,
-                    child: ListView(
-                      scrollDirection: Axis.vertical,
-                      children: [
-                        // SizedBox(
-                        //   height: 20,
-                        // ),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     // Navigator.push(
-                        //     //     context,
-                        //     //     MaterialPageRoute(
-                        //     //       builder: (BuildContext context) =>
-                        //     //           TossAnalysis(),
-                        //     //     ));
-                        //   },
-                        //   child: Container(
-                        //     width: 70,
-                        //     height: 70,
-                        //     child: Image.asset(
-                        //       'logos/IPL.png',
-                        //       color: Color(0xffF8F1F1),
-                        //     ),
-                        //   ),
-                        // ),
-                        for (var i in snapshot.data)
-                          Column(
-                            children: [
-                              Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    side: BorderSide(
-                                        color: Colors.white.withOpacity(0.4))),
-                                color: themecolor,
-                                elevation: 10,
-                                shadowColor: Colors.white,
-                                child: new InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      globals.team1_name = i['Team1'].trim();
-                                      globals.team2_name = i['Team2'].trim();
-                                      globals.team1_stats_link =
-                                          i['team1_stats_link'];
-                                      globals.team2_stats_link =
-                                          i['team2_stats_link'];
-                                      globals.ground =
-                                          i['Ground'].toString().trim();
-                                    });
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Analysis(),
-                                        ));
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            Color(0xff1A3263),
-                                            Color(0xff1A3263).withOpacity(0.8),
-                                          ],
-                                        )),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Center(
-                                          child: Padding(
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    String root_logo =
+                        'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
+                    return Container(
+                      color: Color(0xff2B2B28),
+                      height: MediaQuery.of(context).size.height,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        scrollDirection: Axis.vertical,
+                        children: [
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     // Navigator.push(
+                          //     //     context,
+                          //     //     MaterialPageRoute(
+                          //     //       builder: (BuildContext context) =>
+                          //     //           TossAnalysis(),
+                          //     //     ));
+                          //   },
+                          //   child: Container(
+                          //     width: 70,
+                          //     height: 70,
+                          //     child: Image.asset(
+                          //       'logos/IPL.png',
+                          //       color: Color(0xffF8F1F1),
+                          //     ),
+                          //   ),
+                          // ),
+                          for (var i in snapshot.data)
+                            Column(
+                              children: [
+                                Card(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      side: BorderSide(
+                                          color:
+                                              Colors.white.withOpacity(0.4))),
+                                  color: themecolor,
+                                  elevation: 10,
+                                  shadowColor: Colors.white,
+                                  child: new InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        globals.team1_name = i['Team1'].trim();
+                                        globals.team2_name = i['Team2'].trim();
+                                        globals.team1_stats_link =
+                                            i['team1_stats_link'];
+                                        globals.team2_stats_link =
+                                            i['team2_stats_link'];
+                                        globals.ground =
+                                            i['Ground'].toString().trim();
+                                      });
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => Analysis(),
+                                          ));
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Color(0xff1A3263),
+                                              Color(0xff1A3263)
+                                                  .withOpacity(0.8),
+                                            ],
+                                          )),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                30,
                                             padding: const EdgeInsets.all(5.0),
                                             child: Text(i['Details'],
+                                                textAlign: TextAlign.center,
                                                 style: TextStyle(
+                                                  fontFamily: 'Louisgeorge',
+                                                  fontSize: 15.0,
+                                                  color: themecolor,
+                                                )),
+                                          ),
+                                          SizedBox(height: 5),
+                                          Container(
+                                            padding: EdgeInsets.all(3),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(7.0),
+                                              color: i['Time']
+                                                      .toLowerCase()
+                                                      .contains('result')
+                                                  ? Colors.green
+                                                  : i['Time']
+                                                          .toLowerCase()
+                                                          .contains('live')
+                                                      ? Colors.black38
+                                                      : Colors.red,
+                                            ),
+                                            child: Text(
+                                                i['Time'][0].toUpperCase() +
+                                                    i['Time']
+                                                        .substring(1)
+                                                        .toLowerCase(),
+                                                style: TextStyle(
+                                                    fontFamily: 'Louisgeorge',
                                                     fontSize: 15.0,
-                                                    color: themecolor,
+                                                    color: Colors.white,
                                                     fontWeight:
                                                         FontWeight.bold)),
                                           ),
-                                        ),
-                                        SizedBox(height: 5),
-                                        Text(i['Time'],
-                                            style: TextStyle(
-                                                fontSize: 15.0,
-                                                color: themecolor,
-                                                fontWeight: FontWeight.bold)),
-                                        Divider(
-                                          color: darkcolor,
-                                          thickness: 2,
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                IconButton(
-                                                    icon: Image.asset(
-                                                        'logos/team1.png'),
-                                                    onPressed: null),
-                                                Text(i['Team1'],
+                                          Divider(
+                                            color: darkcolor,
+                                            thickness: 2,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                      icon: Image.network(
+                                                          root_logo +
+                                                              i['team1logo']),
+                                                      onPressed: null),
+                                                  Text(i['Team1'],
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Louisgeorge',
+                                                        fontSize: 15.0,
+                                                        color: themecolor,
+                                                      )),
+                                                  Text(' - ' + i['team1_score'],
+                                                      style: TextStyle(
+                                                        fontSize: 15.0,
+                                                        color: themecolor,
+                                                      ))
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                      icon: Image.network(
+                                                          root_logo +
+                                                              i['team2logo']),
+                                                      onPressed: null),
+                                                  Text(i['Team2'].trim(),
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            'Louisgeorge',
+                                                        fontSize: 15.0,
+                                                        color: themecolor,
+                                                      )),
+                                                  Text(' - ' + i['team2_score'],
+                                                      style: TextStyle(
+                                                        fontSize: 15.0,
+                                                        color: themecolor,
+                                                      ))
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: (i['MatchStarts']
+                                                    .toString()
+                                                    .contains('won'))
+                                                ? Text(i['MatchStarts'],
+                                                    textAlign: TextAlign.center,
                                                     style: TextStyle(
-                                                      fontFamily: 'Louisgeorge',
-                                                      fontSize: 15.0,
-                                                      color: themecolor,
-                                                    )),
-                                                Text(' - ' + i['team1_score'],
+                                                        fontFamily:
+                                                            'Louisgeorge',
+                                                        fontSize: 20.0,
+                                                        color:
+                                                            Colors.greenAccent,
+                                                        fontWeight:
+                                                            FontWeight.bold))
+                                                : Text(i['MatchStarts'],
+                                                    textAlign: TextAlign.center,
                                                     style: TextStyle(
-                                                      fontSize: 15.0,
-                                                      color: themecolor,
-                                                    ))
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                IconButton(
-                                                    icon: Image.asset(
-                                                        'logos/team2.png'),
-                                                    onPressed: null),
-                                                Text(i['Team2'].trim(),
-                                                    style: TextStyle(
-                                                      fontFamily: 'Louisgeorge',
-                                                      fontSize: 15.0,
-                                                      color: themecolor,
-                                                    )),
-                                                Text(' - ' + i['team2_score'],
-                                                    style: TextStyle(
-                                                      fontSize: 15.0,
-                                                      color: themecolor,
-                                                    ))
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: (i['MatchStarts']
-                                                  .toString()
-                                                  .contains('won'))
-                                              ? Text(i['MatchStarts'],
-                                                  style: TextStyle(
-                                                      fontFamily: 'Louisgeorge',
-                                                      fontSize: 20.0,
-                                                      color: Colors.greenAccent,
-                                                      fontWeight:
-                                                          FontWeight.bold))
-                                              : Text(i['MatchStarts'],
-                                                  style: TextStyle(
-                                                      fontFamily: 'Louisgeorge',
-                                                      fontSize: 20.0,
-                                                      color: themecolor,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                        )
-                                      ],
+                                                        fontFamily:
+                                                            'Louisgeorge',
+                                                        fontSize: 20.0,
+                                                        color:
+                                                            Colors.amberAccent,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: 15,
-                              )
-                            ],
-                          ),
-                      ],
-                    ),
-                  );
+                                SizedBox(
+                                  height: 15,
+                                )
+                              ],
+                            ),
+                        ],
+                      ),
+                    );
+                  }
                 }
-              }
-          }
-        },
+            }
+          },
+        ),
       ),
     );
   }
