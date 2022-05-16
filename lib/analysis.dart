@@ -54,8 +54,6 @@ int checkpastmatches(
 }
 
 class _AnalysisState extends State<Analysis> {
-  VideoPlayerController _controller;
-
   @override
   void initState() {
     super.initState();
@@ -69,8 +67,11 @@ class _AnalysisState extends State<Analysis> {
     'partnerships',
     'previous clashes'
   ];
+  String root_logo =
+      'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
+
   List<String> teamnames = [globals.team1_name, globals.team2_name];
-  List<String> teamlogos = ['logos/team1.png', 'logos/team2.png'];
+  List<String> teamlogos = [globals.team1logo, globals.team2logo];
 
   @override
   Widget build(BuildContext context) {
@@ -143,10 +144,13 @@ class _AnalysisState extends State<Analysis> {
                                 )),
                                 child: Row(
                                   children: [
-                                    IconButton(
-                                        icon: Image.asset(
-                                            teamlogos[teamnames.indexOf(i)]),
-                                        onPressed: null),
+                                    Image.network(
+                                      root_logo +
+                                          teamlogos[teamnames.indexOf(i)]
+                                              .toString(),
+                                      width: 32,
+                                      height: 32,
+                                    ),
                                     // IconButton(
                                     //     icon:
                                     //         Image.asset('logos/' + i + '.png'),
@@ -238,10 +242,13 @@ class _AnalysisState extends State<Analysis> {
                                 )),
                                 child: Row(
                                   children: [
-                                    IconButton(
-                                        icon: Image.asset(
-                                            teamlogos[teamnames.indexOf(i)]),
-                                        onPressed: null),
+                                    Image.network(
+                                      root_logo +
+                                          teamlogos[teamnames.indexOf(i)]
+                                              .toString(),
+                                      width: 32,
+                                      height: 32,
+                                    ),
                                     // IconButton(
                                     //     icon:
                                     //         Image.asset('logos/' + i + '.png'),
@@ -391,10 +398,13 @@ class _AnalysisState extends State<Analysis> {
                                 )),
                                 child: Row(
                                   children: [
-                                    IconButton(
-                                        icon: Image.asset(
-                                            teamlogos[teamnames.indexOf(i)]),
-                                        onPressed: null),
+                                    Image.network(
+                                      root_logo +
+                                          teamlogos[teamnames.indexOf(i)]
+                                              .toString(),
+                                      width: 32,
+                                      height: 32,
+                                    ),
                                     // IconButton(
                                     //     icon:
                                     //         Image.asset('logos/' + i + '.png'),
@@ -559,6 +569,7 @@ class _AnalysisState extends State<Analysis> {
                         )
                         .toList();
                     Widget previous_clashes = Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           decoration: BoxDecoration(
@@ -804,29 +815,63 @@ class _AnalysisState extends State<Analysis> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            Text(
-                                              'Previous',
-                                              style: TextStyle(
-                                                fontFamily: 'Cocosharp',
-                                                fontSize: 20.0,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  'Previous',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Cocosharp',
+                                                    fontSize: 20.0,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Image.network(
+                                                  root_logo +
+                                                      teamlogos[0].toString(),
+                                                  width: 32,
+                                                  height: 32,
+                                                ),
+                                              ],
                                             ),
-                                            Image.asset(
-                                              'logos/previous clashes.png',
-                                              color: Colors.black,
-                                              width: 100,
-                                              height: 100,
+                                            Stack(
+                                              alignment:
+                                                  AlignmentDirectional.center,
+                                              children: [
+                                                Image.asset(
+                                                  'logos/previous clashes.png',
+                                                  color: Colors.black,
+                                                  width: 100,
+                                                  height: 100,
+                                                ),
+                                                Text('VS',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Cocosharp',
+                                                      fontSize: 20.0,
+                                                      color: Colors.red,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    )),
+                                              ],
                                             ),
-                                            Text(
-                                              'Clashes',
-                                              style: TextStyle(
-                                                fontFamily: 'Cocosharp',
-                                                fontSize: 20.0,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  'Clashes',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Cocosharp',
+                                                    fontSize: 20.0,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Image.network(
+                                                  root_logo +
+                                                      teamlogos[1].toString(),
+                                                  width: 32,
+                                                  height: 32,
+                                                )
+                                              ],
                                             ),
                                           ],
                                         ),

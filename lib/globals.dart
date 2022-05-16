@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'package:html/dom.dart' as dom;
-
 String ground;
 var team_code1;
 var team_code2;
@@ -11,3 +8,5 @@ var team2_link;
 String team1_stats_link;
 String team2_stats_link;
 String league_page;
+String team1logo;
+String team2logo;

@@ -420,6 +420,8 @@ class _datascrapState extends State<datascrap> {
                                             i['team2_stats_link'];
                                         globals.ground =
                                             i['Ground'].toString().trim();
+                                        globals.team1logo = i['team1logo'];
+                                        globals.team2logo = i['team2logo'];
                                       });
                                       Navigator.push(
                                           context,
