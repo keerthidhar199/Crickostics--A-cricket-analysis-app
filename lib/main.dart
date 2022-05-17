@@ -151,135 +151,168 @@ class _HomepageState extends State<Homepage> {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                     return Container(
-                        color: Color(0xff2B2B28),
-                        child: SkeletonTheme(
-                            shimmerGradient: LinearGradient(colors: [
-                              Color(0xff1A3263).withOpacity(0.8),
-                              Color(0xff1A3263),
-                              Color(0xff1A3263),
-                              Color(0xff1A3263).withOpacity(0.8),
-                            ]),
-                            child: ListView.builder(
-                              itemCount: 10,
-                              itemBuilder: (context, index) =>
-                                  PlayingLeaguesSkelton(),
-                            )));
+                      color: Color(0xff2B2B28),
+                      // child: SkeletonTheme(
+                      //     shimmerGradient: LinearGradient(colors: [
+                      //       Color(0xff1A3263).withOpacity(0.8),
+                      //       Color(0xff1A3263),
+                      //       Color(0xff1A3263),
+                      //       Color(0xff1A3263).withOpacity(0.8),
+                      //     ]),
+                      //     child: ListView.builder(
+                      //       itemCount: 10,
+                      //       itemBuilder: (context, index) =>
+                      //           PlayingLeaguesSkelton(),
+                      //     ))
+                    );
                   default:
                     if (snapshot.hasError)
                       return Text('Error: ${snapshot.error}');
                     else
                       return Container(
                         color: Color(0xff2B2B28),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width - 30,
-                              child: Text(
-                                'Choose your league to continue:',
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontFamily: 'Louisgeorge',
-                                  fontSize: 20.0,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            AnimationLimiter(
-                              child: Expanded(
-                                child: ListView.builder(
-                                  itemCount: snapshot.data.length,
-                                  itemBuilder: (context, index) {
-                                    return AnimationConfiguration.staggeredList(
-                                      duration:
-                                          const Duration(milliseconds: 900),
-                                      position: index,
-                                      child: ScaleAnimation(
-                                        child: FadeInAnimation(
-                                          curve: Curves.easeInExpo,
-                                          child: Card(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                                side: BorderSide(
-                                                    color: Colors.white
-                                                        .withOpacity(0.4))),
-                                            elevation: 10,
-                                            child: new InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  globals.league_page =
-                                                      snapshot.data[index];
-                                                });
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          datascrap(),
-                                                    ));
-                                              },
-                                              child: Container(
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20.0),
-                                                      gradient: LinearGradient(
-                                                        begin:
-                                                            Alignment.topLeft,
-                                                        end: Alignment
-                                                            .bottomRight,
-                                                        colors: [
-                                                          Color(0xff1A3263),
-                                                          Color(0xff1A3263)
-                                                              .withOpacity(0.8),
-                                                        ],
-                                                      )),
-                                                  child: Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width -
-                                                            30,
-                                                    padding: EdgeInsets.only(
-                                                        left: 10.0,
-                                                        right: 10.0),
-                                                    height:
-                                                        (MediaQuery.of(context)
-                                                                    .size
-                                                                    .height /
-                                                                snapshot.data
-                                                                    .length) -
-                                                            15,
-                                                    child: Center(
-                                                      child: Text(
-                                                        snapshot.data[index]
-                                                            .toString(),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Louisgeorge',
-                                                          fontSize: 20.0,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )),
-                                            ),
-                                          ),
+                        child: AnimationLimiter(
+                          child: AnimationConfiguration.staggeredList(
+                            duration: const Duration(milliseconds: 500),
+                            position: 1,
+                            child: ScaleAnimation(
+                              child: FadeInAnimation(
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          30,
+                                      child: Text(
+                                        'Choose your league to continue:',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontFamily: 'Louisgeorge',
+                                          fontSize: 20.0,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                    );
-                                  },
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    AnimationLimiter(
+                                      child: Expanded(
+                                        child: ListView.builder(
+                                          itemCount: snapshot.data.length,
+                                          itemBuilder: (context, index) {
+                                            return AnimationConfiguration
+                                                .staggeredList(
+                                              duration: const Duration(
+                                                  milliseconds: 900),
+                                              position: index,
+                                              child: ScaleAnimation(
+                                                child: FadeInAnimation(
+                                                  curve: Curves.easeInExpo,
+                                                  child: Card(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20.0),
+                                                            side: BorderSide(
+                                                                color: Colors
+                                                                    .white
+                                                                    .withOpacity(
+                                                                        0.4))),
+                                                    elevation: 10,
+                                                    child: new InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          globals.league_page =
+                                                              snapshot
+                                                                  .data[index];
+                                                        });
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) =>
+                                                                      datascrap(),
+                                                            ));
+                                                      },
+                                                      child: Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20.0),
+                                                                  gradient:
+                                                                      LinearGradient(
+                                                                    begin: Alignment
+                                                                        .topLeft,
+                                                                    end: Alignment
+                                                                        .bottomRight,
+                                                                    colors: [
+                                                                      Color(
+                                                                          0xff1A3263),
+                                                                      Color(0xff1A3263)
+                                                                          .withOpacity(
+                                                                              0.8),
+                                                                    ],
+                                                                  )),
+                                                          child: Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width -
+                                                                30,
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10.0,
+                                                                    right:
+                                                                        10.0),
+                                                            height: (MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height /
+                                                                    snapshot
+                                                                        .data
+                                                                        .length) -
+                                                                15,
+                                                            child: Center(
+                                                              child: Text(
+                                                                snapshot
+                                                                    .data[index]
+                                                                    .toString(),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Louisgeorge',
+                                                                  fontSize:
+                                                                      20.0,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          )),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       );
                 }
