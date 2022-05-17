@@ -1,12 +1,9 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:datascrap/result_class.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'globals.dart' as globals;
+import 'package:datascrap/globals.dart' as globals;
 
 /// Custom business object class which contains properties to hold the detailed
 /// information about the employee which will be rendered in datagrid.

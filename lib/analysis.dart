@@ -1,15 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:datascrap/batting_class.dart';
-import 'package:datascrap/bowling_class.dart';
-import 'package:datascrap/partnership_class.dart';
+import 'package:datascrap/models/batting_class.dart';
+import 'package:datascrap/models/bowling_class.dart';
+import 'package:datascrap/models/partnership_class.dart';
 import 'package:datascrap/team_results.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
-import 'package:video_player/video_player.dart';
-
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 

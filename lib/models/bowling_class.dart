@@ -5,16 +5,15 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:tuple/tuple.dart';
 
-/// Custom business object class which contains properties to hold the detailed
-/// information about the employee which will be rendered in datagrid.
-///
-class Partnership {
+class Player {
   /// Creates the employee class with required details.
-  Partnership(this.partners, this.runs, this.wkts, this.opposition, this.ground,
-      this.match_date, this.team);
-  final String partners;
+  Player(this.player, this.overs, this.runs, this.wickets, this.econ,
+      this.opposition, this.ground, this.match_date, this.team);
+  final String player;
+  final double overs;
   final int runs;
-  final String wkts;
+  final int wickets;
+  final double econ;
   final String opposition;
   final String ground;
   final String match_date;
@@ -23,24 +22,30 @@ class Partnership {
 
 /// An object to set the employee collection data source to the datagrid. This
 /// is used to map the employee data to the datagrid widget.
-class PartnershipDataSource extends DataGridSource {
+class bowlingDataSource extends DataGridSource {
   /// Creates the employee data source class with required details.
-  PartnershipDataSource({List<Partnership> Data}) {
-    _Data = Data.map<DataGridRow>((e) => DataGridRow(cells: [
-          DataGridCell<String>(columnName: 'partners', value: e.partners),
-          DataGridCell<int>(columnName: 'runs', value: e.runs),
-          DataGridCell<String>(columnName: 'wkts', value: e.wkts),
-          DataGridCell<String>(columnName: 'opposition', value: e.opposition),
-          DataGridCell<String>(columnName: 'ground', value: e.ground),
-          DataGridCell<String>(columnName: 'match_date', value: e.match_date),
-          DataGridCell<String>(columnName: 'team', value: e.team),
-        ])).toList();
+  bowlingDataSource({List<Player> bowlingData}) {
+    _bowlingData = bowlingData
+        .map<DataGridRow>((e) => DataGridRow(cells: [
+              DataGridCell<String>(columnName: 'player', value: e.player),
+              DataGridCell<double>(columnName: 'overs', value: e.overs),
+              DataGridCell<int>(columnName: 'runs', value: e.runs),
+              DataGridCell<int>(columnName: 'wkts', value: e.wickets),
+              DataGridCell<double>(columnName: 'econ', value: e.econ),
+              DataGridCell<String>(
+                  columnName: 'opposition', value: e.opposition),
+              DataGridCell<String>(columnName: 'ground', value: e.ground),
+              DataGridCell<String>(
+                  columnName: 'match date', value: e.match_date),
+              DataGridCell<String>(columnName: 'tean', value: e.team),
+            ]))
+        .toList();
   }
 
-  List<DataGridRow> _Data = [];
+  List<DataGridRow> _bowlingData = [];
 
   @override
-  List<DataGridRow> get rows => _Data;
+  List<DataGridRow> get rows => _bowlingData;
 
   @override
   DataGridRowAdapter buildRow(DataGridRow row) {
@@ -55,10 +60,11 @@ class PartnershipDataSource extends DataGridSource {
   }
 }
 
-partnership_teams_info(var team_info, String team1_name) async {
+bowling_teams_info(var team1_info, String team1_name) async {
   List<List<String>> allplayers = [];
   List<String> headings = [];
-  dom.Document document1 = parser.parse(team_info.body);
+  List<List<String>> ground_based = [];
+  dom.Document document1 = parser.parse(team1_info.body);
   // print(document
   //     .querySelectorAll('table.engineTable>tbody')[1]
   //     .text
@@ -68,11 +74,11 @@ partnership_teams_info(var team_info, String team1_name) async {
   var titles1 = headers1.querySelectorAll('th');
   titles1.removeWhere((element) => element.text.length == 0);
   for (int i = 0; i < titles1.length; i++) {
-    print(titles1[i].text.toString().trim());
     headings.add(titles1[i].text.toString().trim());
+    headings.remove('Scorecard');
+    headings.remove('Mdns');
+    headings.join(',');
   }
-  headings.remove('Scorecard');
-  headings.join(',');
   headings.insert(headings.length, "Team");
 
   var element = document1.querySelectorAll('table.engineTable>tbody')[0];
@@ -80,20 +86,21 @@ partnership_teams_info(var team_info, String team1_name) async {
   data.removeWhere((element) => element.text.length == 0);
   for (int i = 0; i < data.length; i++) {
     List<String> playerwise = [];
-    for (int j = 0; j < data[j].children.length; j++) {
+    for (int j = 0; j < data[i].children.length; j++) {
       if (data[i].children[j].text.length != 0) {
         playerwise.add(data[i].children[j].text.toString().trim());
       }
     }
-    playerwise.removeAt(6);
+    playerwise.removeAt(2);
+    playerwise.removeAt(8);
     playerwise.join(',');
     playerwise.insert(playerwise.length, team1_name);
     allplayers.add(playerwise);
   }
 
   print(headings);
-  print('Partnerships $allplayers');
   print(allplayers);
+  print(allplayers[0].length);
   print(headings.length);
   // ground_based = allplayers
   //     .where((stats) => stats.elementAt(7) == globals.ground)

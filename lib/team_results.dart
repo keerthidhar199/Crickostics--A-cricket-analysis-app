@@ -1,5 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:datascrap/result_class.dart';
+import 'package:datascrap/models/result_class.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
