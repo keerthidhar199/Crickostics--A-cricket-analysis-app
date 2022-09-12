@@ -10,6 +10,7 @@ import 'package:html/parser.dart' as parser;
 import 'globals.dart' as globals;
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:skeletons/skeletons.dart';
+import 'webscrap.dart' as globals;
 
 void main() {
   runApp(const MyApp());
@@ -75,56 +76,60 @@ class _HomepageState extends State<Homepage> {
   String route = 'https://www.espncricinfo.com';
   var linkdetails = [];
   List match_leagues = [];
+  List match_leagues_refresh = [];
   final GlobalKey<RefreshIndicatorState> _refreshIndicator =
       new GlobalKey<RefreshIndicatorState>();
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => _refreshIndicator.currentState.show());
-  }
 
-  Future<List> getmatchcategs() async {
-    List leagues = [];
-    List leagues1 = [];
+  Future<List<dynamic>> getValidMatches() async {
+    List validMatches = [];
 
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
     dom.Document document = parser.parse(response.body);
+
     var imglogosdata =
         json.decode(document.getElementById('__NEXT_DATA__').text)['props']
             ['editionDetails']['trendingMatches']['matches'];
-    var imglogosdata1 =
+    var parentdata =
         json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-            ['appPageProps']['data']['content']['matches'];
+            ['editionDetails']['navigation']['links'][1]['links'];
 
-    for (var i in imglogosdata1) {
-      leagues1.add(i['series']['longName']);
-    }
     for (var i in imglogosdata) {
-      leagues.add(i['series']['longName']);
+      print(i['series']['slug']);
+      var objectid = i['series']['objectId'];
+      var link = 'https://www.espncricinfo.com/ci/engine/series/' +
+          objectid.toString() +
+          '.html?view=records';
+      // validMatches.add(i['series']['longName']);
+      var teamstats = await http.Client().get(Uri.parse(link));
+      dom.Document teamstatsdoc = parser.parse(teamstats.body);
+      var rec1 = teamstatsdoc
+          .getElementsByClassName('RecBulAro')
+          .where((element) => element.text == 'Records by team');
+      var rec2 = teamstatsdoc
+          .getElementsByClassName('RecBulAro')
+          .where((element) => element.text == 'Records by team');
+      if (rec1.toList().isNotEmpty && rec2.toList().isNotEmpty) {
+        print(i['series']['longName']);
+        validMatches.add(i['series']['longName']);
+      }
     }
+    print(validMatches);
+    return validMatches.toSet().toList();
+  }
 
-    // for (int k = 0;
-    //     k < document.getElementsByClassName('ds-px-4 ds-py-3').length;
-    //     k++) {
-    //   Map<String, String> iplmatch = {};
-    //   var matchdetails =
-    //       await document.getElementsByClassName('ds-px-4 ds-py-3')[k];
-    //   for (var y
-    //       in matchdetails.getElementsByClassName('ds-text-compact-xxs')) {
-    //     var match_det1 = y.getElementsByClassName(
-    //         'ds-text-tight-xs ds-truncate ds-text-ui-typo-mid')[0];
-    //     leagues.add(match_det1.text.split(',').last);
-    //   }
-    // }
-    return (leagues1.toSet().union(leagues.toSet())).toList();
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _refreshIndicator.currentState.show());
   }
 
   Future<Null> _refresh() {
-    return getmatchcategs().then((value) {
+    return getValidMatches().then((value) {
       setState(() {
-        match_leagues = value;
+        match_leagues_refresh = value;
       });
     });
   }
@@ -145,7 +150,7 @@ class _HomepageState extends State<Homepage> {
           key: _refreshIndicator,
           onRefresh: _refresh,
           child: FutureBuilder<List<dynamic>>(
-              future: getmatchcategs(), // async work
+              future: getValidMatches(), // async work
               builder: (BuildContext context,
                   AsyncSnapshot<List<dynamic>> snapshot) {
                 switch (snapshot.connectionState) {
@@ -279,22 +284,24 @@ class _HomepageState extends State<Homepage> {
                                                                         .data
                                                                         .length) -
                                                                 15,
-                                                            child: Center(
-                                                              child: Text(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .toString(),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      'Louisgeorge',
-                                                                  fontSize:
-                                                                      20.0,
-                                                                  color: Colors
-                                                                      .white,
+                                                            child: Flexible(
+                                                              child: Center(
+                                                                child: Text(
+                                                                  snapshot.data[
+                                                                          index]
+                                                                      .toString(),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'Louisgeorge',
+                                                                    fontSize:
+                                                                        20.0,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),

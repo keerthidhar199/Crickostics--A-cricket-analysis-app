@@ -56,19 +56,32 @@ class HistoryDataSource extends DataGridSource {
   DataGridRowAdapter buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
-      return Container(
-        color: (globals.team1_name.contains(e.value.toString()))
-            ? Colors.green
-            : Colors.white,
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
-        child: Text(
-          e.value.toString(),
+      print('naasas' +
+          globals.team2_name
+              .contains(row.getCells()[2].value.toString())
+              .toString());
+
+      if (globals.team2_name.contains(row.getCells()[2].value)) {
+        return Container(
+            child: Text(
+          e.value,
           style: TextStyle(
-            color: Colors.black,
+              color: globals.team2_name.contains(e.value)
+                  ? Colors.green
+                  : Colors.red),
+        ));
+      } else {
+        return Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            e.value.toString(),
+            style: TextStyle(
+              color: Colors.black,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }).toList());
   }
 }
@@ -99,11 +112,36 @@ class TeamResultsDataSource extends DataGridSource {
   DataGridRowAdapter buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
-      return Container(
-        alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
-        child: Text(e.value.toString()),
-      );
+      if ((globals.team1_name.contains(row.getCells()[0].value.toString()) ||
+              globals.team1_name
+                  .contains(row.getCells()[1].value.toString())) &&
+          (globals.team2_name.contains(row.getCells()[1].value.toString()) ||
+              globals.team2_name
+                  .contains(row.getCells()[0].value.toString()))) {
+        return Container(
+          color: Colors.greenAccent,
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            e.value.toString(),
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        );
+      } else {
+        return Container(
+          color: Colors.white,
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            e.value.toString(),
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        );
+      }
     }).toList());
   }
 }

@@ -98,97 +98,93 @@ class _datascrapState extends State<datascrap> {
               .where((element) => element.text == 'Stats');
 
           // print('link3 ${link3.toList()[0].attributes["href"]}');
-          if (link3.toList().isNotEmpty) {
-            var teamstats = await http.Client().get(
-                Uri.parse(link3.toList()[0].attributes["href"].toString()));
-            dom.Document teamstatsdoc = parser.parse(teamstats.body);
 
-            for (var y
-                in matchdetails.getElementsByClassName('ds-text-compact-xxs')) {
-              var match_det =
-                  y.getElementsByClassName('ds-flex ds-justify-between')[0];
-              if (!match_det.text.toLowerCase().contains('covered')) {
-                var match_det1 = y.getElementsByClassName(
-                    'ds-text-tight-xs ds-truncate ds-text-ui-typo-mid')[0];
-                var teams1 = y
-                    .getElementsByClassName(
-                        'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo-title ds-mt-1 ds-mb-1')[0]
-                    .querySelector('p')
-                    .text;
-                var teams2 = y
-                    .getElementsByClassName(
-                        'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo-title ds-mt-1 ds-mb-1')[1]
-                    .querySelector('p')
-                    .text; //teams 1 and 2
-                var teamscore = y.getElementsByClassName(
-                    'ds-text-compact-s ds-text-typo-title');
-                var stauts = y.getElementsByClassName(
-                    'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo-title')[0];
-                var response1 = await http.Client().get(Uri.parse(
-                    'https://www.espncricinfo.com/live-cricket-score'));
-                dom.Document document1 = parser.parse(response1.body);
-                var imglogosdata1 = json.decode(
-                        document1.getElementById('__NEXT_DATA__').text)['props']
-                    ['appPageProps']['data']['content']['matches'];
-                var imglogosdata = json.decode(
-                        document1.getElementById('__NEXT_DATA__').text)['props']
-                    ['editionDetails']['trendingMatches']['matches'];
+          for (var y
+              in matchdetails.getElementsByClassName('ds-text-compact-xxs')) {
+            var match_det =
+                y.getElementsByClassName('ds-flex ds-justify-between')[0];
+            if (!match_det.text.toLowerCase().contains('covered')) {
+              var match_det1 = y.getElementsByClassName(
+                  'ds-text-tight-xs ds-truncate ds-text-ui-typo-mid')[0];
+              var teams1 = y
+                  .getElementsByClassName(
+                      'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo-title')[0]
+                  .querySelector('p')
+                  .text;
+              var teams2 = y
+                  .getElementsByClassName(
+                      'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo-title')[1]
+                  .querySelector('p')
+                  .text; //teams 1 and 2
+              var teamscore = y.getElementsByClassName(
+                  'ds-text-compact-s ds-text-typo-title');
+              var stauts = y.getElementsByClassName(
+                  'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo-title')[0];
+              var response1 = await http.Client().get(
+                  Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
+              dom.Document document1 = parser.parse(response1.body);
+              var imglogosdata1 = json.decode(
+                      document1.getElementById('__NEXT_DATA__').text)['props']
+                  ['appPageProps']['data']['content']['matches'];
+              var imglogosdata = json.decode(
+                      document1.getElementById('__NEXT_DATA__').text)['props']
+                  ['editionDetails']['trendingMatches']['matches'];
 
-                for (var i in imglogosdata) {
-                  if ((i['teams'][0]['team']['longName']
-                          .toString()
-                          .trim()
-                          .contains(teams1)) &&
-                      (i['teams'][1]['team']['longName']
-                          .toString()
-                          .trim()
-                          .contains(teams2))) {
-                    iplmatch['team1logo'] =
-                        i['teams'][0]['team']['image']['url'].toString();
-                    iplmatch['team2logo'] =
-                        i['teams'][1]['team']['image']['url'].toString();
-                  } else {
-                    for (var i in imglogosdata1) {
-                      if ((i['teams'][0]['team']['longName']
-                              .toString()
-                              .trim()
-                              .contains(teams1)) &&
-                          (i['teams'][1]['team']['longName']
-                              .toString()
-                              .trim()
-                              .contains(teams2))) {
-                        iplmatch['team1logo'] =
-                            i['teams'][0]['team']['image']['url'].toString();
-                        iplmatch['team2logo'] =
-                            i['teams'][1]['team']['image']['url'].toString();
-                      }
+              for (var i in imglogosdata) {
+                if ((i['teams'][0]['team']['longName']
+                        .toString()
+                        .trim()
+                        .contains(teams1)) &&
+                    (i['teams'][1]['team']['longName']
+                        .toString()
+                        .trim()
+                        .contains(teams2))) {
+                  iplmatch['team1logo'] =
+                      i['teams'][0]['team']['image']['url'].toString();
+                  iplmatch['team2logo'] =
+                      i['teams'][1]['team']['image']['url'].toString();
+                } else {
+                  for (var i in imglogosdata1) {
+                    if ((i['teams'][0]['team']['longName']
+                            .toString()
+                            .trim()
+                            .contains(teams1)) &&
+                        (i['teams'][1]['team']['longName']
+                            .toString()
+                            .trim()
+                            .contains(teams2))) {
+                      iplmatch['team1logo'] =
+                          i['teams'][0]['team']['image']['url'].toString();
+                      iplmatch['team2logo'] =
+                          i['teams'][1]['team']['image']['url'].toString();
                     }
                   }
                 }
-                print('hero team1: ${teams1}');
-                print('hero match_det: ${match_det.text}');
-                print('hero match_det1: ${match_det1.text}');
-                print('hero team2: ${teams2}');
-                // print('hero teamscore: ${teamscore[0].text}');
-                // print('hero teamscore: ${teamscore[1].text}');
-                print('hero stauts: ${stauts.text}');
-                iplmatch['Time'] = match_det.text;
-                iplmatch['Match_name'] = match_det1.text.split(',').last;
-                iplmatch['Team1'] = teams1;
-                iplmatch['Team2'] = teams2;
-                iplmatch['MatchStarts'] = stauts.text;
-                iplmatch['Details'] = match_det1.text;
-                iplmatch['Ground'] = match_det1.text.split(',')[1].trim();
-                if (teamscore.length == 2) {
-                  iplmatch['team1_score'] = teamscore[0].text.trim();
-                  iplmatch['team2_score'] = teamscore[1].text.trim();
-                } else if (teamscore.length == 1) {
-                  iplmatch['team1_score'] = teamscore[0].text.trim();
-                  iplmatch['team2_score'] = '';
-                } else {
-                  iplmatch['team1_score'] = '';
-                  iplmatch['team2_score'] = '';
-                }
+              }
+              print('hero team1: ${teams1}');
+              print('hero match_det: ${match_det.text}');
+              print('hero match_det1: ${match_det1.text}');
+              print('hero team2: ${teams2}');
+              // print('hero teamscore: ${teamscore[0].text}');
+              // print('hero teamscore: ${teamscore[1].text}');
+              print('hero stauts: ${stauts.text}');
+              iplmatch['Time'] = match_det.text;
+              iplmatch['Match_name'] = match_det1.text.split(',').last;
+              iplmatch['Team1'] = teams1;
+              iplmatch['Team2'] = teams2;
+              iplmatch['MatchStarts'] = stauts.text;
+              iplmatch['Details'] = match_det1.text;
+              iplmatch['Ground'] = match_det1.text.split(',')[1].trim();
+              if (teamscore.length == 2) {
+                iplmatch['team1_score'] = teamscore[0].text.trim();
+                iplmatch['team2_score'] = teamscore[1].text.trim();
+              } else if (teamscore.length == 1) {
+                iplmatch['team1_score'] = teamscore[0].text.trim();
+                iplmatch['team2_score'] = '';
+              } else {
+                iplmatch['team1_score'] = '';
+                iplmatch['team2_score'] = '';
+              }
 
 //                    hero team1: Kolkata Knight Riders
 //                    hero match_det: Live
@@ -198,8 +194,13 @@ class _datascrapState extends State<datascrap> {
 //                    hero teamscore: (17.6/20 ov, T:178) 113/7
 //                     hero stauts: Sunrisers need 65 runs in 12 balls.
 
-              }
             }
+          }
+          if (link3.toList().isNotEmpty) {
+            var teamstats = await http.Client().get(
+                Uri.parse(link3.toList()[0].attributes["href"].toString()));
+            dom.Document teamstatsdoc = parser.parse(teamstats.body);
+
             var rec1 = teamstatsdoc
                 .getElementsByClassName('RecBulAro')
                 .where((element) => element.text == 'Records by team');
@@ -220,7 +221,12 @@ class _datascrapState extends State<datascrap> {
                 print('rec1 ${rec1.first.attributes["href"]}');
                 matches.add(iplmatch);
               }
+            } else if (rec1.length == 0) {
+              iplmatch['team1_stats_link'] =
+                  link3.toList()[0].attributes["href"].toString();
+              matches.add(iplmatch);
             }
+
             if (rec2.length != 0) {
               rec2 = rec2
                   .toList()[0]
@@ -235,6 +241,10 @@ class _datascrapState extends State<datascrap> {
                 print('rec2 ${rec2.first.attributes["href"]}');
                 matches.add(iplmatch);
               }
+            } else if (rec2.length == 0) {
+              iplmatch['team2_stats_link'] =
+                  link3.toList()[0].attributes["href"].toString();
+              matches.add(iplmatch);
             }
           }
         }
@@ -485,9 +495,17 @@ class _datascrapState extends State<datascrap> {
                                                           : Colors.red,
                                                 ),
                                                 child: Text(
-                                                    snapshot.data[i]['Time'][0]
+                                                    snapshot.data[i]['Time']
+                                                            .replaceAll(
+                                                                snapshot.data[i]
+                                                                    ['Details'],
+                                                                '')[0]
                                                             .toUpperCase() +
                                                         snapshot.data[i]['Time']
+                                                            .replaceAll(
+                                                                snapshot.data[i]
+                                                                    ['Details'],
+                                                                '')
                                                             .substring(1)
                                                             .toLowerCase(),
                                                     style: TextStyle(
@@ -520,23 +538,33 @@ class _datascrapState extends State<datascrap> {
                                                                     'team1logo'],
                                                           ),
                                                           onPressed: null),
-                                                      Text(
-                                                          snapshot.data[i]
-                                                              ['Team1'],
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Louisgeorge',
-                                                            fontSize: 15.0,
-                                                            color: themecolor,
-                                                          )),
-                                                      Text(
-                                                          ' - ' +
-                                                              snapshot.data[i][
-                                                                  'team1_score'],
-                                                          style: TextStyle(
-                                                            fontSize: 15.0,
-                                                            color: themecolor,
-                                                          ))
+                                                      Flexible(
+                                                        child: Text(
+                                                            snapshot.data[i]
+                                                                ['Team1'],
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Louisgeorge',
+                                                              fontSize: 15.0,
+                                                              color: themecolor,
+                                                            )),
+                                                      ),
+                                                      Flexible(
+                                                        child: Text(' - ',
+                                                            style: TextStyle(
+                                                              fontSize: 25.0,
+                                                              color: themecolor,
+                                                            )),
+                                                      ),
+                                                      Flexible(
+                                                        child: Text(
+                                                            snapshot.data[i]
+                                                                ['team1_score'],
+                                                            style: TextStyle(
+                                                              fontSize: 15.0,
+                                                              color: themecolor,
+                                                            )),
+                                                      )
                                                     ],
                                                   ),
                                                   Row(
@@ -550,24 +578,34 @@ class _datascrapState extends State<datascrap> {
                                                                     'team2logo'],
                                                           ),
                                                           onPressed: null),
-                                                      Text(
-                                                          snapshot.data[i]
-                                                                  ['Team2']
-                                                              .trim(),
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Louisgeorge',
-                                                            fontSize: 15.0,
-                                                            color: themecolor,
-                                                          )),
-                                                      Text(
-                                                          ' - ' +
-                                                              snapshot.data[i][
-                                                                  'team2_score'],
-                                                          style: TextStyle(
-                                                            fontSize: 15.0,
-                                                            color: themecolor,
-                                                          ))
+                                                      Flexible(
+                                                        child: Text(
+                                                            snapshot.data[i]
+                                                                    ['Team2']
+                                                                .trim(),
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Louisgeorge',
+                                                              fontSize: 15.0,
+                                                              color: themecolor,
+                                                            )),
+                                                      ),
+                                                      Flexible(
+                                                        child: Text(' - ',
+                                                            style: TextStyle(
+                                                              fontSize: 25.0,
+                                                              color: themecolor,
+                                                            )),
+                                                      ),
+                                                      Flexible(
+                                                        child: Text(
+                                                            snapshot.data[i]
+                                                                ['team2_score'],
+                                                            style: TextStyle(
+                                                              fontSize: 15.0,
+                                                              color: themecolor,
+                                                            )),
+                                                      )
                                                     ],
                                                   )
                                                 ],

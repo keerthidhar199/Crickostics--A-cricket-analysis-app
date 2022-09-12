@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:datascrap/models/result_class.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -60,7 +61,12 @@ class _team_resultsState extends State<team_results> {
                       globals.team1_name,
                       globals.team2_name
                     ];
-                    List<String> teamlogos = ['team1', 'team2'];
+                    String root_logo =
+                        'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
+                    List<String> teamlogos = [
+                      globals.team1logo,
+                      globals.team2logo
+                    ];
 
                     List<Widget> category = [];
 
@@ -149,8 +155,9 @@ class _team_resultsState extends State<team_results> {
                             child: Row(
                               children: [
                                 IconButton(
-                                    icon: Image.asset(
-                                        'logos/' + teamlogos[k] + '.png'),
+                                    icon: CachedNetworkImage(
+                                      imageUrl: root_logo + teamlogos[k],
+                                    ),
                                     onPressed: null),
                                 GestureDetector(
                                   behavior: HitTestBehavior.translucent,
@@ -307,15 +314,14 @@ class _team_resultsState extends State<team_results> {
                                       Colors.white60,
                                     ],
                                   )),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                  child: Column(
                                     children: [
                                       SizedBox(
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.4,
                                         child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
+                                          padding: const EdgeInsets.all(10.0),
                                           child: Text(
                                             'Team History ',
                                             textAlign: TextAlign.left,
@@ -328,13 +334,13 @@ class _team_resultsState extends State<team_results> {
                                           ),
                                         ),
                                       ),
-                                      Image.asset(
-                                        'logos/bowling.png',
-                                        color: Colors.black,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.3,
-                                        height: 100,
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8.0),
+                                        child: Image.asset(
+                                          'logos/team_history.png',
+                                          height: 100,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -407,6 +413,18 @@ class _team_resultsState extends State<team_results> {
           i[1].toString().trim(),
           'Ongoing',
           'Ongoing',
+          i[3].toString().trim(),
+          i[4].toString().trim(),
+          i[5].toString().trim(),
+        ));
+      }
+      if (i[2].toString().contains('no result') ||
+          i[2].toString().contains('abandoned')) {
+        team_results.add(Result(
+          i[0].toString().trim(),
+          i[1].toString().trim(),
+          'No Result (or Abandoned)',
+          'No Result (or Abandoned)',
           i[3].toString().trim(),
           i[4].toString().trim(),
           i[5].toString().trim(),

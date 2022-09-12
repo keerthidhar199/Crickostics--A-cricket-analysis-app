@@ -913,7 +913,7 @@ class _AnalysisState extends State<Analysis> {
           Tuple2<List<String>, List<Player>>,
           Tuple2<List<String>, List<Partnership>>>> getData() async {
     var bowling = 'bowling/best_figures_innings';
-    var batting = 'batting/most_runs_innings';
+    var batting = 'batting/highest_strike_rate_innings';
     var partnership = 'fow/highest_partnerships_for_any_wicket';
     List<List<String>> teams_bowling = [];
     List<String> teams_bowling_headings = [];
@@ -925,13 +925,23 @@ class _AnalysisState extends State<Analysis> {
 //BATTING*******************************************************
     print('Manali ${globals.team1_stats_link}');
     var root = 'https://stats.espncricinfo.com';
-
+    dom.Document document;
+    String containing;
     //TEAM1
-    var response_team1 =
-        await http.Client().get(Uri.parse(root + globals.team1_stats_link));
-    dom.Document document = parser.parse(response_team1.body);
+    var response_team1;
+    if (globals.team1_stats_link.startsWith('https')) {
+      response_team1 =
+          await http.Client().get(Uri.parse(globals.team1_stats_link));
+      document = parser.parse(response_team1.body);
+    } else {
+      response_team1 =
+          await http.Client().get(Uri.parse(root + globals.team1_stats_link));
+      document = parser.parse(response_team1.body);
+    }
+
     var team1_batting_table = document.querySelectorAll('a').where(
         (element) => element.attributes['href'].toString().contains(batting));
+    print('team1_batting_table $team1_batting_table');
     var team1_bowling_table = document.querySelectorAll('a').where(
         (element) => element.attributes['href'].toString().contains(bowling));
     var team1_partnership_table = document.querySelectorAll('a').where(
@@ -939,9 +949,19 @@ class _AnalysisState extends State<Analysis> {
             element.attributes['href'].toString().contains(partnership));
 
     //TEAM2
-    var response_team2 =
-        await http.Client().get(Uri.parse(root + globals.team2_stats_link));
-    dom.Document document1 = parser.parse(response_team2.body);
+    dom.Document document1;
+
+    var response_team2;
+    if (globals.team2_stats_link.startsWith('https')) {
+      response_team2 =
+          await http.Client().get(Uri.parse(globals.team2_stats_link));
+      document1 = parser.parse(response_team2.body);
+    } else {
+      response_team2 =
+          await http.Client().get(Uri.parse(root + globals.team2_stats_link));
+      document1 = parser.parse(response_team2.body);
+    }
+
     var team2_batting_table = document1.querySelectorAll('a').where(
         (element) => element.attributes['href'].toString().contains(batting));
     var team2_bowling_table = document1.querySelectorAll('a').where(
