@@ -69,41 +69,44 @@ bowling_teams_info(var team1_info, String team1_name) async {
   //     .querySelectorAll('table.engineTable>tbody')[1]
   //     .text
   //     .contains('Records'));
-  print(document1.text.toString());
+  print('deppthy' + document1.text.toString());
   var headers1 = document1.querySelectorAll('table.engineTable>thead>tr')[0];
   var titles1 = headers1.querySelectorAll('th');
-  titles1.removeWhere((element) => element.text.length == 0);
-  for (int i = 0; i < titles1.length; i++) {
-    headings.add(titles1[i].text.toString().trim());
-    headings.remove('Scorecard');
-    headings.remove('Mdns');
-    headings.join(',');
-  }
-  headings.insert(headings.length, "Team");
-
-  var element = document1.querySelectorAll('table.engineTable>tbody')[0];
-  var data = element.querySelectorAll('tr');
-  data.removeWhere((element) => element.text.length == 0);
-  for (int i = 0; i < data.length; i++) {
-    List<String> playerwise = [];
-    for (int j = 0; j < data[i].children.length; j++) {
-      if (data[i].children[j].text.length != 0) {
-        playerwise.add(data[i].children[j].text.toString().trim());
-      }
+  if (headers1 == null || titles1 == null) {
+    return Tuple2(null, null);
+  } else {
+    titles1.removeWhere((element) => element.text.length == 0);
+    for (int i = 0; i < titles1.length; i++) {
+      headings.add(titles1[i].text.toString().trim());
+      headings.remove('Scorecard');
+      headings.remove('Mdns');
+      headings.join(',');
     }
-    playerwise.removeAt(2);
-    playerwise.removeAt(8);
-    playerwise.join(',');
-    playerwise.insert(playerwise.length, team1_name);
-    allplayers.add(playerwise);
-  }
+    headings.insert(headings.length, "Team");
 
-  print(headings);
-  print(allplayers);
-  print(allplayers[0].length);
-  print(headings.length);
-  // ground_based = allplayers
-  //     .where((stats) => stats.elementAt(7) == globals.ground)
-  //     .toList();
-  return Tuple2(headings, allplayers);
+    var element = document1.querySelectorAll('table.engineTable>tbody')[0];
+    var data = element.querySelectorAll('tr');
+    data.removeWhere((element) => element.text.length == 0);
+    for (int i = 0; i < data.length; i++) {
+      List<String> playerwise = [];
+      for (int j = 0; j < data[i].children.length; j++) {
+        if (data[i].children[j].text.length != 0) {
+          playerwise.add(data[i].children[j].text.toString().trim());
+        }
+      }
+      playerwise.removeAt(2);
+      playerwise.removeAt(8);
+      playerwise.join(',');
+      playerwise.insert(playerwise.length, team1_name);
+      allplayers.add(playerwise);
+    }
+    print(headings);
+    print(allplayers);
+    print(allplayers[0].length);
+    print(headings.length);
+    // ground_based = allplayers
+    //     .where((stats) => stats.elementAt(7) == globals.ground)
+    //     .toList();
+    return Tuple2(headings, allplayers);
+  }
 }

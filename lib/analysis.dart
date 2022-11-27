@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:datascrap/models/batting_class.dart';
 import 'package:datascrap/models/bowling_class.dart';
@@ -142,17 +143,20 @@ class _AnalysisState extends State<Analysis> {
                                 )),
                                 child: Row(
                                   children: [
-                                    Image.network(
-                                      root_logo +
-                                          teamlogos[teamnames.indexOf(i)]
-                                              .toString(),
-                                      width: 32,
-                                      height: 32,
-                                    ),
-                                    // IconButton(
-                                    //     icon:
-                                    //         Image.asset('logos/' + i + '.png'),
-                                    //     onPressed: null),
+                                    teamlogos[teamnames.indexOf(i)] != null
+                                        ? Image.network(
+                                            root_logo +
+                                                teamlogos[teamnames.indexOf(i)]
+                                                    .toString(),
+                                            width: 32,
+                                            height: 32,
+                                          )
+                                        : IconButton(
+                                            icon: Image.asset('logos/team' +
+                                                (teamnames.indexOf(i) + 1)
+                                                    .toString() +
+                                                '.png'),
+                                            onPressed: null),
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -185,36 +189,41 @@ class _AnalysisState extends State<Analysis> {
                                   ],
                                 ),
                               ),
-                              SfDataGrid(
-                                  verticalScrollPhysics:
-                                      NeverScrollableScrollPhysics(),
-                                  isScrollbarAlwaysShown: true,
-                                  rowHeight: 35.0,
-                                  shrinkWrapRows: true,
-                                  allowSorting: true,
-                                  source: BattingDataSource(
-                                      batData: snapshot.data.item1.item2
-                                          .where((element) =>
-                                              element.team == i &&
-                                              element.ground == globals.ground)
-                                          .toList()),
-                                  columnWidthMode: ColumnWidthMode.auto,
-                                  selectionMode: SelectionMode.multiple,
-                                  columns:
-                                      snapshot.data.item1.item1.map((headings) {
-                                    return GridColumn(
-                                        columnName: headings.toLowerCase(),
-                                        label: Container(
-                                            padding: EdgeInsets.all(16.0),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              headings.trim()[0].toUpperCase() +
+                              snapshot.data.item1.item2 == null
+                                  ? Text('Not batted yet')
+                                  : SfDataGrid(
+                                      verticalScrollPhysics:
+                                          NeverScrollableScrollPhysics(),
+                                      isScrollbarAlwaysShown: true,
+                                      rowHeight: 35.0,
+                                      shrinkWrapRows: true,
+                                      allowSorting: true,
+                                      source: BattingDataSource(
+                                          batData: snapshot.data.item1.item2
+                                              .where((element) =>
+                                                  element.team == i &&
+                                                  element.ground ==
+                                                      globals.ground)
+                                              .toList()),
+                                      columnWidthMode: ColumnWidthMode.auto,
+                                      selectionMode: SelectionMode.multiple,
+                                      columns: snapshot.data.item1.item1
+                                          .map((headings) {
+                                        return GridColumn(
+                                            columnName: headings.toLowerCase(),
+                                            label: Container(
+                                                padding: EdgeInsets.all(16.0),
+                                                alignment: Alignment.center,
+                                                child: Text(
                                                   headings
-                                                      .trim()
-                                                      .substring(1)
-                                                      .toLowerCase(),
-                                            )));
-                                  }).toList()),
+                                                          .trim()[0]
+                                                          .toUpperCase() +
+                                                      headings
+                                                          .trim()
+                                                          .substring(1)
+                                                          .toLowerCase(),
+                                                )));
+                                      }).toList()),
                               SizedBox(
                                 height: 20,
                               ),
@@ -240,17 +249,20 @@ class _AnalysisState extends State<Analysis> {
                                 )),
                                 child: Row(
                                   children: [
-                                    Image.network(
-                                      root_logo +
-                                          teamlogos[teamnames.indexOf(i)]
-                                              .toString(),
-                                      width: 32,
-                                      height: 32,
-                                    ),
-                                    // IconButton(
-                                    //     icon:
-                                    //         Image.asset('logos/' + i + '.png'),
-                                    //     onPressed: null),
+                                    teamlogos[teamnames.indexOf(i)] != null
+                                        ? Image.network(
+                                            root_logo +
+                                                teamlogos[teamnames.indexOf(i)]
+                                                    .toString(),
+                                            width: 32,
+                                            height: 32,
+                                          )
+                                        : IconButton(
+                                            icon: Image.asset('logos/team' +
+                                                (teamnames.indexOf(i) + 1)
+                                                    .toString() +
+                                                '.png'),
+                                            onPressed: null),
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -283,35 +295,40 @@ class _AnalysisState extends State<Analysis> {
                                   ],
                                 ),
                               ),
-                              SfDataGrid(
-                                  verticalScrollPhysics:
-                                      NeverScrollableScrollPhysics(),
-                                  rowHeight: 35.0,
-                                  shrinkWrapRows: true,
-                                  allowSorting: true,
-                                  source: bowlingDataSource(
-                                      bowlingData: snapshot.data.item2.item2
-                                          .where((element) =>
-                                              element.team == i &&
-                                              element.ground == globals.ground)
-                                          .toList()),
-                                  columnWidthMode: ColumnWidthMode.auto,
-                                  selectionMode: SelectionMode.multiple,
-                                  columns:
-                                      snapshot.data.item2.item1.map((headings) {
-                                    return GridColumn(
-                                        columnName: headings.toLowerCase(),
-                                        label: Container(
-                                            padding: EdgeInsets.all(16.0),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              headings.trim()[0].toUpperCase() +
+                              snapshot.data.item2.item2 == null
+                                  ? Text('Not yet bowled')
+                                  : SfDataGrid(
+                                      verticalScrollPhysics:
+                                          NeverScrollableScrollPhysics(),
+                                      rowHeight: 35.0,
+                                      shrinkWrapRows: true,
+                                      allowSorting: true,
+                                      source: bowlingDataSource(
+                                          bowlingData: snapshot.data.item2.item2
+                                              .where((element) =>
+                                                  element.team == i &&
+                                                  element.ground ==
+                                                      globals.ground)
+                                              .toList()),
+                                      columnWidthMode: ColumnWidthMode.auto,
+                                      selectionMode: SelectionMode.multiple,
+                                      columns: snapshot.data.item2.item1
+                                          .map((headings) {
+                                        return GridColumn(
+                                            columnName: headings.toLowerCase(),
+                                            label: Container(
+                                                padding: EdgeInsets.all(16.0),
+                                                alignment: Alignment.center,
+                                                child: Text(
                                                   headings
-                                                      .trim()
-                                                      .substring(1)
-                                                      .toLowerCase(),
-                                            )));
-                                  }).toList()),
+                                                          .trim()[0]
+                                                          .toUpperCase() +
+                                                      headings
+                                                          .trim()
+                                                          .substring(1)
+                                                          .toLowerCase(),
+                                                )));
+                                      }).toList()),
                               SizedBox(
                                 height: 20,
                               ),
@@ -396,17 +413,20 @@ class _AnalysisState extends State<Analysis> {
                                 )),
                                 child: Row(
                                   children: [
-                                    Image.network(
-                                      root_logo +
-                                          teamlogos[teamnames.indexOf(i)]
-                                              .toString(),
-                                      width: 32,
-                                      height: 32,
-                                    ),
-                                    // IconButton(
-                                    //     icon:
-                                    //         Image.asset('logos/' + i + '.png'),
-                                    //     onPressed: null),
+                                    teamlogos[teamnames.indexOf(i)] != null
+                                        ? Image.network(
+                                            root_logo +
+                                                teamlogos[teamnames.indexOf(i)]
+                                                    .toString(),
+                                            width: 32,
+                                            height: 32,
+                                          )
+                                        : IconButton(
+                                            icon: Image.asset('logos/team' +
+                                                (teamnames.indexOf(i) + 1)
+                                                    .toString() +
+                                                '.png'),
+                                            onPressed: null),
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -439,36 +459,41 @@ class _AnalysisState extends State<Analysis> {
                                   ],
                                 ),
                               ),
-                              SfDataGrid(
-                                  verticalScrollPhysics:
-                                      NeverScrollableScrollPhysics(),
-                                  isScrollbarAlwaysShown: true,
-                                  rowHeight: 35.0,
-                                  shrinkWrapRows: true,
-                                  allowSorting: true,
-                                  source: PartnershipDataSource(
-                                      Data: snapshot.data.item3.item2
-                                          .where((element) =>
-                                              element.team == i &&
-                                              element.ground == globals.ground)
-                                          .toList()),
-                                  columnWidthMode: ColumnWidthMode.auto,
-                                  selectionMode: SelectionMode.multiple,
-                                  columns:
-                                      snapshot.data.item3.item1.map((headings) {
-                                    return GridColumn(
-                                        columnName: headings.toLowerCase(),
-                                        label: Container(
-                                            padding: EdgeInsets.all(16.0),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              headings.trim()[0].toUpperCase() +
+                              snapshot.data.item3.item2 == null
+                                  ? Text('No partnerships so far')
+                                  : SfDataGrid(
+                                      verticalScrollPhysics:
+                                          NeverScrollableScrollPhysics(),
+                                      isScrollbarAlwaysShown: true,
+                                      rowHeight: 35.0,
+                                      shrinkWrapRows: true,
+                                      allowSorting: true,
+                                      source: PartnershipDataSource(
+                                          Data: snapshot.data.item3.item2
+                                              .where((element) =>
+                                                  element.team == i &&
+                                                  element.ground ==
+                                                      globals.ground)
+                                              .toList()),
+                                      columnWidthMode: ColumnWidthMode.auto,
+                                      selectionMode: SelectionMode.multiple,
+                                      columns: snapshot.data.item3.item1
+                                          .map((headings) {
+                                        return GridColumn(
+                                            columnName: headings.toLowerCase(),
+                                            label: Container(
+                                                padding: EdgeInsets.all(16.0),
+                                                alignment: Alignment.center,
+                                                child: Text(
                                                   headings
-                                                      .trim()
-                                                      .substring(1)
-                                                      .toLowerCase(),
-                                            )));
-                                  }).toList()),
+                                                          .trim()[0]
+                                                          .toUpperCase() +
+                                                      headings
+                                                          .trim()
+                                                          .substring(1)
+                                                          .toLowerCase(),
+                                                )));
+                                      }).toList()),
                               SizedBox(
                                 height: 20,
                               ),
@@ -610,17 +635,29 @@ class _AnalysisState extends State<Analysis> {
                             source: BattingDataSource(
                                 batData:
                                     snapshot.data.item1.item2.where((element) {
-                              return ((globals.team1_name
-                                          .contains(element.team) &&
-                                      globals.team2_name.contains(element
-                                          .opposition
-                                          .replaceAll('v', '')
-                                          .trim())) ||
+                              print('yeuegwie' + globals.team2__short_name);
+
+                              //Just having a check with both the name and the abbreviation of the team.
+                              // For example, both 'United States of America' and 'U.S.A'
+                              return (((globals.team1_name
+                                          .contains(element.team)) &&
+                                      ((globals.team2_name).contains(element
+                                              .opposition
+                                              .replaceAll('v', '')
+                                              .trim()) ||
+                                          globals.team2__short_name.contains(
+                                              element.opposition
+                                                  .replaceAll('v', '')
+                                                  .trim()))) ||
                                   (globals.team2_name.contains(element.team) &&
-                                      globals.team1_name.contains(element
-                                          .opposition
-                                          .replaceAll('v', '')
-                                          .trim())));
+                                      (globals.team1_name.contains(element
+                                              .opposition
+                                              .replaceAll('v', '')
+                                              .trim()) ||
+                                          globals.team1__short_name.contains(
+                                              element.opposition
+                                                  .replaceAll('v', '')
+                                                  .trim()))));
                             }).toList()),
                             columnWidthMode: ColumnWidthMode.auto,
                             selectionMode: SelectionMode.multiple,
@@ -670,43 +707,54 @@ class _AnalysisState extends State<Analysis> {
                             ],
                           ),
                         ),
-                        SfDataGrid(
-                            verticalScrollPhysics:
-                                NeverScrollableScrollPhysics(),
-                            rowHeight: 35.0,
-                            shrinkWrapRows: true,
-                            allowSorting: true,
-                            source: bowlingDataSource(
-                                bowlingData:
-                                    snapshot.data.item2.item2.where((element) {
-                              return ((globals.team1_name
-                                          .contains(element.team) &&
-                                      globals.team2_name.contains(element
-                                          .opposition
-                                          .replaceAll('v', '')
-                                          .trim())) ||
-                                  (globals.team2_name.contains(element.team) &&
-                                      globals.team1_name.contains(element
-                                          .opposition
-                                          .replaceAll('v', '')
-                                          .trim())));
-                            }).toList()),
-                            columnWidthMode: ColumnWidthMode.auto,
-                            selectionMode: SelectionMode.multiple,
-                            columns: snapshot.data.item2.item1.map((headings) {
-                              return GridColumn(
-                                  columnName: headings.toLowerCase(),
-                                  label: Container(
-                                      padding: EdgeInsets.all(16.0),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        headings.trim()[0].toUpperCase() +
-                                            headings
-                                                .trim()
-                                                .substring(1)
-                                                .toLowerCase(),
-                                      )));
-                            }).toList()),
+                        snapshot.data.item2.item2 == null
+                            ? Text('Not yet bowled')
+                            : SfDataGrid(
+                                verticalScrollPhysics:
+                                    NeverScrollableScrollPhysics(),
+                                rowHeight: 35.0,
+                                shrinkWrapRows: true,
+                                allowSorting: true,
+                                source: bowlingDataSource(
+                                    bowlingData: snapshot.data.item2.item2
+                                        .where((element) {
+                                  return (((globals.team1_name
+                                              .contains(element.team)) &&
+                                          ((globals.team2_name).contains(element
+                                                  .opposition
+                                                  .replaceAll('v', '')
+                                                  .trim()) ||
+                                              globals.team2__short_name
+                                                  .contains(element.opposition
+                                                      .replaceAll('v', '')
+                                                      .trim()))) ||
+                                      (globals.team2_name.contains(element.team) &&
+                                          (globals.team1_name.contains(element
+                                                  .opposition
+                                                  .replaceAll('v', '')
+                                                  .trim()) ||
+                                              globals.team1__short_name
+                                                  .contains(element.opposition
+                                                      .replaceAll('v', '')
+                                                      .trim()))));
+                                }).toList()),
+                                columnWidthMode: ColumnWidthMode.auto,
+                                selectionMode: SelectionMode.multiple,
+                                columns:
+                                    snapshot.data.item2.item1.map((headings) {
+                                  return GridColumn(
+                                      columnName: headings.toLowerCase(),
+                                      label: Container(
+                                          padding: EdgeInsets.all(16.0),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            headings.trim()[0].toUpperCase() +
+                                                headings
+                                                    .trim()
+                                                    .substring(1)
+                                                    .toLowerCase(),
+                                          )));
+                                }).toList()),
                         Container(
                           decoration: BoxDecoration(
                               gradient: LinearGradient(
@@ -739,43 +787,54 @@ class _AnalysisState extends State<Analysis> {
                             ],
                           ),
                         ),
-                        SfDataGrid(
-                            verticalScrollPhysics:
-                                NeverScrollableScrollPhysics(),
-                            rowHeight: 35.0,
-                            shrinkWrapRows: true,
-                            allowSorting: true,
-                            source: PartnershipDataSource(
-                                Data:
-                                    snapshot.data.item3.item2.where((element) {
-                              return ((globals.team1_name
-                                          .contains(element.team) &&
-                                      globals.team2_name.contains(element
-                                          .opposition
-                                          .replaceAll('v', '')
-                                          .trim())) ||
-                                  (globals.team2_name.contains(element.team) &&
-                                      globals.team1_name.contains(element
-                                          .opposition
-                                          .replaceAll('v', '')
-                                          .trim())));
-                            }).toList()),
-                            columnWidthMode: ColumnWidthMode.auto,
-                            selectionMode: SelectionMode.multiple,
-                            columns: snapshot.data.item3.item1.map((headings) {
-                              return GridColumn(
-                                  columnName: headings.toLowerCase(),
-                                  label: Container(
-                                      padding: EdgeInsets.all(16.0),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        headings.trim()[0].toUpperCase() +
-                                            headings
-                                                .trim()
-                                                .substring(1)
-                                                .toLowerCase(),
-                                      )));
-                            }).toList()),
+                        snapshot.data.item3.item2 == null
+                            ? Text('No partnerships so far')
+                            : SfDataGrid(
+                                verticalScrollPhysics:
+                                    NeverScrollableScrollPhysics(),
+                                rowHeight: 35.0,
+                                shrinkWrapRows: true,
+                                allowSorting: true,
+                                source: PartnershipDataSource(
+                                    Data: snapshot.data.item3.item2
+                                        .where((element) {
+                                  return (((globals.team1_name
+                                              .contains(element.team)) &&
+                                          ((globals.team2_name).contains(element
+                                                  .opposition
+                                                  .replaceAll('v', '')
+                                                  .trim()) ||
+                                              globals.team2__short_name
+                                                  .contains(element.opposition
+                                                      .replaceAll('v', '')
+                                                      .trim()))) ||
+                                      (globals.team2_name.contains(element.team) &&
+                                          (globals.team1_name.contains(element
+                                                  .opposition
+                                                  .replaceAll('v', '')
+                                                  .trim()) ||
+                                              globals.team1__short_name
+                                                  .contains(element.opposition
+                                                      .replaceAll('v', '')
+                                                      .trim()))));
+                                }).toList()),
+                                columnWidthMode: ColumnWidthMode.auto,
+                                selectionMode: SelectionMode.multiple,
+                                columns:
+                                    snapshot.data.item3.item1.map((headings) {
+                                  return GridColumn(
+                                      columnName: headings.toLowerCase(),
+                                      label: Container(
+                                          padding: EdgeInsets.all(16.0),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            headings.trim()[0].toUpperCase() +
+                                                headings
+                                                    .trim()
+                                                    .substring(1)
+                                                    .toLowerCase(),
+                                          )));
+                                }).toList()),
                       ],
                     );
                     Widget pastmatches = SingleChildScrollView(
@@ -824,12 +883,18 @@ class _AnalysisState extends State<Analysis> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                Image.network(
-                                                  root_logo +
-                                                      teamlogos[0].toString(),
-                                                  width: 32,
-                                                  height: 32,
-                                                ),
+                                                teamlogos[0] != null
+                                                    ? Image.network(
+                                                        root_logo +
+                                                            teamlogos[0]
+                                                                .toString(),
+                                                        width: 32,
+                                                        height: 32,
+                                                      )
+                                                    : IconButton(
+                                                        icon: Image.asset(
+                                                            'logos/team1.png'),
+                                                        onPressed: null),
                                               ],
                                             ),
                                             Stack(
@@ -863,12 +928,18 @@ class _AnalysisState extends State<Analysis> {
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
-                                                Image.network(
-                                                  root_logo +
-                                                      teamlogos[1].toString(),
-                                                  width: 32,
-                                                  height: 32,
-                                                )
+                                                teamlogos[1] != null
+                                                    ? Image.network(
+                                                        root_logo +
+                                                            teamlogos[1]
+                                                                .toString(),
+                                                        width: 32,
+                                                        height: 32,
+                                                      )
+                                                    : IconButton(
+                                                        icon: Image.asset(
+                                                            'logos/team2.png'),
+                                                        onPressed: null),
                                               ],
                                             ),
                                           ],
@@ -978,45 +1049,50 @@ class _AnalysisState extends State<Analysis> {
         await batting_teams_info(team1_info_batting, globals.team1_name);
     var value2 =
         await batting_teams_info(team2_info_batting, globals.team2_name);
-    teams_batting = new List.from(value1.item2)..addAll(value2.item2);
     teams_batting_headings = value1.item1;
 
     List<Batting_player> batting_playersdata1 = [];
-    for (var i in teams_batting) {
-      if (i.toString().contains('-')) {
-        i[i.indexWhere((element) => element.contains('-'))] = '0.0';
+    if (value1.item1 == null || value2.item1 == null) {
+      batting_playersdata1 = null;
+    } else {
+      teams_batting = new List.from(value1.item2)..addAll(value2.item2);
+
+      for (var i in teams_batting) {
+        if (i.toString().contains('-')) {
+          i[i.indexWhere((element) => element.contains('-'))] = '0.0';
+        }
       }
-    }
-    print('teams_batting $teams_batting');
-    for (var i in teams_batting) {
-      if (i[1].trim().contains('*')) {
-        batting_playersdata1.add(Batting_player(
-            i[0].trim() + '*',
-            int.parse(i[1].replaceAll('*', '').trim()),
-            int.parse(i[2].trim()),
-            int.parse(i[3].trim()),
-            int.parse(i[4].trim()),
-            double.parse(i[5].trim()),
-            i[6].trim(),
-            i[7].trim(),
-            i[8].trim(),
-            i[9].trim()));
-      } else {
-        batting_playersdata1.add(Batting_player(
-            i[0].trim(),
-            int.parse(i[1].trim()),
-            int.parse(i[2].trim()),
-            int.parse(i[3].trim()),
-            int.parse(i[4].trim()),
-            double.parse(i[5].trim()),
-            i[6].trim(),
-            i[7].trim(),
-            i[8].trim(),
-            i[9].trim()));
+      print('teams_batting $teams_batting');
+      for (var i in teams_batting) {
+        if (i[1].trim().contains('*')) {
+          batting_playersdata1.add(Batting_player(
+              i[0].trim() + '*',
+              int.parse(i[1].replaceAll('*', '').trim()),
+              int.parse(i[2].trim()),
+              int.parse(i[3].trim()),
+              int.parse(i[4].trim()),
+              double.parse(i[5].trim()),
+              i[6].trim(),
+              i[7].trim(),
+              i[8].trim(),
+              i[9].trim()));
+        } else {
+          batting_playersdata1.add(Batting_player(
+              i[0].trim(),
+              int.parse(i[1].trim()),
+              int.parse(i[2].trim()),
+              int.parse(i[3].trim()),
+              int.parse(i[4].trim()),
+              double.parse(i[5].trim()),
+              i[6].trim(),
+              i[7].trim(),
+              i[8].trim(),
+              i[9].trim()));
+        }
       }
+      print('playersdata $batting_playersdata1');
+      // return Tuple2(teams_batting_headings, batting_playersdata1);
     }
-    print('playersdata $batting_playersdata1');
-    // return Tuple2(teams_batting_headings, batting_playersdata1);
 
 //BOWLING*******************************************************
 
@@ -1028,23 +1104,27 @@ class _AnalysisState extends State<Analysis> {
         await bowling_teams_info(team1_info_bowling, globals.team1_name);
     var value4 =
         await bowling_teams_info(team2_info_bowling, globals.team2_name);
-    teams_bowling = new List.from(value3.item2)..addAll(value4.item2);
+
     teams_bowling_headings = value3.item1;
     List<Player> bowling_playersdata1 = [];
-
-    for (var i in teams_bowling) {
-      bowling_playersdata1.add(Player(
-          i[0].trim(),
-          double.parse(i[1].trim()),
-          int.parse(i[2].trim()),
-          int.parse(i[3].trim()),
-          double.parse(i[4].trim()),
-          i[5].trim(),
-          i[6].trim(),
-          i[7].trim(),
-          i[8].trim()));
+    if (value3.item1 == null || value4.item1 == null) {
+      print('Reppa ${value3.item1}');
+      bowling_playersdata1 = null;
+    } else {
+      teams_bowling = new List.from(value3.item2)..addAll(value4.item2);
+      for (var i in teams_bowling) {
+        bowling_playersdata1.add(Player(
+            i[0].trim(),
+            double.parse(i[1].trim()),
+            int.parse(i[2].trim()),
+            int.parse(i[3].trim()),
+            double.parse(i[4].trim()),
+            i[5].trim(),
+            i[6].trim(),
+            i[7].trim(),
+            i[8].trim()));
+      }
     }
-
 //PARTNERSHIPS*******************************************************
     var team1_info_partnerships = await http.Client().get(Uri.parse(
         root + team1_partnership_table.first.attributes['href'].toString()));
@@ -1055,37 +1135,41 @@ class _AnalysisState extends State<Analysis> {
         team1_info_partnerships, globals.team1_name);
     var value6 = await partnership_teams_info(
         team2_info_partnerships, globals.team2_name);
-    partnerships = new List.from(value5.item2)..addAll(value6.item2);
     partnerships_headings = value5.item1;
 
     print('partnerships $partnerships_headings');
     List<Partnership> partnership_playersdata = [];
-    for (var i in partnerships) {
-      if (i[1].trim().contains('*')) {
-        partnership_playersdata.add(Partnership(
-          i[0].trim() + '*',
-          int.parse(i[1].replaceAll('*', '').trim()),
-          i[2].trim(),
-          i[3].trim(),
-          i[4].trim(),
-          i[5].trim(),
-          i[6].trim(),
-        ));
-      } else {
-        partnership_playersdata.add(Partnership(
-          i[0].trim(),
-          int.parse(i[1].trim()),
-          i[2].trim(),
-          i[3].trim(),
-          i[4].trim(),
-          i[5].trim(),
-          i[6].trim(),
-        ));
-      }
-    }
-    print('playersdata $partnership_playersdata');
-    // return Tuple2(teams_batting_headings, batting_playersdata1);
+    if (value5.item1 == null || value6.item1 == null) {
+      partnership_playersdata = null;
+    } else {
+      partnerships = new List.from(value5.item2)..addAll(value6.item2);
 
+      for (var i in partnerships) {
+        if (i[1].trim().contains('*')) {
+          partnership_playersdata.add(Partnership(
+            i[0].trim() + '*',
+            int.parse(i[1].replaceAll('*', '').trim()),
+            i[2].trim(),
+            i[3].trim(),
+            i[4].trim(),
+            i[5].trim(),
+            i[6].trim(),
+          ));
+        } else {
+          partnership_playersdata.add(Partnership(
+            i[0].trim(),
+            int.parse(i[1].trim()),
+            i[2].trim(),
+            i[3].trim(),
+            i[4].trim(),
+            i[5].trim(),
+            i[6].trim(),
+          ));
+        }
+      }
+      print('playersdata $partnership_playersdata');
+      // return Tuple2(teams_batting_headings, batting_playersdata1);
+    }
     Tuple2<List<String>, List<Player>> bowlingdataheadings = Tuple2(
         teams_bowling_headings, bowling_playersdata1); //bowling data overall
     Tuple2<List<String>, List<Batting_player>> battingdataheadings = Tuple2(

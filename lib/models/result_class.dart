@@ -112,12 +112,21 @@ class TeamResultsDataSource extends DataGridSource {
   DataGridRowAdapter buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
-      if ((globals.team1_name.contains(row.getCells()[0].value.toString()) ||
-              globals.team1_name
-                  .contains(row.getCells()[1].value.toString())) &&
-          (globals.team2_name.contains(row.getCells()[1].value.toString()) ||
-              globals.team2_name
-                  .contains(row.getCells()[0].value.toString()))) {
+      if (((globals.team1_name.contains(row.getCells()[0].value.toString()) ||
+                  globals.team1_name
+                      .contains(row.getCells()[1].value.toString())) &&
+              (globals.team2_name
+                      .contains(row.getCells()[1].value.toString()) ||
+                  globals.team2_name
+                      .contains(row.getCells()[0].value.toString()))) ||
+          (globals.team1__short_name
+                      .contains(row.getCells()[0].value.toString()) ||
+                  globals.team1__short_name
+                      .contains(row.getCells()[1].value.toString())) &&
+              (globals.team2__short_name
+                      .contains(row.getCells()[1].value.toString()) ||
+                  globals.team2__short_name
+                      .contains(row.getCells()[0].value.toString()))) {
         return Container(
           color: Colors.greenAccent,
           alignment: Alignment.center,
@@ -167,8 +176,9 @@ teams_results_info(var team1_info, String team1_name) async {
   data.removeWhere((element) => element.text.length == 0);
   for (int i = 0; i < data.length; i++) {
     List<String> playerwise = [];
-    for (int j = 0; j < data[j].children.length; j++) {
-      if (data[i].children[j].text.length != 0) {
+    for (int j = 0; j < data[i].children.length; j++) {
+      if (data[i].children[j].text.length != 0 ||
+          data[i].children[j].text != null) {
         playerwise.add(data[i].children[j].text.toString().trim());
       }
     }

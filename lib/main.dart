@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:datascrap/recent_stats_testing.dart';
 import 'package:datascrap/skeleton.dart';
+import 'package:datascrap/typeofstats.dart';
 import 'package:datascrap/webscrap.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -86,31 +88,43 @@ class _HomepageState extends State<Homepage> {
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
     dom.Document document = parser.parse(response.body);
-
-    var imglogosdata =
+    List imglogosdata =
         json.decode(document.getElementById('__NEXT_DATA__').text)['props']
             ['editionDetails']['trendingMatches']['matches'];
+    List imglogosdata1 =
+        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+            ['appPageProps']['data']['content']['matches'];
+    List takethisimglogosdata = new List.from(imglogosdata)
+      ..addAll(imglogosdata1);
+    ;
+
     var parentdata =
         json.decode(document.getElementById('__NEXT_DATA__').text)['props']
             ['editionDetails']['navigation']['links'][1]['links'];
 
-    for (var i in imglogosdata) {
-      print(i['series']['slug']);
-      var objectid = i['series']['objectId'];
-      var link = 'https://www.espncricinfo.com/ci/engine/series/' +
-          objectid.toString() +
-          '.html?view=records';
-      // validMatches.add(i['series']['longName']);
-      var teamstats = await http.Client().get(Uri.parse(link));
-      dom.Document teamstatsdoc = parser.parse(teamstats.body);
-      var rec1 = teamstatsdoc
-          .getElementsByClassName('RecBulAro')
-          .where((element) => element.text == 'Records by team');
-      var rec2 = teamstatsdoc
-          .getElementsByClassName('RecBulAro')
-          .where((element) => element.text == 'Records by team');
-      if (rec1.toList().isNotEmpty && rec2.toList().isNotEmpty) {
-        print(i['series']['longName']);
+    for (var i in takethisimglogosdata) {
+      if (!i['status'].toString().startsWith('Not covered') &&
+          (i['statusText'].toString().startsWith('Match starts') ||
+              i['statusText'].toString().startsWith('Match yet'))) {
+        print('USA1 ' + i['statusText']);
+        var objectid = i['series']['objectId'];
+        var link = 'https://www.espncricinfo.com/ci/engine/series/' +
+            objectid.toString() +
+            '.html?view=records';
+        // validMatches.add(i['series']['longName']);
+        var teamstats = await http.Client().get(Uri.parse(link));
+        dom.Document teamstatsdoc = parser.parse(teamstats.body);
+        var rec1 = teamstatsdoc
+            .getElementsByClassName('RecBulAro')
+            .where((element) => element.text == 'Records by team');
+        var rec2 = teamstatsdoc
+            .getElementsByClassName('RecBulAro')
+            .where((element) => element.text == 'Records by team');
+        // if (rec1.toList().isNotEmpty && rec2.toList().isNotEmpty) {
+        //   print(i['series']['longName']);
+        //   print(i['series']['longName']);
+        //   validMatches.add(i['series']['longName']);
+        // }
         validMatches.add(i['series']['longName']);
       }
     }
@@ -156,20 +170,20 @@ class _HomepageState extends State<Homepage> {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                     return Container(
-                      color: Color(0xff2B2B28),
-                      // child: SkeletonTheme(
-                      //     shimmerGradient: LinearGradient(colors: [
-                      //       Color(0xff1A3263).withOpacity(0.8),
-                      //       Color(0xff1A3263),
-                      //       Color(0xff1A3263),
-                      //       Color(0xff1A3263).withOpacity(0.8),
-                      //     ]),
-                      //     child: ListView.builder(
-                      //       itemCount: 10,
-                      //       itemBuilder: (context, index) =>
-                      //           PlayingLeaguesSkelton(),
-                      //     ))
-                    );
+                        color: Color(0xff2B2B28),
+                        // child: Text('Loading ${snapshot.data}'),
+                        child: SkeletonTheme(
+                            shimmerGradient: LinearGradient(colors: [
+                              Color(0xff1A3263).withOpacity(0.8),
+                              Color(0xff1A3263),
+                              Color(0xff1A3263),
+                              Color(0xff1A3263).withOpacity(0.8),
+                            ]),
+                            child: ListView.builder(
+                              itemCount: 10,
+                              itemBuilder: (context, index) =>
+                                  PlayingLeaguesSkelton(),
+                            )));
                   default:
                     if (snapshot.hasError)
                       return Text('Error: ${snapshot.error}');
@@ -200,6 +214,18 @@ class _HomepageState extends State<Homepage> {
                                         ),
                                       ),
                                     ),
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    recentmatchtestdata(),
+                                              ));
+                                        },
+                                        child: Container(
+                                          color: Color(0xffFFB72B),
+                                        )),
                                     SizedBox(
                                       height: 10,
                                     ),
@@ -235,6 +261,8 @@ class _HomepageState extends State<Homepage> {
                                                           globals.league_page =
                                                               snapshot
                                                                   .data[index];
+                                                          print(
+                                                              'Globals ${globals.league_page}');
                                                         });
                                                         Navigator.push(
                                                             context,

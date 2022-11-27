@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:datascrap/analysis.dart';
 import 'package:datascrap/skeleton.dart';
+import 'package:datascrap/typeofstats.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/routes/default_transitions.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
+import 'package:intl/intl.dart';
 import 'globals.dart' as globals;
 import 'package:skeletons/skeletons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -26,11 +28,16 @@ class _datascrapState extends State<datascrap> {
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
     dom.Document document = parser.parse(response.body);
-    var imglogosdata =
-        json.decode(document.getElementById('__NEXT_DATA__').innerHtml)['props']
+    List imglogosdata =
+        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
             ['editionDetails']['trendingMatches']['matches'];
+    List imglogosdata1 =
+        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+            ['appPageProps']['data']['content']['matches'];
+    List takethisimglogosdata = new List.from(imglogosdata)
+      ..addAll(imglogosdata1);
     String seriesname = '';
-    for (var i in imglogosdata) {
+    for (var i in takethisimglogosdata) {
       if (i['teams'][0]['team']['longName'].toString().trim() == leaguename) {
         seriesname = i['teams'][0]['team']['image']['url'].toString();
       } else if (i['teams'][1]['team']['longName'].toString().trim() ==
@@ -38,7 +45,7 @@ class _datascrapState extends State<datascrap> {
         seriesname = i['teams'][1]['team']['image']['url'].toString();
       }
     }
-    print('imglogosdata12 $seriesname');
+    //print('imglogosdata12 $seriesname');
     return seriesname;
   }
 
@@ -52,6 +59,7 @@ class _datascrapState extends State<datascrap> {
     super.initState();
   }
 
+  var link2doc1;
   Future<List<Map<String, String>>> getlivematches(String league) async {
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
@@ -74,10 +82,11 @@ class _datascrapState extends State<datascrap> {
       if (matchdetails.text.contains(league)) {
         var link1 = matchdetails.querySelectorAll('a')[0];
         print('link1 ${link1.attributes["href"]}');
-        var forlink2 = await http.Client().get(Uri.parse(
-            'https://www.espncricinfo.com' +
-                link1.attributes["href"].toString()));
+        var link2address = 'https://www.espncricinfo.com' +
+            link1.attributes["href"].toString();
+        var forlink2 = await http.Client().get(Uri.parse(link2address));
         dom.Document link2doc = parser.parse(forlink2.body);
+
         if (link2doc
             .getElementsByClassName(
                 'ds-text-tight-m ds-font-regular ds-text-ui-typo-mid')
@@ -87,6 +96,31 @@ class _datascrapState extends State<datascrap> {
               .getElementsByClassName(
                   'ds-text-tight-m ds-font-regular ds-text-ui-typo-mid')[0]
               .querySelector('a'); //
+
+          // var recent_perform = link2doc
+          //     .getElementsByClassName('ds-p-0')[1]
+          //     .querySelector('table');
+
+          // // recent_perform.querySelectorAll('tbody')[1].clone(true);
+
+          // var team1_recent = recent_perform.querySelectorAll('tbody')[0];
+          // var team1_recentname = team1_recent.querySelector(
+          //     'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span');
+          // var team1_recentform = team1_recent.querySelectorAll(
+          //     'tr>td>div > div.ReactCollapse--collapse > div > div > a');
+          // var team1_winsloss = team1_recent.querySelector(
+          //     'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div');
+
+          // if (team1_recentname != null) {
+          //   print('asa11 ${team1_recentname.text}'); //teamname
+          //   print('asa11 ${team1_winsloss.text}'); //LWLLL
+          // }
+          // for (int i = 0; i < team1_recentform.length; i++) {
+          //   var justanothevar = team1_recentform[i].querySelector(
+          //       "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
+          //   print('asa11 ${justanothevar.text}');
+          //   print('asa11 ${team1_recentform[i].attributes['href']}');
+          // }
           print('link2 ${link2.attributes["href"]}');
 
           var forlink3 = await http.Client().get(Uri.parse(
@@ -123,14 +157,16 @@ class _datascrapState extends State<datascrap> {
               var response1 = await http.Client().get(
                   Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
               dom.Document document1 = parser.parse(response1.body);
-              var imglogosdata1 = json.decode(
-                      document1.getElementById('__NEXT_DATA__').text)['props']
-                  ['appPageProps']['data']['content']['matches'];
-              var imglogosdata = json.decode(
+              List imglogosdata = json.decode(
                       document1.getElementById('__NEXT_DATA__').text)['props']
                   ['editionDetails']['trendingMatches']['matches'];
+              List imglogosdata1 = json.decode(
+                      document1.getElementById('__NEXT_DATA__').text)['props']
+                  ['appPageProps']['data']['content']['matches'];
+              List takethisimglogosdata = new List.from(imglogosdata)
+                ..addAll(imglogosdata1);
 
-              for (var i in imglogosdata) {
+              for (var i in takethisimglogosdata) {
                 if ((i['teams'][0]['team']['longName']
                         .toString()
                         .trim()
@@ -139,12 +175,23 @@ class _datascrapState extends State<datascrap> {
                         .toString()
                         .trim()
                         .contains(teams2))) {
-                  iplmatch['team1logo'] =
-                      i['teams'][0]['team']['image']['url'].toString();
-                  iplmatch['team2logo'] =
-                      i['teams'][1]['team']['image']['url'].toString();
+                  iplmatch['linkaddress'] = link2address;
+                  iplmatch['Team1_short'] =
+                      i['teams'][0]['team']['name'].toString();
+                  iplmatch['Team2_short'] =
+                      i['teams'][1]['team']['name'].toString();
+                  if (i['teams'][0]['team']['image'] == null) {
+                    iplmatch['team1logo'] = null;
+
+                    iplmatch['team2logo'] = null;
+                  } else {
+                    iplmatch['team1logo'] =
+                        i['teams'][0]['team']['image']['url'].toString();
+                    iplmatch['team2logo'] =
+                        i['teams'][1]['team']['image']['url'].toString();
+                  }
                 } else {
-                  for (var i in imglogosdata1) {
+                  for (var i in takethisimglogosdata) {
                     if ((i['teams'][0]['team']['longName']
                             .toString()
                             .trim()
@@ -153,28 +200,57 @@ class _datascrapState extends State<datascrap> {
                             .toString()
                             .trim()
                             .contains(teams2))) {
-                      iplmatch['team1logo'] =
-                          i['teams'][0]['team']['image']['url'].toString();
-                      iplmatch['team2logo'] =
-                          i['teams'][1]['team']['image']['url'].toString();
+                      iplmatch['linkaddress'] = link2address;
+
+                      iplmatch['Team1_short'] =
+                          i['teams'][0]['team']['name'].toString();
+                      iplmatch['Team2_short'] =
+                          i['teams'][1]['team']['name'].toString();
+
+                      if (i['teams'][0]['team']['image'] == null) {
+                        iplmatch['team1logo'] = null;
+
+                        iplmatch['team2logo'] = null;
+                      } else {
+                        iplmatch['team1logo'] =
+                            i['teams'][0]['team']['image']['url'].toString();
+                        iplmatch['team2logo'] =
+                            i['teams'][1]['team']['image']['url'].toString();
+                      }
                     }
                   }
                 }
               }
-              print('hero team1: ${teams1}');
-              print('hero match_det: ${match_det.text}');
-              print('hero match_det1: ${match_det1.text}');
-              print('hero team2: ${teams2}');
-              // print('hero teamscore: ${teamscore[0].text}');
-              // print('hero teamscore: ${teamscore[1].text}');
-              print('hero stauts: ${stauts.text}');
+              //print('hero team1: ${teams1}');
+              //print('hero match_det: ${match_det.text}');
+              //print('hero match_det1: ${match_det1.text}');
+              //print('hero team2: ${teams2}');
+              // //print('hero teamscore: ${teamscore[0].text}');
+              // //print('hero teamscore: ${teamscore[1].text}');
+              //print('hero stauts: ${stauts.text}');
+
               iplmatch['Time'] = match_det.text;
               iplmatch['Match_name'] = match_det1.text.split(',').last;
               iplmatch['Team1'] = teams1;
               iplmatch['Team2'] = teams2;
               iplmatch['MatchStarts'] = stauts.text;
               iplmatch['Details'] = match_det1.text;
-              iplmatch['Ground'] = match_det1.text.split(',')[1].trim();
+
+              final DateTime today = DateTime.now();
+              final DateFormat format2 = DateFormat('MMMM');
+              //print(format2.format(
+              // today));
+              //getting current month name like January, February...
+              var detailslist = match_det1.text.split(',');
+
+              for (var k in detailslist) {
+                if (k.contains(format2.format(today).toString())) {
+                  iplmatch['Ground'] = detailslist[detailslist.indexOf(k) - 1]
+                      .trim(); //taking the ground name from the list which is the one before Date details
+                }
+              }
+              print('assa1' + iplmatch.toString());
+
               if (teamscore.length == 2) {
                 iplmatch['team1_score'] = teamscore[0].text.trim();
                 iplmatch['team2_score'] = teamscore[1].text.trim();
@@ -199,6 +275,7 @@ class _datascrapState extends State<datascrap> {
           if (link3.toList().isNotEmpty) {
             var teamstats = await http.Client().get(
                 Uri.parse(link3.toList()[0].attributes["href"].toString()));
+            print('assa1' + link3.toList()[0].attributes["href"].toString());
             dom.Document teamstatsdoc = parser.parse(teamstats.body);
 
             var rec1 = teamstatsdoc
@@ -207,6 +284,7 @@ class _datascrapState extends State<datascrap> {
             var rec2 = teamstatsdoc
                 .getElementsByClassName('RecBulAro')
                 .where((element) => element.text == 'Records by team');
+            print('rec1 ${rec1.length}');
             if (rec1.length != 0) {
               rec1 = rec1
                   .toList()[0]
@@ -214,11 +292,10 @@ class _datascrapState extends State<datascrap> {
                   .children[2]
                   .getElementsByClassName('RecordLinks')
                   .where((element) => element.text == iplmatch["Team1"]);
-
               if (rec1.length != 0) {
                 iplmatch['team1_stats_link'] =
                     rec1.first.attributes["href"].toString();
-                print('rec1 ${rec1.first.attributes["href"]}');
+                //print('rec1 ${rec1.first.attributes["href"]}');
                 matches.add(iplmatch);
               }
             } else if (rec1.length == 0) {
@@ -238,7 +315,7 @@ class _datascrapState extends State<datascrap> {
               if (rec2.length != 0) {
                 iplmatch['team2_stats_link'] =
                     rec2.first.attributes["href"].toString();
-                print('rec2 ${rec2.first.attributes["href"]}');
+                //print('rec2 ${rec2.first.attributes["href"]}');
                 matches.add(iplmatch);
               }
             } else if (rec2.length == 0) {
@@ -250,7 +327,7 @@ class _datascrapState extends State<datascrap> {
         }
       }
     }
-    print(matches);
+    print('asa11 ${matches.toSet().toList()}');
     return matches.toSet().toList();
   }
 
@@ -300,6 +377,8 @@ class _datascrapState extends State<datascrap> {
                           Color(0xff1A3263).withOpacity(0.8),
                         ]),
                         child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
                           itemCount: 5,
                           itemBuilder: (context, index) => NewsCardSkelton(),
                         )));
@@ -317,6 +396,8 @@ class _datascrapState extends State<datascrap> {
                             Color(0xff1A3263).withOpacity(0.8),
                           ]),
                           child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
                             itemCount: 5,
                             itemBuilder: (context, index) => NewsCardSkelton(),
                           )));
@@ -336,7 +417,7 @@ class _datascrapState extends State<datascrap> {
                           SizedBox(
                             height: 10,
                           ),
-                          Text('Stats not available. It may be because of :',
+                          Text('Stats not available.',
                               style: TextStyle(
                                 fontFamily: 'Louisgeorge',
                                 fontSize: 20.0,
@@ -354,29 +435,13 @@ class _datascrapState extends State<datascrap> {
                                   onPressed: null),
                               Flexible(
                                 child: Text(
-                                    'The league might started recently due to which enough data is not found',
+                                    'The league might have started recently due to which enough data is not found.',
                                     style: TextStyle(
                                       fontFamily: 'Louisgeorge',
                                       fontSize: 15.0,
                                       color: Colors.white,
                                     )),
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                  icon: Image.asset(
-                                    'logos/ball.png',
-                                  ),
-                                  onPressed: null),
-                              Text(
-                                  'Live Stream for this league is not available ',
-                                  style: TextStyle(
-                                    fontFamily: 'Louisgeorge',
-                                    fontSize: 15.0,
-                                    color: Colors.white,
-                                  )),
                             ],
                           ),
                         ],
@@ -390,6 +455,7 @@ class _datascrapState extends State<datascrap> {
                         color: Color(0xff2B2B28),
                         height: MediaQuery.of(context).size.height,
                         child: ListView.builder(
+                          shrinkWrap: true,
                           physics: const AlwaysScrollableScrollPhysics(),
                           scrollDirection: Axis.vertical,
                           itemCount: snapshot.data.length,
@@ -424,6 +490,12 @@ class _datascrapState extends State<datascrap> {
                                             globals.team2_name = snapshot
                                                 .data[i]['Team2']
                                                 .trim();
+                                            globals.team1__short_name = snapshot
+                                                .data[i]['Team1_short']
+                                                .trim();
+                                            globals.team2__short_name = snapshot
+                                                .data[i]['Team2_short']
+                                                .trim();
                                             globals.team1_stats_link = snapshot
                                                 .data[i]['team1_stats_link'];
                                             globals.team2_stats_link = snapshot
@@ -436,12 +508,14 @@ class _datascrapState extends State<datascrap> {
                                                 snapshot.data[i]['team1logo'];
                                             globals.team2logo =
                                                 snapshot.data[i]['team2logo'];
+                                            globals.ontap =
+                                                snapshot.data[i]['linkaddress'];
                                           });
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    Analysis(),
+                                                    typeofstats(),
                                               ));
                                         },
                                         child: Container(
@@ -529,15 +603,22 @@ class _datascrapState extends State<datascrap> {
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      IconButton(
-                                                          icon:
-                                                              CachedNetworkImage(
-                                                            imageUrl: root_logo +
-                                                                snapshot.data[i]
-                                                                    [
-                                                                    'team1logo'],
-                                                          ),
-                                                          onPressed: null),
+                                                      snapshot.data[i][
+                                                                  'team1logo'] !=
+                                                              null
+                                                          ? IconButton(
+                                                              icon:
+                                                                  CachedNetworkImage(
+                                                                imageUrl: root_logo +
+                                                                    snapshot.data[
+                                                                            i][
+                                                                        'team1logo'],
+                                                              ),
+                                                              onPressed: null)
+                                                          : IconButton(
+                                                              icon: Image.asset(
+                                                                  'logos/team1.png'),
+                                                              onPressed: null),
                                                       Flexible(
                                                         child: Text(
                                                             snapshot.data[i]
@@ -569,15 +650,22 @@ class _datascrapState extends State<datascrap> {
                                                   ),
                                                   Row(
                                                     children: [
-                                                      IconButton(
-                                                          icon:
-                                                              CachedNetworkImage(
-                                                            imageUrl: root_logo +
-                                                                snapshot.data[i]
-                                                                    [
-                                                                    'team2logo'],
-                                                          ),
-                                                          onPressed: null),
+                                                      snapshot.data[i][
+                                                                  'team1logo'] !=
+                                                              null
+                                                          ? IconButton(
+                                                              icon:
+                                                                  CachedNetworkImage(
+                                                                imageUrl: root_logo +
+                                                                    snapshot.data[
+                                                                            i][
+                                                                        'team2logo'],
+                                                              ),
+                                                              onPressed: null)
+                                                          : IconButton(
+                                                              icon: Image.asset(
+                                                                  'logos/team2.png'),
+                                                              onPressed: null),
                                                       Flexible(
                                                         child: Text(
                                                             snapshot.data[i]

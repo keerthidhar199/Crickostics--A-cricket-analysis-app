@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -5,6 +6,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:tuple/tuple.dart';
+import 'package:datascrap/globals.dart' as globals;
 
 /// Custom business object class which contains properties to hold the detailed
 /// information about the employee which will be rendered in datagrid.
@@ -48,7 +50,8 @@ class BattingDataSource extends DataGridSource {
             ]))
         .toList();
   }
-
+  String root_logo =
+      'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
   List<DataGridRow> _batData = [];
 
   @override
@@ -78,7 +81,7 @@ batting_teams_info(var team1_info, String team1_name) async {
   //     .querySelectorAll('table.engineTable>tbody')[1]
   //     .text
   //     .contains('Records'));
-  print(document1.text.toString());
+  print('deppthy1' + document1.text.toString());
   var headers1 = document1.querySelectorAll('table.engineTable>thead>tr')[0];
   var titles1 = headers1.querySelectorAll('th');
   titles1.removeWhere((element) => element.text.length == 0);

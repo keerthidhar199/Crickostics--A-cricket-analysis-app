@@ -58,8 +58,12 @@ class _team_resultsState extends State<team_results> {
                     return Text('Error: ${snapshot.error}');
                   } else {
                     List<String> thetwoteams = [
-                      globals.team1_name,
-                      globals.team2_name
+                      globals.team1__short_name,
+                      globals.team2__short_name,
+                    ];
+                    List<String> thetwoteams_short = [
+                      globals.team1__short_name,
+                      globals.team2__short_name,
                     ];
                     String root_logo =
                         'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
@@ -73,10 +77,7 @@ class _team_resultsState extends State<team_results> {
                     for (int k = 0; k < thetwoteams.length; k++) {
                       Map<String, List<dynamic>> won = {};
                       Map<String, List<dynamic>> lost = {};
-                      if (thetwoteams[k].contains('Bangalore') ||
-                          thetwoteams[k].contains('Kolkata')) {
-                        thetwoteams[k] = getAbbreviation(thetwoteams[k]).trim();
-                      }
+
                       // Bombarding the original list into those which are won and lost by the globals.team1 and globals.team2
                       // (which are taken from the homepage card )
                       List<Result> winning =
@@ -399,6 +400,7 @@ class _team_resultsState extends State<team_results> {
           .get(Uri.parse(root + league_page.first.attributes["href"]));
       var value3 =
           await teams_results_info(team_result_info, globals.team1_name);
+
       teams_results = value3.item2;
       team_results_headings = value3.item1;
     }
