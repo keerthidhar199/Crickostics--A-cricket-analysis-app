@@ -1,17 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:datascrap/analysis.dart';
 import 'package:datascrap/skeleton.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/routes/default_transitions.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'package:intl/intl.dart';
 import 'globals.dart' as globals;
 import 'package:skeletons/skeletons.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class recentmatchdata extends StatefulWidget {
   const recentmatchdata({Key key}) : super(key: key);
@@ -126,7 +121,12 @@ class _recentmatchdataState extends State<recentmatchdata> {
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
           var justanothevar1 = team1_recentform[i].querySelector(
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-ui-typo-mid.ds-text-left");
-          matches_played_details1.add(justanothevar.text);
+
+          matches_played_details1.add(justanothevar.text.split(',').last +
+              ', ' +
+              justanothevar.text
+                  .replaceAll((justanothevar.text.split(',').last), ''));
+
           match_winner1.add(justanothevar1.text);
 
           matches_played_links1.add(team1_recentform[i].attributes['href']);
@@ -140,7 +140,12 @@ class _recentmatchdataState extends State<recentmatchdata> {
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
           var justanothevar1 = team2_recentform[i].querySelector(
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-ui-typo-mid.ds-text-left");
-          matches_played_details2.add(justanothevar.text);
+
+          matches_played_details2.add(justanothevar.text.split(',').last +
+              ', ' +
+              justanothevar.text
+                  .replaceAll((justanothevar.text.split(',').last), ''));
+
           match_winner2.add(justanothevar1.text);
           matches_played_links2.add(team2_recentform[i].attributes['href']);
         }
@@ -273,7 +278,6 @@ class _recentmatchdataState extends State<recentmatchdata> {
                     globals.team1logo,
                     globals.team2logo
                   ];
-                  IconData gun = Icons.arrow_drop_down_circle;
 
                   // return Text(snapshot.data[1].toString());
                   return SingleChildScrollView(
@@ -296,6 +300,21 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
+                                  teamlogos[snapshot.data.indexOf(e)] != null
+                                      ? Image.network(
+                                          root_logo +
+                                              teamlogos[
+                                                      snapshot.data.indexOf(e)]
+                                                  .toString(),
+                                          width: 32,
+                                          height: 32,
+                                        )
+                                      : IconButton(
+                                          icon: Image.asset('logos/team' +
+                                              (snapshot.data.indexOf(e) + 1)
+                                                  .toString() +
+                                              '.png'),
+                                          onPressed: null),
                                   GestureDetector(
                                     onTap: () {},
                                     child: SizedBox(
@@ -347,15 +366,15 @@ class _recentmatchdataState extends State<recentmatchdata> {
                             ),
                             ExpansionTile(
                               trailing: Icon(
-                                gun,
-                                color: Colors.yellowAccent,
+                                Icons.arrow_drop_down_circle,
+                                color: Colors.yellow.shade300,
                                 size: 25,
                               ),
                               title: Text(
-                                'Click for more details',
+                                "More details",
                                 style: TextStyle(
                                   fontSize: 13.0,
-                                  color: Colors.yellowAccent,
+                                  color: Colors.yellow.shade300,
                                   fontStyle: FontStyle.italic,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -370,16 +389,25 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                         children: [
                                           Column(
                                             children: [
+                                              //Faceoff
                                               Container(
-                                                padding:
-                                                    const EdgeInsets.all(10.0),
+                                                decoration: new BoxDecoration(
+                                                    borderRadius:
+                                                        new BorderRadius.all(
+                                                            new Radius.circular(
+                                                                10.0)),
+                                                    color: Colors.white30),
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
                                                     0.9,
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
                                                 child: Text(
                                                   e['matches_details'][i]
-                                                      .toString(),
+                                                      .toString()
+                                                      .split(',')
+                                                      .first,
                                                   style: TextStyle(
                                                     fontSize: 15.0,
                                                     color: Colors.white70,
@@ -388,6 +416,24 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                                   maxLines: 4,
                                                 ),
                                               ),
+                                              //Date of the match happened
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.9,
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').replaceFirst(',', '(')} )",
+                                                  style: TextStyle(
+                                                    fontSize: 10.0,
+                                                    color: Colors.white70,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              //Winner of the match
                                               Container(
                                                 padding:
                                                     const EdgeInsets.all(10.0),
