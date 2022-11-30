@@ -26,4 +26,4 @@ I have created this app to analyse cricket statistics for users. It gives the us
 Install all the dependencies and simply run the application. If any problem due to version, try using/degrading your flutter version to 2.0.1
 
 ## Progress
-This is a project I've been working and is still being updated accordingly with the current technology trends.(Right now only IPL is implemented. Pretty soon I'll update the rest of the leagues and push it).
+This is a project I've been working and is still being updated accordingly with the current technology trends.
