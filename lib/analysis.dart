@@ -542,41 +542,39 @@ class _AnalysisState extends State<Analysis> {
                                                       Colors.white60,
                                                     ],
                                                   )),
-                                              child: Expanded(
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      '${capitalize(names[categories.indexOf(e)])}',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Cocosharp',
-                                                        fontSize: 15.0,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    Image.asset(
-                                                      'logos/' +
-                                                          '${names[categories.indexOf(e)]}' +
-                                                          '.png',
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    '${capitalize(names[categories.indexOf(e)])}',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Cocosharp',
+                                                      fontSize: 15.0,
                                                       color: Colors.black,
-                                                      width: 100,
-                                                      height: 100,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
-                                                    Text(
-                                                      'In ${globals.ground}',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Cocosharp',
-                                                        fontSize: 15.0,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                  ),
+                                                  Image.asset(
+                                                    'logos/' +
+                                                        '${names[categories.indexOf(e)]}' +
+                                                        '.png',
+                                                    color: Colors.black,
+                                                    width: 100,
+                                                    height: 100,
+                                                  ),
+                                                  Text(
+                                                    'In ${globals.ground}',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Cocosharp',
+                                                      fontSize: 15.0,
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                             e

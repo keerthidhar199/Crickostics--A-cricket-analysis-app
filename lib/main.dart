@@ -312,24 +312,22 @@ class _HomepageState extends State<Homepage> {
                                                                         .data
                                                                         .length) -
                                                                 15,
-                                                            child: Flexible(
-                                                              child: Center(
-                                                                child: Text(
-                                                                  snapshot.data[
-                                                                          index]
-                                                                      .toString(),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Louisgeorge',
-                                                                    fontSize:
-                                                                        20.0,
-                                                                    color: Colors
-                                                                        .white,
-                                                                  ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                snapshot
+                                                                    .data[index]
+                                                                    .toString(),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      'Louisgeorge',
+                                                                  fontSize:
+                                                                      20.0,
+                                                                  color: Colors
+                                                                      .white,
                                                                 ),
                                                               ),
                                                             ),
