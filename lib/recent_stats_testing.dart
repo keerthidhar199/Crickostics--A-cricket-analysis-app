@@ -55,7 +55,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
     dom.Document link2doc;
 
     var forlink2 = await http.Client().get(Uri.parse(
-        'https://www.espncricinfo.com/series/can-under-19s-national-selection-tournament-2022-23-1345523/province-number-1-under-19s-vs-sudur-paschim-province-under-19s-10th-match-1345536/live-cricket-score'));
+        'https://www.espncricinfo.com/series/csa-provincial-one-day-challenge-division-one-2022-23-1334880/knights-vs-western-province-7th-match-1334977/live-cricket-score'));
     link2doc = parser.parse(forlink2.body);
 
     // print('link11 ${link_correction}');
@@ -79,11 +79,16 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
       print('asa11 ${team1_recentname}');
       var team1_recentform = team1_recent.querySelectorAll(
           'td>div > div.ReactCollapse--collapse > div > div > a');
-      var team1_winsloss = team1_recent
+      var winsloss1 = team1_recent
           .querySelector(
               'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
-          .text;
+          .children;
 
+      List team1_winsloss = [];
+      String d = '';
+      for (var i = 0; i < winsloss1.length; i++) {
+        team1_winsloss.add(winsloss1[i].text.trim());
+      }
       var team2_recent = recent_perform.querySelectorAll('tbody>tr')[1];
       var team2_recentname = team2_recent
           .querySelector(
@@ -93,10 +98,15 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
 
       var team2_recentform = team2_recent.querySelectorAll(
           'tr>td>div > div.ReactCollapse--collapse > div > div > a');
-      var team2_winsloss = team2_recent
+      var winsloss2 = team2_recent
           .querySelector(
               'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
-          .text;
+          .children;
+
+      List team2_winsloss = [];
+      for (var i = 0; i < winsloss2.length; i++) {
+        team2_winsloss.add(winsloss2[i].text.trim());
+      }
       if (team1_recentname != null && team2_recentname != null) {
         List<String> matches_played_details1 = [];
         List<String> matches_played_links1 = [];
@@ -106,16 +116,33 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
         List<String> match_winner2 = [];
 
         team1['Name'] = [team1_recentname];
-        team1['winsloss'] = [team1_winsloss];
+        team1['winsloss'] = [
+          team1_winsloss
+              .toString()
+              .replaceAll('[', '')
+              .replaceAll(']', '')
+              .replaceAll(' ', '')
+        ];
         team2['Name'] = [team2_recentname];
-        team2['winsloss'] = [team2_winsloss];
+        team2['winsloss'] = [
+          team2_winsloss
+              .toString()
+              .replaceAll('[', '')
+              .replaceAll(']', '')
+              .replaceAll(' ', '')
+        ];
 
         for (int i = 0; i < team1_recentform.length; i++) {
           var justanothevar = team1_recentform[i].querySelector(
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
           var justanothevar1 = team1_recentform[i].querySelector(
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-ui-typo-mid.ds-text-left");
-          matches_played_details1.add(justanothevar.text);
+
+          matches_played_details1.add(justanothevar.text.split(',').last +
+              ', ' +
+              justanothevar.text
+                  .replaceAll((justanothevar.text.split(',').last), ''));
+
           match_winner1.add(justanothevar1.text);
 
           matches_played_links1.add(team1_recentform[i].attributes['href']);
@@ -127,9 +154,14 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
         for (int i = 0; i < team2_recentform.length; i++) {
           var justanothevar = team2_recentform[i].querySelector(
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
-          var justanothevar1 = team1_recentform[i].querySelector(
+          var justanothevar1 = team2_recentform[i].querySelector(
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-ui-typo-mid.ds-text-left");
-          matches_played_details2.add(justanothevar.text);
+
+          matches_played_details2.add(justanothevar.text.split(',').last +
+              ', ' +
+              justanothevar.text
+                  .replaceAll((justanothevar.text.split(',').last), ''));
+
           match_winner2.add(justanothevar1.text);
           matches_played_links2.add(team2_recentform[i].attributes['href']);
         }
@@ -262,6 +294,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                     globals.team1logo,
                     globals.team2logo
                   ];
+
                   // return Text(snapshot.data[1].toString());
                   return SingleChildScrollView(
                     child: Container(
@@ -283,30 +316,48 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: SizedBox(
-                                      height: 40.0,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.6,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Text(
-                                          '${e['Name'][0].trim()}',
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            fontSize: 20.0,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
+                                  Row(
+                                    children: [
+                                      teamlogos[snapshot.data.indexOf(e)] !=
+                                              null
+                                          ? Image.network(
+                                              root_logo +
+                                                  teamlogos[snapshot.data
+                                                          .indexOf(e)]
+                                                      .toString(),
+                                              width: 32,
+                                              height: 32,
+                                            )
+                                          : IconButton(
+                                              icon: Image.asset('logos/team' +
+                                                  (snapshot.data.indexOf(e) + 1)
+                                                      .toString() +
+                                                  '.png'),
+                                              onPressed: null),
+                                      GestureDetector(
+                                        onTap: () {},
+                                        child: SizedBox(
+                                          height: 40.0,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(6.0),
+                                            child: Text(
+                                              '${e['Name'][0].trim()}',
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                fontSize: 20.0,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                   Row(
                                       children: e['winsloss'][0]
                                           .toString()
-                                          .characters
+                                          .split(',')
                                           .map((character) {
                                     return Container(
                                       child: Text(
@@ -332,7 +383,21 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                 ],
                               ),
                             ),
-                            Column(
+                            ExpansionTile(
+                              trailing: Icon(
+                                Icons.arrow_drop_down_circle,
+                                color: Colors.yellow.shade300,
+                                size: 25,
+                              ),
+                              title: Text(
+                                "More details",
+                                style: TextStyle(
+                                  fontSize: 13.0,
+                                  color: Colors.yellow.shade300,
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               children: [
                                 for (var i = 0;
                                     i < e['matches_details'].length;
@@ -340,34 +405,54 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                   Column(
                                     children: [
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
+                                              //Faceoff
                                               Container(
+                                                decoration: new BoxDecoration(
+                                                    borderRadius:
+                                                        new BorderRadius.all(
+                                                            new Radius.circular(
+                                                                10.0)),
+                                                    color: Colors.white60),
                                                 padding:
-                                                    const EdgeInsets.all(10.0),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.9,
+                                                    const EdgeInsets.all(5.0),
                                                 child: Text(
                                                   e['matches_details'][i]
-                                                      .toString(),
+                                                      .toString()
+                                                      .split(',')
+                                                      .first,
                                                   style: TextStyle(
                                                     fontSize: 15.0,
-                                                    color: Colors.white70,
+                                                    color: Colors.black,
                                                     fontWeight: FontWeight.bold,
                                                   ),
+                                                  textAlign: TextAlign.left,
                                                   maxLines: 4,
                                                 ),
                                               ),
+                                              //Date of the match happened
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').substring(1).trim()}",
+                                                  style: TextStyle(
+                                                    fontSize: 10.0,
+                                                    color: Colors.white70,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              //Winner of the match
                                               Container(
                                                 padding:
                                                     const EdgeInsets.all(10.0),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.9,
                                                 child: Text(
                                                   e['match_winner'][i]
                                                       .toString(),
@@ -383,31 +468,31 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                               ),
                                             ],
                                           ),
-                                          Container(
-                                            child: Text(
-                                              '${e['winsloss'][0].toString()[i]}',
-                                              style: TextStyle(
-                                                fontSize: 20.0,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
+                                          e['winsloss'][0]
+                                              .split(',')
+                                              .map((character) {
+                                            return Container(
+                                              child: Text(
+                                                '${character}',
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            decoration: new BoxDecoration(
-                                              borderRadius: new BorderRadius
-                                                      .all(
-                                                  new Radius.circular(10.0)),
-                                              color: e['winsloss'][0]
-                                                          .toString()[i] ==
-                                                      'W'
-                                                  ? Colors.green
-                                                  : e['winsloss'][0]
-                                                              .toString()[i] ==
-                                                          'L'
-                                                      ? Colors.red
-                                                      : Colors.grey,
-                                            ),
-                                            padding: new EdgeInsets.all(8),
-                                          ),
+                                              decoration: new BoxDecoration(
+                                                borderRadius: new BorderRadius
+                                                        .all(
+                                                    new Radius.circular(10.0)),
+                                                color: character == 'W'
+                                                    ? Colors.green
+                                                    : character == 'L'
+                                                        ? Colors.red
+                                                        : Colors.grey,
+                                              ),
+                                              padding: new EdgeInsets.all(8),
+                                            );
+                                          }).toList()[i]
                                         ],
                                       ),
                                       Divider(

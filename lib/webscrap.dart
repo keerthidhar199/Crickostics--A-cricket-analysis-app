@@ -243,11 +243,14 @@ class _datascrapState extends State<datascrap> {
               //getting current month name like January, February...
               var detailslist = match_det1.text.split(',');
 
+              print('bass' + detailslist.toString());
               for (var k in detailslist) {
+                print('bass' + k.toString());
                 if (k.contains(format2.format(today).toString())) {
-                  iplmatch['Ground'] = detailslist[detailslist.indexOf(k) - 1]
-                      .trim(); //taking the ground name from the list which is the one before Date details
-                }
+                  iplmatch['Ground'] =
+                      detailslist[detailslist.indexOf(k) - 1].trim();
+                  //taking the ground name from the list which is the one before Date details
+                } else {}
               }
               print('assa1' + iplmatch.toString());
 

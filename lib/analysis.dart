@@ -1,18 +1,26 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:datascrap/models/batting_class.dart';
 import 'package:datascrap/models/bowling_class.dart';
 import 'package:datascrap/models/partnership_class.dart';
-import 'package:datascrap/team_results.dart';
+import 'package:datascrap/views/previous_clashes_UI.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 
+import 'views/batting_table_UI.dart';
+import 'views/bowling_table_UI.dart';
+import 'views/partnerships_table_UI.dart';
+
 class Analysis extends StatefulWidget {
+  static Map<String, List> battersmap = {};
+
+  static Map<String, List> bowlersmap = {};
+
+  static Map<String, List> partnershipsmap = {};
+
   /// Creates the home page.
   Analysis({Key key}) : super(key: key);
 
@@ -53,8 +61,12 @@ int checkpastmatches(
 }
 
 class _AnalysisState extends State<Analysis> {
+  bool _isButtonDisabled;
+  bool addtofantasyteam;
+
   @override
   void initState() {
+    _isButtonDisabled = true;
     super.initState();
   }
 
@@ -66,28 +78,32 @@ class _AnalysisState extends State<Analysis> {
     'partnerships',
     'previous clashes'
   ];
+
   String root_logo =
       'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
 
   List<String> teamnames = [globals.team1_name, globals.team2_name];
   List<String> teamlogos = [globals.team1logo, globals.team2logo];
-
   @override
   Widget build(BuildContext context) {
+    print('assa11endva ${Analysis.battersmap}');
+    List<List<dynamic>> bowlers = [];
+    List<List<dynamic>> partnerships = [];
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-            backgroundColor: Color(0xffFFB72B),
-            title: const Text(
-              'Stack',
-              style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
-            ),
-            leading: IconButton(
-                color: Colors.black,
-                icon: Icon(Icons.keyboard_arrow_left),
-                onPressed: () {
-                  Navigator.pop(context);
-                })),
+          backgroundColor: Color(0xffFFB72B),
+          title: const Text(
+            'Stack',
+            style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
+          ),
+          leading: IconButton(
+              color: Colors.black,
+              icon: Icon(Icons.keyboard_arrow_left),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
+        ),
         body: Container(
           color: Color(0xff2B2B28),
           height: MediaQuery.of(context).size.height,
@@ -126,380 +142,14 @@ class _AnalysisState extends State<Analysis> {
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    Widget batting = Column(
-                      children: [
-                        for (var i in teamnames)
-                          Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Color(0xff19388A),
-                                    Color(0xff4F91CD),
-                                  ],
-                                )),
-                                child: Row(
-                                  children: [
-                                    teamlogos[teamnames.indexOf(i)] != null
-                                        ? Image.network(
-                                            root_logo +
-                                                teamlogos[teamnames.indexOf(i)]
-                                                    .toString(),
-                                            width: 32,
-                                            height: 32,
-                                          )
-                                        : IconButton(
-                                            icon: Image.asset('logos/team' +
-                                                (teamnames.indexOf(i) + 1)
-                                                    .toString() +
-                                                '.png'),
-                                            onPressed: null),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  team_results(),
-                                            ));
-                                      },
-                                      child: SizedBox(
-                                        height: 40.0,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Text(
-                                            '$i',
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontFamily: 'Cocosharp',
-                                              fontSize: 20.0,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              snapshot.data.item1.item2 == null
-                                  ? Text('Not batted yet')
-                                  : SfDataGrid(
-                                      verticalScrollPhysics:
-                                          NeverScrollableScrollPhysics(),
-                                      isScrollbarAlwaysShown: true,
-                                      rowHeight: 35.0,
-                                      shrinkWrapRows: true,
-                                      allowSorting: true,
-                                      source: BattingDataSource(
-                                          batData: snapshot.data.item1.item2
-                                              .where((element) =>
-                                                  element.team == i &&
-                                                  element.ground ==
-                                                      globals.ground)
-                                              .toList()),
-                                      columnWidthMode: ColumnWidthMode.auto,
-                                      selectionMode: SelectionMode.multiple,
-                                      columns: snapshot.data.item1.item1
-                                          .map((headings) {
-                                        return GridColumn(
-                                            columnName: headings.toLowerCase(),
-                                            label: Container(
-                                                padding: EdgeInsets.all(16.0),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  headings
-                                                          .trim()[0]
-                                                          .toUpperCase() +
-                                                      headings
-                                                          .trim()
-                                                          .substring(1)
-                                                          .toLowerCase(),
-                                                )));
-                                      }).toList()),
-                              SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          )
-                      ],
+                    Widget batting = widgetbatting(
+                      snapshot: snapshot,
                     );
-
-                    Widget bowling = Column(
-                      children: [
-                        for (var i in teamnames)
-                          Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Color(0xff19388A),
-                                    Color(0xff4F91CD),
-                                  ],
-                                )),
-                                child: Row(
-                                  children: [
-                                    teamlogos[teamnames.indexOf(i)] != null
-                                        ? Image.network(
-                                            root_logo +
-                                                teamlogos[teamnames.indexOf(i)]
-                                                    .toString(),
-                                            width: 32,
-                                            height: 32,
-                                          )
-                                        : IconButton(
-                                            icon: Image.asset('logos/team' +
-                                                (teamnames.indexOf(i) + 1)
-                                                    .toString() +
-                                                '.png'),
-                                            onPressed: null),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  team_results(),
-                                            ));
-                                      },
-                                      child: SizedBox(
-                                        height: 40.0,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Text(
-                                            '${i}',
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontFamily: 'Cocosharp',
-                                              fontSize: 20.0,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              snapshot.data.item2.item2 == null
-                                  ? Text('Not yet bowled')
-                                  : SfDataGrid(
-                                      verticalScrollPhysics:
-                                          NeverScrollableScrollPhysics(),
-                                      rowHeight: 35.0,
-                                      shrinkWrapRows: true,
-                                      allowSorting: true,
-                                      source: bowlingDataSource(
-                                          bowlingData: snapshot.data.item2.item2
-                                              .where((element) =>
-                                                  element.team == i &&
-                                                  element.ground ==
-                                                      globals.ground)
-                                              .toList()),
-                                      columnWidthMode: ColumnWidthMode.auto,
-                                      selectionMode: SelectionMode.multiple,
-                                      columns: snapshot.data.item2.item1
-                                          .map((headings) {
-                                        return GridColumn(
-                                            columnName: headings.toLowerCase(),
-                                            label: Container(
-                                                padding: EdgeInsets.all(16.0),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  headings
-                                                          .trim()[0]
-                                                          .toUpperCase() +
-                                                      headings
-                                                          .trim()
-                                                          .substring(1)
-                                                          .toLowerCase(),
-                                                )));
-                                      }).toList()),
-                              SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          ),
-                        // for (var i in snapshot.data.item2.item2)
-                        //   if ((globals.team1_name.contains(i.team) &&
-                        //           globals.team2_name.contains(i.opposition)) ||
-                        //       (globals.team2_name.contains(i.team) &&
-                        //           globals.team1_name.contains(i.opposition)))
-                        // Column(
-                        //   children: [
-                        //     Container(
-                        //       decoration: BoxDecoration(
-                        //           gradient: LinearGradient(
-                        //         begin: Alignment.topLeft,
-                        //         end: Alignment.bottomRight,
-                        //         colors: [
-                        //           Color(0xff19388A),
-                        //           Color(0xff4F91CD),
-                        //         ],
-                        //       )),
-                        //       child: Row(
-                        //         children: [
-                        //           // IconButton(
-                        //           //     icon:
-                        //           //         Image.asset('logos/' + i + '.png'),
-                        //           //     onPressed: null),
-                        //           GestureDetector(
-                        //             onTap: () {
-                        //               Navigator.push(
-                        //                   context,
-                        //                   MaterialPageRoute(
-                        //                     builder:
-                        //                         (BuildContext context) =>
-                        //                             team_results(),
-                        //                   ));
-                        //             },
-                        //             child: SizedBox(
-                        //               height: 35.0,
-                        //               width: MediaQuery.of(context)
-                        //                       .size
-                        //                       .width *
-                        //                   0.6,
-                        //               child: Padding(
-                        //                 padding: const EdgeInsets.all(6.0),
-                        //                 child: Text(
-                        //                   '${i.team + ' vs ' + i.opposition}',
-                        //                   textAlign: TextAlign.left,
-                        //                   style: TextStyle(
-                        //                     fontFamily:
-                        //                         'BasicCommercialSRPro',
-                        //                     fontSize: 20.0,
-                        //                     color: Colors.white,
-                        //                     fontWeight: FontWeight.bold,
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //    ],
-                        // ),
-                      ],
+                    Widget bowling = widgetbowling(
+                      snapshot: snapshot,
                     );
-                    Widget partnership = Column(
-                      children: [
-                        for (var i in teamnames)
-                          Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    Color(0xff19388A),
-                                    Color(0xff4F91CD),
-                                  ],
-                                )),
-                                child: Row(
-                                  children: [
-                                    teamlogos[teamnames.indexOf(i)] != null
-                                        ? Image.network(
-                                            root_logo +
-                                                teamlogos[teamnames.indexOf(i)]
-                                                    .toString(),
-                                            width: 32,
-                                            height: 32,
-                                          )
-                                        : IconButton(
-                                            icon: Image.asset('logos/team' +
-                                                (teamnames.indexOf(i) + 1)
-                                                    .toString() +
-                                                '.png'),
-                                            onPressed: null),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  team_results(),
-                                            ));
-                                      },
-                                      child: SizedBox(
-                                        height: 40.0,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(6.0),
-                                          child: Text(
-                                            '$i',
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontFamily: 'Cocosharp',
-                                              fontSize: 20.0,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              snapshot.data.item3.item2 == null
-                                  ? Text('No partnerships so far')
-                                  : SfDataGrid(
-                                      verticalScrollPhysics:
-                                          NeverScrollableScrollPhysics(),
-                                      isScrollbarAlwaysShown: true,
-                                      rowHeight: 35.0,
-                                      shrinkWrapRows: true,
-                                      allowSorting: true,
-                                      source: PartnershipDataSource(
-                                          Data: snapshot.data.item3.item2
-                                              .where((element) =>
-                                                  element.team == i &&
-                                                  element.ground ==
-                                                      globals.ground)
-                                              .toList()),
-                                      columnWidthMode: ColumnWidthMode.auto,
-                                      selectionMode: SelectionMode.multiple,
-                                      columns: snapshot.data.item3.item1
-                                          .map((headings) {
-                                        return GridColumn(
-                                            columnName: headings.toLowerCase(),
-                                            label: Container(
-                                                padding: EdgeInsets.all(16.0),
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  headings
-                                                          .trim()[0]
-                                                          .toUpperCase() +
-                                                      headings
-                                                          .trim()
-                                                          .substring(1)
-                                                          .toLowerCase(),
-                                                )));
-                                      }).toList()),
-                              SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          )
-                      ],
+                    Widget partnership = widgetpartnership(
+                      snapshot: snapshot,
                     );
 
                     List<Widget> categories = [
@@ -542,37 +192,44 @@ class _AnalysisState extends State<Analysis> {
                                                       Colors.white60,
                                                     ],
                                                   )),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                              child: Column(
                                                 children: [
-                                                  Text(
-                                                    '${capitalize(names[categories.indexOf(e)])}',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Cocosharp',
-                                                      fontSize: 15.0,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  Image.asset(
-                                                    'logos/' +
-                                                        '${names[categories.indexOf(e)]}' +
-                                                        '.png',
-                                                    color: Colors.black,
-                                                    width: 100,
-                                                    height: 100,
-                                                  ),
-                                                  Text(
-                                                    'In ${globals.ground}',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Cocosharp',
-                                                      fontSize: 15.0,
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        '${capitalize(names[categories.indexOf(e)])}',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Cocosharp',
+                                                          fontSize: 15.0,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Image.asset(
+                                                        'logos/' +
+                                                            '${names[categories.indexOf(e)]}' +
+                                                            '.png',
+                                                        color: Colors.black,
+                                                        width: 100,
+                                                        height: 100,
+                                                      ),
+                                                      Text(
+                                                        'In ${globals.ground}',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Cocosharp',
+                                                          fontSize: 15.0,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ],
                                               ),
@@ -589,372 +246,12 @@ class _AnalysisState extends State<Analysis> {
                           ),
                         )
                         .toList();
-                    Widget previous_clashes = Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xff19388A),
-                              Color(0xff4F91CD),
-                            ],
-                          )),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: 40.0,
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6.0),
-                                  child: Text(
-                                    'Batting',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontFamily: 'Cocosharp',
-                                      fontSize: 20.0,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SfDataGrid(
-                            verticalScrollPhysics:
-                                NeverScrollableScrollPhysics(),
-                            rowHeight: 35.0,
-                            shrinkWrapRows: true,
-                            allowSorting: true,
-                            source: BattingDataSource(
-                                batData:
-                                    snapshot.data.item1.item2.where((element) {
-                              print('yeuegwie' + globals.team2__short_name);
-
-                              //Just having a check with both the name and the abbreviation of the team.
-                              // For example, both 'United States of America' and 'U.S.A'
-                              return (((globals.team1_name
-                                          .contains(element.team)) &&
-                                      ((globals.team2_name).contains(element
-                                              .opposition
-                                              .replaceAll('v', '')
-                                              .trim()) ||
-                                          globals.team2__short_name.contains(
-                                              element.opposition
-                                                  .replaceAll('v', '')
-                                                  .trim()))) ||
-                                  (globals.team2_name.contains(element.team) &&
-                                      (globals.team1_name.contains(element
-                                              .opposition
-                                              .replaceAll('v', '')
-                                              .trim()) ||
-                                          globals.team1__short_name.contains(
-                                              element.opposition
-                                                  .replaceAll('v', '')
-                                                  .trim()))));
-                            }).toList()),
-                            columnWidthMode: ColumnWidthMode.auto,
-                            selectionMode: SelectionMode.multiple,
-                            columns: snapshot.data.item1.item1.map((headings) {
-                              return GridColumn(
-                                  columnName: headings.toLowerCase(),
-                                  label: Container(
-                                      padding: EdgeInsets.all(16.0),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        headings.trim()[0].toUpperCase() +
-                                            headings
-                                                .trim()
-                                                .substring(1)
-                                                .toLowerCase(),
-                                      )));
-                            }).toList()),
-                        Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xff19388A),
-                              Color(0xff4F91CD),
-                            ],
-                          )),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: 40.0,
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6.0),
-                                  child: Text(
-                                    'Bowling',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontFamily: 'Cocosharp',
-                                      fontSize: 20.0,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        snapshot.data.item2.item2 == null
-                            ? Text('Not yet bowled')
-                            : SfDataGrid(
-                                verticalScrollPhysics:
-                                    NeverScrollableScrollPhysics(),
-                                rowHeight: 35.0,
-                                shrinkWrapRows: true,
-                                allowSorting: true,
-                                source: bowlingDataSource(
-                                    bowlingData: snapshot.data.item2.item2
-                                        .where((element) {
-                                  return (((globals.team1_name
-                                              .contains(element.team)) &&
-                                          ((globals.team2_name).contains(element
-                                                  .opposition
-                                                  .replaceAll('v', '')
-                                                  .trim()) ||
-                                              globals.team2__short_name
-                                                  .contains(element.opposition
-                                                      .replaceAll('v', '')
-                                                      .trim()))) ||
-                                      (globals.team2_name.contains(element.team) &&
-                                          (globals.team1_name.contains(element
-                                                  .opposition
-                                                  .replaceAll('v', '')
-                                                  .trim()) ||
-                                              globals.team1__short_name
-                                                  .contains(element.opposition
-                                                      .replaceAll('v', '')
-                                                      .trim()))));
-                                }).toList()),
-                                columnWidthMode: ColumnWidthMode.auto,
-                                selectionMode: SelectionMode.multiple,
-                                columns:
-                                    snapshot.data.item2.item1.map((headings) {
-                                  return GridColumn(
-                                      columnName: headings.toLowerCase(),
-                                      label: Container(
-                                          padding: EdgeInsets.all(16.0),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            headings.trim()[0].toUpperCase() +
-                                                headings
-                                                    .trim()
-                                                    .substring(1)
-                                                    .toLowerCase(),
-                                          )));
-                                }).toList()),
-                        Container(
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xff19388A),
-                              Color(0xff4F91CD),
-                            ],
-                          )),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: 40.0,
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6.0),
-                                  child: Text(
-                                    'Partnerships',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontFamily: 'Cocosharp',
-                                      fontSize: 20.0,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        snapshot.data.item3.item2 == null
-                            ? Text('No partnerships so far')
-                            : SfDataGrid(
-                                verticalScrollPhysics:
-                                    NeverScrollableScrollPhysics(),
-                                rowHeight: 35.0,
-                                shrinkWrapRows: true,
-                                allowSorting: true,
-                                source: PartnershipDataSource(
-                                    Data: snapshot.data.item3.item2
-                                        .where((element) {
-                                  return (((globals.team1_name
-                                              .contains(element.team)) &&
-                                          ((globals.team2_name).contains(element
-                                                  .opposition
-                                                  .replaceAll('v', '')
-                                                  .trim()) ||
-                                              globals.team2__short_name
-                                                  .contains(element.opposition
-                                                      .replaceAll('v', '')
-                                                      .trim()))) ||
-                                      (globals.team2_name.contains(element.team) &&
-                                          (globals.team1_name.contains(element
-                                                  .opposition
-                                                  .replaceAll('v', '')
-                                                  .trim()) ||
-                                              globals.team1__short_name
-                                                  .contains(element.opposition
-                                                      .replaceAll('v', '')
-                                                      .trim()))));
-                                }).toList()),
-                                columnWidthMode: ColumnWidthMode.auto,
-                                selectionMode: SelectionMode.multiple,
-                                columns:
-                                    snapshot.data.item3.item1.map((headings) {
-                                  return GridColumn(
-                                      columnName: headings.toLowerCase(),
-                                      label: Container(
-                                          padding: EdgeInsets.all(16.0),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            headings.trim()[0].toUpperCase() +
-                                                headings
-                                                    .trim()
-                                                    .substring(1)
-                                                    .toLowerCase(),
-                                          )));
-                                }).toList()),
-                      ],
-                    );
-                    Widget pastmatches = SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width - 15,
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  side: BorderSide(
-                                    color: Colors.black,
-                                    width: 2.0,
-                                  )),
-                              color: Colors.white,
-                              elevation: 10,
-                              shadowColor: Colors.blue,
-                              child: SingleChildScrollView(
-                                child: Container(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                            gradient: LinearGradient(
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                              colors: [
-                                                Colors.white38,
-                                                Colors.white60,
-                                              ],
-                                            )),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  'Previous',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Cocosharp',
-                                                    fontSize: 20.0,
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                teamlogos[0] != null
-                                                    ? Image.network(
-                                                        root_logo +
-                                                            teamlogos[0]
-                                                                .toString(),
-                                                        width: 32,
-                                                        height: 32,
-                                                      )
-                                                    : IconButton(
-                                                        icon: Image.asset(
-                                                            'logos/team1.png'),
-                                                        onPressed: null),
-                                              ],
-                                            ),
-                                            Stack(
-                                              alignment:
-                                                  AlignmentDirectional.center,
-                                              children: [
-                                                Image.asset(
-                                                  'logos/previous clashes.png',
-                                                  color: Colors.black,
-                                                  width: 100,
-                                                  height: 100,
-                                                ),
-                                                Text('VS',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Cocosharp',
-                                                      fontSize: 20.0,
-                                                      color: Colors.red,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    )),
-                                              ],
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  'Clashes',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Cocosharp',
-                                                    fontSize: 20.0,
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                teamlogos[1] != null
-                                                    ? Image.network(
-                                                        root_logo +
-                                                            teamlogos[1]
-                                                                .toString(),
-                                                        width: 32,
-                                                        height: 32,
-                                                      )
-                                                    : IconButton(
-                                                        icon: Image.asset(
-                                                            'logos/team2.png'),
-                                                        onPressed: null),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      previous_clashes
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                    Widget d = SingleChildScrollView(
+                      child: pastmatches(
+                        snapshot: snapshot,
                       ),
                     );
-
-                    list.add(pastmatches);
+                    list.add(d);
                     return Builder(
                       builder: (context) {
                         return CarouselSlider(
@@ -1035,6 +332,7 @@ class _AnalysisState extends State<Analysis> {
         (element) => element.attributes['href'].toString().contains(batting));
     var team2_bowling_table = document1.querySelectorAll('a').where(
         (element) => element.attributes['href'].toString().contains(bowling));
+
     var team2_partnership_table = document1.querySelectorAll('a').where(
         (element) =>
             element.attributes['href'].toString().contains(partnership));

@@ -88,19 +88,12 @@ class _recentmatchdataState extends State<recentmatchdata> {
       var winsloss1 = team1_recent
           .querySelector(
               'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
-          .text
-          .trim();
+          .children;
 
       List team1_winsloss = [];
-
+      String d = '';
       for (var i = 0; i < winsloss1.length; i++) {
-        if (winsloss1[i] == 'W') {
-          team1_winsloss.add('W');
-        } else if (winsloss1[i] == 'L') {
-          team1_winsloss.add('L');
-        } else {
-          team1_winsloss.add(winsloss1[i]);
-        }
+        team1_winsloss.add(winsloss1[i].text.trim());
       }
       var team2_recent = recent_perform.querySelectorAll('tbody>tr')[1];
       var team2_recentname = team2_recent
@@ -114,17 +107,11 @@ class _recentmatchdataState extends State<recentmatchdata> {
       var winsloss2 = team2_recent
           .querySelector(
               'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
-          .text
-          .trim();
+          .children;
+
       List team2_winsloss = [];
       for (var i = 0; i < winsloss2.length; i++) {
-        if (winsloss2[i] == 'W') {
-          team2_winsloss.add('W');
-        } else if (winsloss2[i] == 'L') {
-          team2_winsloss.add('L');
-        } else {
-          team2_winsloss.add(winsloss2[i]);
-        }
+        team2_winsloss.add(winsloss2[i].text.trim());
       }
       if (team1_recentname != null && team2_recentname != null) {
         List<String> matches_played_details1 = [];
@@ -438,7 +425,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                                         new BorderRadius.all(
                                                             new Radius.circular(
                                                                 10.0)),
-                                                    color: Colors.white60 ),
+                                                    color: Colors.white60),
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: Text(
