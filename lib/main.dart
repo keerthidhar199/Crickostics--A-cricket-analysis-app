@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:datascrap/recent_stats_testing.dart';
 import 'package:datascrap/skeleton.dart';
 import 'package:datascrap/typeofstats.dart';
+import 'package:datascrap/views/fantasy_players_UI.dart';
 import 'package:datascrap/webscrap.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -52,19 +53,6 @@ class MyApp extends StatelessWidget {
     ));
   }
 }
-
-// Map<String, int> team_codes = {
-//   'Chennai Super Kings': 4343,
-//   'Delhi Capitals': 4344,
-//   'Gujarat Titans': 6904,
-//   'Kolkata Knight Riders': 4341,
-//   'Lucknow Super Giants': 6903,
-//   'Mumbai Indians': 4346,
-//   'Punjab Kings': 4342,
-//   'Rajasthan Royals': 4345,
-//   'Royal Challengers Bangalore': 4340,
-//   'Sunrisers Hyderabad': 5143,
-// };
 
 class Homepage extends StatefulWidget {
   const Homepage({Key key}) : super(key: key);
@@ -157,6 +145,24 @@ class _HomepageState extends State<Homepage> {
             'Playing Leagues',
             style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
           ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => fantasyteam(),
+                    ));
+              },
+              child: Container(
+                  child: Text(
+                    'Your fantasy',
+                    style: TextStyle(
+                        fontFamily: 'Cocosharp', color: Colors.black87),
+                  ),
+                  color: Colors.orange),
+            ),
+          ],
         ),
         body: RefreshIndicator(
           color: Color(0xffFFB72B),
@@ -195,7 +201,7 @@ class _HomepageState extends State<Homepage> {
                             duration: const Duration(milliseconds: 500),
                             position: 1,
                             child: ScaleAnimation(
-                              child: FadeInAnimation(
+                              child: SlideAnimation(
                                 child: Column(
                                   children: [
                                     SizedBox(

@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:datascrap/models/batting_class.dart';
 import 'package:datascrap/models/bowling_class.dart';
 import 'package:datascrap/models/partnership_class.dart';
+import 'package:datascrap/services/exportcsv.dart';
 import 'package:datascrap/views/previous_clashes_UI.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
@@ -87,8 +88,10 @@ class _AnalysisState extends State<Analysis> {
   @override
   Widget build(BuildContext context) {
     print('assa11endva ${Analysis.battersmap}');
-    List<List<dynamic>> bowlers = [];
-    List<List<dynamic>> partnerships = [];
+    Analysis.battersmap.clear();
+    Analysis.bowlersmap.clear();
+    Analysis.partnershipsmap.clear();
+
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
@@ -103,6 +106,14 @@ class _AnalysisState extends State<Analysis> {
               onPressed: () {
                 Navigator.pop(context);
               }),
+          actions: [
+            IconButton(
+                color: Colors.black,
+                icon: Icon(Icons.done_all),
+                onPressed: () {
+                  exportcsv.getcsv().then((value) => null);
+                }),
+          ],
         ),
         body: Container(
           color: Color(0xff2B2B28),

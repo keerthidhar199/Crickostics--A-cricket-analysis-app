@@ -52,12 +52,15 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           for (var k in dataGridController.selectedRows) {
                             var acc = k.getCells();
 
-                            print('assa11end1 ${acc[0].value} ${acc[1].value}');
+                            print(
+                                'assa11end1 ${acc[0].value} &${acc[1].value}');
                             team1_partnershipfantasy
-                                .add('${acc[0].value} ${acc[1].value}');
+                                .add('${acc[0].value} &${acc[1].value}');
                           }
                           Analysis.partnershipsmap[globals.league_page +
-                              'team1'] = team1_partnershipfantasy;
+                              '_' +
+                              globals.team1_name +
+                              '_partnership'] = team1_partnershipfantasy;
                           ;
                           print('assa11end12 ${Analysis.partnershipsmap}');
                         });
@@ -86,12 +89,14 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                             var acc = k.getCells();
 
                             print(
-                                'assa11end1 ${acc[0].value} ${acc[1].value}}');
+                                'assa11end1 ${acc[0].value} &${acc[1].value}}');
                             team2_partnershipfantasy
-                                .add('${acc[0].value} ${acc[1].value}');
+                                .add('${acc[0].value} &${acc[1].value}');
                           }
                           Analysis.partnershipsmap[globals.league_page +
-                              'team2'] = team2_partnershipfantasy;
+                              '_' +
+                              globals.team2_name +
+                              '_partnership'] = team2_partnershipfantasy;
                           print('assa11end12 ${Analysis.partnershipsmap}');
                         });
                       },

@@ -54,8 +54,10 @@ class _widgetbowlingState extends State<widgetbowling> {
                             team1_bowlfantasy.add(
                                 '${acc[0].value} ${acc[1].value} ${acc[4].value}');
                           }
-                          Analysis.bowlersmap[globals.league_page + 'team1'] =
-                              team1_bowlfantasy.toSet().toList();
+                          Analysis.bowlersmap[globals.league_page +
+                              '_' +
+                              globals.team1_name +
+                              '_bowling'] = team1_bowlfantasy.toSet().toList();
                           ;
                           print('assa11end12 ${Analysis.bowlersmap}');
                         });
@@ -88,8 +90,10 @@ class _widgetbowlingState extends State<widgetbowling> {
                             team2_bowlfantasy.add(
                                 '${acc[0].value} ${acc[1].value} ${acc[4].value}');
                           }
-                          Analysis.bowlersmap[globals.league_page + 'team2'] =
-                              team2_bowlfantasy.toSet().toList();
+                          Analysis.bowlersmap[globals.league_page +
+                              '_' +
+                              globals.team2_name +
+                              '_bowling'] = team2_bowlfantasy.toSet().toList();
                           ;
                           print('assa11end12 ${Analysis.bowlersmap}');
                         });
