@@ -10,10 +10,10 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
+import 'package:page_transition/page_transition.dart';
 import 'globals.dart' as globals;
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:skeletons/skeletons.dart';
-import 'webscrap.dart' as globals;
 
 void main() {
   runApp(const MyApp());
@@ -37,12 +37,17 @@ class MyApp extends StatelessWidget {
               'logos/crickostics.png',
               filterQuality: FilterQuality.high,
             ),
-            Text(
-              'CRICKOSTICS',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'RestaurantMenu',
-                  fontSize: 70),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'CRICKOSTICS',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'RestaurantMenu',
+                      fontSize: 50),
+                ),
+              ),
             )
           ],
         ),
@@ -94,20 +99,19 @@ class _HomepageState extends State<Homepage> {
       if (!i['status'].toString().startsWith('Not covered') &&
           (i['statusText'].toString().startsWith('Match starts') ||
               i['statusText'].toString().startsWith('Match yet'))) {
-        print('USA1 ' + i['statusText']);
-        var objectid = i['series']['objectId'];
-        var link = 'https://www.espncricinfo.com/ci/engine/series/' +
-            objectid.toString() +
-            '.html?view=records';
+        // var objectid = i['series']['objectId'];
+        // var link = 'https://www.espncricinfo.com/ci/engine/series/' +
+        //     objectid.toString() +
+        //     '.html?view=records';
         // validMatches.add(i['series']['longName']);
-        var teamstats = await http.Client().get(Uri.parse(link));
-        dom.Document teamstatsdoc = parser.parse(teamstats.body);
-        var rec1 = teamstatsdoc
-            .getElementsByClassName('RecBulAro')
-            .where((element) => element.text == 'Records by team');
-        var rec2 = teamstatsdoc
-            .getElementsByClassName('RecBulAro')
-            .where((element) => element.text == 'Records by team');
+        // var teamstats = await http.Client().get(Uri.parse(link));
+        // dom.Document teamstatsdoc = parser.parse(teamstats.body);
+        // var rec1 = teamstatsdoc
+        //     .getElementsByClassName('RecBulAro')
+        //     .where((element) => element.text == 'Records by team');
+        // var rec2 = teamstatsdoc
+        //     .getElementsByClassName('RecBulAro')
+        //     .where((element) => element.text == 'Records by team');
         // if (rec1.toList().isNotEmpty && rec2.toList().isNotEmpty) {
         //   print(i['series']['longName']);
         //   print(i['series']['longName']);
@@ -128,16 +132,18 @@ class _HomepageState extends State<Homepage> {
         .addPostFrameCallback((_) => _refreshIndicator.currentState.show());
   }
 
-  Future<Null> _refresh() {
-    return getValidMatches().then((value) {
-      setState(() {
-        match_leagues_refresh = value;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    Future<void> _refresh() {
+      getValidMatches().then((value) {
+        setState(() {
+          match_leagues_refresh = value;
+        });
+      });
+      return Future.delayed(Duration(microseconds: 1));
+      // return
+    }
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xffFFB72B),
@@ -203,15 +209,12 @@ class _HomepageState extends State<Homepage> {
                             child: ScaleAnimation(
                               child: SlideAnimation(
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width -
-                                          30,
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
                                       child: Text(
-                                        'Choose your league to continue:',
+                                        'Choose your League :',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                           fontFamily: 'Louisgeorge',
@@ -220,21 +223,19 @@ class _HomepageState extends State<Homepage> {
                                         ),
                                       ),
                                     ),
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    recentmatchtestdata(),
-                                              ));
-                                        },
-                                        child: Container(
-                                          color: Color(0xffFFB72B),
-                                        )),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
+                                    // TextButton(
+                                    //     onPressed: () {
+                                    //       Navigator.push(
+                                    //           context,
+                                    //           MaterialPageRoute(
+                                    //             builder: (context) =>
+                                    //                 recentmatchtestdata(),
+                                    //           ));
+                                    //     },
+                                    //     child: Container(
+                                    //       color: Color(0xffFFB72B),
+                                    //     )),
+
                                     AnimationLimiter(
                                       child: Expanded(
                                         child: ListView.builder(

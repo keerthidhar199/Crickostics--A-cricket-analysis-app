@@ -60,6 +60,10 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           Analysis.partnershipsmap[globals.league_page +
                               '_' +
                               globals.team1_name +
+                              'vs' +
+                              globals.team2_name +
+                              '_' +
+                              globals.team1_name +
                               '_partnership'] = team1_partnershipfantasy;
                           ;
                           print('assa11end12 ${Analysis.partnershipsmap}');
@@ -94,6 +98,10 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                                 .add('${acc[0].value} &${acc[1].value}');
                           }
                           Analysis.partnershipsmap[globals.league_page +
+                              '_' +
+                              globals.team1_name +
+                              'vs' +
+                              globals.team2_name +
                               '_' +
                               globals.team2_name +
                               '_partnership'] = team2_partnershipfantasy;

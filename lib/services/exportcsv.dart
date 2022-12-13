@@ -11,40 +11,49 @@ class exportcsv {
       Analysis.bowlersmap,
       Analysis.partnershipsmap
     ];
-    List<dynamic> associateList = [
-      {"number": 1, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 2, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 3, "lat": "14.97534313396318", "lon": "101.22998536005622"},
-      {"number": 4, "lat": "14.97534313396318", "lon": "101.22998536005622"}
-    ];
+    var finalMap = {}
+      ..addAll(associateList1[0])
+      ..addAll(associateList1[1])
+      ..addAll(associateList1[2]);
+
+    print('ik1 $finalMap');
 
     List<List<dynamic>> rows = [];
     List<List<dynamic>> existing_table_rows = [];
-
+    Set distinct_teams = {};
+    Map<String, List<dynamic>> mapteamwise = {};
     List<dynamic> row = [];
-    row.add("Player Stats");
-    row.add("Category");
     row.add("Team");
-    row.add('League');
-    rows.add(row);
-    existing_table_rows.add([]);
-    for (int i = 0; i < associateList1.length; i++) {
-      for (var j in associateList1[i].keys) {
-        List<dynamic> row = [];
-        var league, team, category;
-        league = j.toString().split('_')[0];
-        team = j.toString().split('_')[1];
-        category = j.toString().split('_')[2];
-        row.add(associateList1[i][j]);
-        row.add(category);
-        row.add(team);
-        row.add(league);
-        existing_table_rows.add(row);
 
-        rows.add(row);
-      }
-      print(rows);
+    row.add('Player Stats');
+    rows.add(row);
+
+    existing_table_rows.add([]);
+    for (var j in finalMap.keys) {
+      var league, team, vs;
+      print(j);
+      league = j.toString().split('_')[0];
+      vs = j.toString().split('_')[1];
+      team = j.toString().split('_')[2];
+      distinct_teams.add(league + '_' + vs + '_' + team);
     }
+    for (var k in distinct_teams) {
+      List teamwise = [];
+      List<dynamic> row = [];
+      for (var j in finalMap.keys) {
+        if (j.toString().contains(k)) {
+          var category = j.toString().split('_')[3][0].toUpperCase() +
+              j.toString().split('_')[3].substring(1).toLowerCase();
+          teamwise.add(finalMap[j] + [category]);
+        }
+      }
+      mapteamwise[k] = teamwise;
+      row.add(k);
+      row.add(teamwise);
+      existing_table_rows.add(row);
+      rows.add(row);
+    }
+    print(rows);
 
     String dir = await ExtStorage.getExternalStoragePublicDirectory(
         ExtStorage.DIRECTORY_DOWNLOADS);

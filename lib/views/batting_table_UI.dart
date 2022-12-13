@@ -59,6 +59,10 @@ class _widgetbattingState extends State<widgetbatting> {
                           Analysis.battersmap[globals.league_page +
                               '_' +
                               globals.team1_name +
+                              'vs' +
+                              globals.team2_name +
+                              '_' +
+                              globals.team1_name +
                               '_batting'] = team1_batfantasy;
                           ;
                           print('assa11end12 ${Analysis.battersmap}');
@@ -93,6 +97,10 @@ class _widgetbattingState extends State<widgetbatting> {
                                 '${acc[0].value} ${acc[1].value} ${acc[5].value}');
                           }
                           Analysis.battersmap[globals.league_page +
+                              '_' +
+                              globals.team1_name +
+                              'vs' +
+                              globals.team2_name +
                               '_' +
                               globals.team2_name +
                               '_batting'] = team2_batfantasy;

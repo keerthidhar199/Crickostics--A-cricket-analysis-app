@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 String ground;
 var team_code1;
 var team_code2;
@@ -13,3 +16,4 @@ String team2_stats_link;
 String league_page;
 String team1logo;
 String team2logo;
+TextStyle noble = TextStyle(fontFamily: 'Cocosharp', color: Colors.white);
