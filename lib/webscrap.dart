@@ -77,26 +77,28 @@ class _datascrapState extends State<datascrap> {
 
       var matchdetails =
           await document.getElementsByClassName('ds-px-4 ds-py-3')[k];
-      print('matchdetais ${matchdetails.text}');
+      // print('matchdetais ${matchdetails.text}');
       // if (matchdetails.querySelectorAll('a').isNotEmpty) {
       if (matchdetails.text.contains(league)) {
         var link1 = matchdetails.querySelectorAll('a')[0];
         print('link1 ${link1.attributes["href"]}');
         var link2address = 'https://www.espncricinfo.com' +
             link1.attributes["href"].toString();
+
         var forlink2 = await http.Client().get(Uri.parse(link2address));
         dom.Document link2doc = parser.parse(forlink2.body);
-
+        print('link2address $link2address');
         if (link2doc
             .getElementsByClassName(
-                'ds-text-tight-m ds-font-regular ds-text-ui-typo-mid')
+                'ds-text-tight-m ds-font-regular ds-text-typo-mid3')
             .toList()
             .isNotEmpty) {
           var link2 = link2doc
               .getElementsByClassName(
-                  'ds-text-tight-m ds-font-regular ds-text-ui-typo-mid')[0]
+                  'ds-text-tight-m ds-font-regular ds-text-typo-mid3')[0]
               .querySelector('a'); //
 
+          print('adfsfsgb  $link2');
           // var recent_perform = link2doc
           //     .getElementsByClassName('ds-p-0')[1]
           //     .querySelector('table');
@@ -121,7 +123,8 @@ class _datascrapState extends State<datascrap> {
           //   print('asa11 ${justanothevar.text}');
           //   print('asa11 ${team1_recentform[i].attributes['href']}');
           // }
-          print('link2 ${link2.attributes["href"]}');
+          print(
+              'link2.attributes["href"].toString() ${link2.attributes["href"].toString()}');
 
           var forlink3 = await http.Client().get(Uri.parse(
               'https://www.espncricinfo.com' +
@@ -139,21 +142,31 @@ class _datascrapState extends State<datascrap> {
                 y.getElementsByClassName('ds-flex ds-justify-between')[0];
             if (!match_det.text.toLowerCase().contains('covered')) {
               var match_det1 = y.getElementsByClassName(
-                  'ds-text-tight-xs ds-truncate ds-text-ui-typo-mid')[0];
+                  'ds-text-tight-xs ds-truncate ds-text-typo-mid3')[0];
               var teams1 = y
                   .getElementsByClassName(
-                      'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo-title')[0]
+                      'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[0]
                   .querySelector('p')
                   .text;
               var teams2 = y
                   .getElementsByClassName(
-                      'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo-title')[1]
+                      'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[1]
                   .querySelector('p')
                   .text; //teams 1 and 2
               var teamscore = y.getElementsByClassName(
-                  'ds-text-compact-s ds-text-typo-title');
-              var stauts = y.getElementsByClassName(
-                  'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo-title')[0];
+                  'ds-text-compact-s ds-text-typo ds-text-right ds-whitespace-nowrap');
+              var stauts;
+              if (y
+                  .getElementsByClassName(
+                      'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo')
+                  .isEmpty) {
+                stauts = '';
+              } else {
+                stauts = y
+                    .getElementsByClassName(
+                        'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo')[0]
+                    .text;
+              }
               var response1 = await http.Client().get(
                   Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
               dom.Document document1 = parser.parse(response1.body);
@@ -233,7 +246,7 @@ class _datascrapState extends State<datascrap> {
               iplmatch['Match_name'] = match_det1.text.split(',').last;
               iplmatch['Team1'] = teams1;
               iplmatch['Team2'] = teams2;
-              iplmatch['MatchStarts'] = stauts.text;
+              iplmatch['MatchStarts'] = stauts;
               iplmatch['Details'] = match_det1.text;
 
               final DateTime today = DateTime.now();

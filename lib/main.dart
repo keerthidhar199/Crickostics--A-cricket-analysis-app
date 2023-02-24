@@ -80,6 +80,7 @@ class _HomepageState extends State<Homepage> {
 
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
+
     dom.Document document = parser.parse(response.body);
     List imglogosdata =
         json.decode(document.getElementById('__NEXT_DATA__').text)['props']

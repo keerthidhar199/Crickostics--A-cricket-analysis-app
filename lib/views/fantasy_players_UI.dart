@@ -65,11 +65,13 @@ class _fantasyteamState extends State<fantasyteam> {
         backgroundColor: Color(0xff2B2B28),
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          title: Text('Fantasy',
+              style: TextStyle(
+                fontFamily: 'Cocosharp',
+                fontSize: 20.0,
+                color: Colors.black,
+              )),
           backgroundColor: Color(0xffFFB72B),
-          title: Text(
-            'Your Fantasy',
-            style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
-          ),
           leading: IconButton(
               color: Colors.black,
               icon: Icon(Icons.keyboard_arrow_left),
@@ -123,128 +125,331 @@ class _fantasyteamState extends State<fantasyteam> {
                 ),
               )
             : fantasydata != null
-                ? GroupedListView<dynamic, String>(
-                    elements: fantasydata.keys.toList(),
-                    groupBy: (element) => element.toString().split('_').first,
-                    groupHeaderBuilder: (e) {
-                      Color1 = randomColors[distinct_leagues
-                          .toList()
-                          .indexOf(e.toString().split('_').first)];
-                      return Container(
-                        // decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(20.0),
-                        //     gradient: LinearGradient(
-                        //       begin: Alignment.bottomLeft,
-                        //       end: Alignment.topRight,
-                        //       colors: [
-                        //         Color1,
-                        //         Color1.withOpacity(0.85),
+                ? Column(
+                    children: [
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Stack(
+                              alignment: AlignmentDirectional.center,
+                              children: [
+                                Divider(
+                                  color: Colors.white,
+                                  thickness: 5,
+                                ),
+                                Image.asset(
+                                  'logos/my_fantasy.png',
+                                  filterQuality: FilterQuality.high,
+                                  width: 75,
+                                  height: 75,
+                                  fit: BoxFit.scaleDown,
+                                ),
+                              ]),
+                          SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: GroupedListView<dynamic, String>(
+                            elements: fantasydata.keys.toList(),
+                            groupBy: (element) =>
+                                element.toString().split('_').first,
+                            groupHeaderBuilder: (e) {
+                              Color1 = randomColors[distinct_leagues
+                                  .toList()
+                                  .indexOf(e.toString().split('_').first)];
+                              return Container(
+                                // decoration: BoxDecoration(
+                                //     borderRadius: BorderRadius.circular(20.0),
+                                //     gradient: LinearGradient(
+                                //       begin: Alignment.bottomLeft,
+                                //       end: Alignment.topRight,
+                                //       colors: [
+                                //         Color1,
+                                //         Color1.withOpacity(0.85),
 
-                        //       ],
-                        //     )),
-                        child: Text(
-                          e.toString().split('_').first,
-                          style: globals.noble,
-                          textScaleFactor: 1.255,
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    },
-                    indexedItemBuilder: (context, e, index) {
-                      Color1 = randomColors[distinct_leagues
-                          .toList()
-                          .indexOf(e.toString().split('_').first)];
-                      List teamsplit = e.toString().split('_')[1].split('vs');
-                      String vs = teamsplit[0] + ' vs ' + teamsplit[1];
-                      return Column(children: [
-                        Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                gradient: LinearGradient(
-                                  begin: Alignment.bottomLeft,
-                                  end: Alignment.topRight,
-                                  colors: [
-                                    Color1,
-                                    Color1.withOpacity(0.85),
-                                  ],
-                                )),
-                            child: ExpansionTile(
-                                trailing: Icon(
-                                  Icons.arrow_drop_down,
-                                  size: 25,
+                                //       ],
+                                //     )),
+                                child: Text(
+                                  e.toString().split('_').first,
+                                  style: TextStyle(
+                                      fontFamily: 'NewAthletic',
+                                      color: Colors.white),
+                                  textScaleFactor: 1.255,
+                                  textAlign: TextAlign.center,
                                 ),
-                                title: Text(
-                                  vs,
-                                  style: globals.noble,
-                                ),
-                                children: fantasydata[e].map((eachteam) {
-                                  return Column(
-                                    children: [
-                                      Text(
-                                        teamsplit[fantasydata[e]
-                                            .toList()
-                                            .indexOf(eachteam)],
-                                        style: globals.noble,
-                                      ), //Team1 and team2  title
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Card(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                          ),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.bottomLeft,
-                                                  end: Alignment.topRight,
-                                                  colors: [
-                                                    Color1.withOpacity(0.55),
-                                                    Color1.withOpacity(0.8),
-                                                  ],
-                                                )),
-                                            padding: const EdgeInsets.all(8),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  'Your Selection',
-                                                  style: globals.noble,
-                                                ),
-                                                for (var as in eachteam.keys)
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        as.toString(),
-                                                        style: globals
-                                                            .noble, //Category of the player
-                                                      ),
-                                                      for (var player
-                                                          in eachteam[as])
-                                                        Column(
-                                                          children: [
-                                                            Text(player
-                                                                .toString()), //Each player and their stats
-                                                          ],
-                                                        )
-                                                    ],
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
+                              );
+                            },
+                            indexedItemBuilder: (context, e, index) {
+                              Color1 = randomColors[distinct_leagues
+                                  .toList()
+                                  .indexOf(e.toString().split('_').first)];
+                              List teamsplit =
+                                  e.toString().split('_')[1].split('vs');
+                              String vs = teamsplit[0] + ' vs ' + teamsplit[1];
+                              return Column(children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.bottomLeft,
+                                          end: Alignment.topRight,
+                                          colors: [
+                                            Color1,
+                                            Color1.withOpacity(0.85),
+                                          ],
+                                        )),
+                                    child: ExpansionTile(
+                                        trailing: Icon(
+                                          Icons.arrow_drop_down,
+                                          size: 25,
                                         ),
-                                      ), //Selected players and their data both team1 and team2
-                                    ],
-                                  );
-                                }).toList())),
-                        SizedBox(
-                          height: 10,
-                        )
-                      ]);
-                      // return Text(element.toString());
-                    })
+                                        title: Text(
+                                          vs,
+                                          style: globals.noble,
+                                        ),
+                                        children:
+                                            fantasydata[e].map((eachteam) {
+                                          return Column(
+                                            children: [
+                                              Text(
+                                                teamsplit[fantasydata[e]
+                                                    .toList()
+                                                    .indexOf(eachteam)],
+                                                style: globals.noble,
+                                              ), //Team1 and team2  title
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: Card(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                  ),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20.0),
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .bottomLeft,
+                                                          end: Alignment
+                                                              .topRight,
+                                                          colors: [
+                                                            Color1.withOpacity(
+                                                                0.55),
+                                                            Color1.withOpacity(
+                                                                0.8),
+                                                          ],
+                                                        )),
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          'Your Selection',
+                                                          style: globals.noble,
+                                                        ),
+                                                        for (var as
+                                                            in eachteam.keys)
+                                                          as.toString() !=
+                                                                  'Partnerships'
+                                                              ? Column(
+                                                                  children: [
+                                                                    Container(
+                                                                        decoration:
+                                                                            new BoxDecoration(
+                                                                          color:
+                                                                              Color1,
+                                                                          shape:
+                                                                              BoxShape.circle,
+                                                                        ),
+                                                                        child: Image
+                                                                            .asset(
+                                                                          'logos/' +
+                                                                              '${as.toString().toLowerCase()}' +
+                                                                              '.png',
+                                                                          color:
+                                                                              Colors.white,
+                                                                          width:
+                                                                              50,
+                                                                          height:
+                                                                              50,
+                                                                        ) //Category of the player
+                                                                        ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Container(
+                                                                          width:
+                                                                              MediaQuery.of(context).size.width / 3,
+                                                                          child:
+                                                                              Text(
+                                                                            'Player',
+                                                                            style:
+                                                                                globals.Louisgeorge,
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          width:
+                                                                              MediaQuery.of(context).size.width / 3,
+                                                                          child:
+                                                                              Text(
+                                                                            as.toString() == 'Batting'
+                                                                                ? 'Runs'
+                                                                                : 'Wickets',
+                                                                            style:
+                                                                                globals.Louisgeorge,
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          child:
+                                                                              Text(
+                                                                            as.toString() == 'Batting'
+                                                                                ? 'Strike Rate'
+                                                                                : 'Economy',
+                                                                            style:
+                                                                                globals.Louisgeorge,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    for (var player
+                                                                        in eachteam[
+                                                                            as])
+                                                                      Column(
+                                                                        children: [
+                                                                          Row(
+                                                                            children: [
+                                                                              Container(
+                                                                                width: MediaQuery.of(context).size.width / 3,
+                                                                                child: Text(
+                                                                                  player.toString().split(' ').where((element) => element.startsWith(RegExp(r'[A-Z]'))).join(' '),
+                                                                                  style: globals.LouisgeorgeBOLD,
+                                                                                ),
+                                                                              ),
+                                                                              Container(
+                                                                                width: MediaQuery.of(context).size.width / 3,
+                                                                                child: Text(
+                                                                                  player.toString().split(' ').where((element) => element.startsWith(RegExp(r'[0-9]'))).first.trim(),
+                                                                                  style: globals.Louisgeorge,
+                                                                                ),
+                                                                              ),
+                                                                              Container(
+                                                                                child: Text(
+                                                                                  player.toString().split(' ').where((element) => element.startsWith(RegExp(r'[0-9]'))).last,
+                                                                                  style: globals.Louisgeorge,
+                                                                                ),
+                                                                              )
+                                                                            ],
+                                                                          ), //Each player and their stats
+                                                                        ],
+                                                                      )
+                                                                  ],
+                                                                )
+                                                              : Column(
+                                                                  children: [
+                                                                    Container(
+                                                                        decoration:
+                                                                            new BoxDecoration(
+                                                                          color:
+                                                                              Colors.white,
+                                                                          shape:
+                                                                              BoxShape.circle,
+                                                                        ),
+                                                                        child: Image
+                                                                            .asset(
+                                                                          'logos/' +
+                                                                              '${as.toString().toLowerCase()}' +
+                                                                              '.png',
+                                                                          color:
+                                                                              Color1,
+                                                                          width:
+                                                                              50,
+                                                                          height:
+                                                                              50,
+                                                                        ) //Category of the player
+                                                                        ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Container(
+                                                                          width:
+                                                                              MediaQuery.of(context).size.width / 1.5,
+                                                                          child:
+                                                                              Text(
+                                                                            'Players',
+                                                                            style:
+                                                                                globals.Louisgeorge,
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          child:
+                                                                              Text(
+                                                                            'Runs',
+                                                                            style:
+                                                                                globals.Louisgeorge,
+                                                                          ),
+                                                                        ),
+                                                                        //Each player and their stats
+                                                                      ],
+                                                                    ),
+                                                                    for (int i =
+                                                                            0;
+                                                                        i < eachteam[as].length;
+                                                                        i += 2)
+                                                                      Column(
+                                                                        children: [
+                                                                          Row(
+                                                                            children: [
+                                                                              Container(
+                                                                                width: MediaQuery.of(context).size.width / 1.5,
+                                                                                child: Text(
+                                                                                  eachteam[as][i].toString() + ', ' + eachteam[as][i + 1].toString().split('&')[0],
+                                                                                  //  + player.toString().split('&')[1][0],
+
+                                                                                  style: globals.LouisgeorgeBOLD,
+                                                                                ),
+                                                                              ),
+                                                                              // Text(eachteam[as].toString()),
+                                                                              Container(
+                                                                                child: Text(
+                                                                                  eachteam[as][i + 1].toString().split('&')[1],
+                                                                                  style: globals.Louisgeorge,
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                  ],
+                                                                ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ), //Selected players and their data both team1 and team2
+                                            ],
+                                          );
+                                        }).toList())),
+                                SizedBox(
+                                  height: 10,
+                                )
+                              ]);
+                              // return Text(element.toString());
+                            }),
+                      ),
+                    ],
+                  )
                 : CircularProgressIndicator());
   }
 }

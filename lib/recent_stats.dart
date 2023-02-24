@@ -68,7 +68,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
 
     if (link2doc
         .getElementsByClassName(
-            'ds-text-tight-m ds-font-regular ds-text-ui-typo-mid')
+            'ds-text-tight-m ds-font-regular ds-text-typo-mid3')
         .toList()
         .isNotEmpty) {
       var recent_perform =
@@ -79,15 +79,16 @@ class _recentmatchdataState extends State<recentmatchdata> {
       var team1_recent = recent_perform.querySelectorAll('tbody>tr')[0];
       var team1_recentname = team1_recent
           .querySelector(
-              'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
+              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
           .text;
+      print('team1_recentname $team1_recentname');
 
       print('asa11 ${team1_recentname}');
       var team1_recentform = team1_recent.querySelectorAll(
           'td>div > div.ReactCollapse--collapse > div > div > a');
       var winsloss1 = team1_recent
           .querySelector(
-              'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
+              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
           .children;
 
       List team1_winsloss = [];
@@ -98,7 +99,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
       var team2_recent = recent_perform.querySelectorAll('tbody>tr')[1];
       var team2_recentname = team2_recent
           .querySelector(
-              'td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
+              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
           .text;
       print('asa12 ${team2_recentname}');
 
@@ -106,9 +107,10 @@ class _recentmatchdataState extends State<recentmatchdata> {
           'tr>td>div > div.ReactCollapse--collapse > div > div > a');
       var winsloss2 = team2_recent
           .querySelector(
-              'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
+              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
           .children;
 
+      print('winlloss $winsloss1 $winsloss2');
       List team2_winsloss = [];
       for (var i = 0; i < winsloss2.length; i++) {
         team2_winsloss.add(winsloss2[i].text.trim());
@@ -142,7 +144,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
           var justanothevar = team1_recentform[i].querySelector(
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
           var justanothevar1 = team1_recentform[i].querySelector(
-              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-ui-typo-mid.ds-text-left");
+              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-typo-mid3.ds-text-left");
 
           matches_played_details1.add(justanothevar.text.split(',').last +
               ', ' +
@@ -160,15 +162,17 @@ class _recentmatchdataState extends State<recentmatchdata> {
         for (int i = 0; i < team2_recentform.length; i++) {
           var justanothevar = team2_recentform[i].querySelector(
               "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
-          var justanothevar1 = team2_recentform[i].querySelector(
-              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-ui-typo-mid.ds-text-left");
-
+          var justanothevar1 = team2_recentform[i]
+              .getElementsByClassName(
+                  'ds-text-compact-xs ds-text-typo-mid3 ds-text-left')[0]
+              .text;
+          print('justanothevar1 $justanothevar1');
           matches_played_details2.add(justanothevar.text.split(',').last +
               ', ' +
               justanothevar.text
                   .replaceAll((justanothevar.text.split(',').last), ''));
 
-          match_winner2.add(justanothevar1.text);
+          match_winner2.add(justanothevar1);
           matches_played_links2.add(team2_recentform[i].attributes['href']);
         }
         team2['matches_details'] = matches_played_details2;

@@ -97,7 +97,9 @@ flutter:
     - family: KGHAPPYSolid
       fonts:
         - asset: fonts/KGHAPPYSolid.ttf   
-        
+    - family: NewAthletic
+      fonts:
+        - asset: fonts/NewAthletic.ttf   
         
        
   #   - family: Trajan Pro

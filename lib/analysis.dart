@@ -112,6 +112,27 @@ class _AnalysisState extends State<Analysis> {
                 icon: Icon(Icons.done_all),
                 onPressed: () {
                   exportcsv.getcsv().then((value) => null);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        behavior: SnackBarBehavior.floating,
+                        content: Row(children: [
+                          Image.asset(
+                            'logos/my_fantasy.png',
+                            width: 50,
+                            height: 50,
+                          ),
+                          Text(
+                              "Cricked !!\n"
+                              "Added to your Fantasy lot\n"
+                              "You can view these in 'Your Fantasy' tab.",
+                              style: globals.nobleblack),
+                        ]),
+                        backgroundColor: Colors.amberAccent,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsetsDirectional.only(
+                          bottom: MediaQuery.of(context).size.height / 2,
+                        )),
+                  );
                 }),
           ],
         ),
@@ -173,6 +194,12 @@ class _AnalysisState extends State<Analysis> {
                           (e) => SingleChildScrollView(
                             child: Column(
                               children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text(
+                                      "Once all players are selected, Click Submit on the top to save all your selected players.",
+                                      style: globals.smallnoble),
+                                ),
                                 Container(
                                   width: MediaQuery.of(context).size.width - 15,
                                   child: Card(
