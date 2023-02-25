@@ -10,7 +10,7 @@ class importcsv {
   //[P Nissanka, PHKD Mendis &36, KNA Bandara, C Karunaratne &42, Partnership]]
 
   static Future<Map<String, List<dynamic>>> getcsvdata() async {
-    Map<String, List<dynamic>> parseData(league_name, team, csvOutput) {
+    Map<String, List<dynamic>> parseData(league_name, team, csvOutput, logo) {
       int index1, index2, index3;
 
       List batting = [], bowling = [], partnerships = [];
@@ -20,7 +20,7 @@ class importcsv {
           .replaceAll('[', '')
           .replaceAll(']', '')
           .split(',');
-
+      print('ik22 $players');
       for (var i in players) {
         players[players.indexOf(i)] = i.trim();
       }
@@ -43,7 +43,7 @@ class importcsv {
       playerstats['Batting'] = batting;
       playerstats['Bowling'] = bowling;
       playerstats['Partnerships'] = partnerships;
-
+      playerstats['Logo'] = [logo];
       return playerstats;
     }
 
@@ -58,7 +58,7 @@ class importcsv {
           .transform(new CsvToListConverter(fieldDelimiter: ','))
           .toList();
       print('ik11 ${fields}');
-      print('ik11 ${fields[0]}');
+      print('ik12 ${fields[1][2]}');
       List<Map<String, List<dynamic>>> result = [];
       Map<String, List<dynamic>> league_data = {};
       Set distinct_leagues = {};
@@ -77,7 +77,8 @@ class importcsv {
 
         // if (distinct_leagues.toList().contains(league_name_and_vs)) {}
         dummy[team_of_the_league] = [
-          parseData(league_name_and_vs, team_of_the_league, fields[i][1])
+          parseData(league_name_and_vs, team_of_the_league, fields[i][1],
+              fields[i][2])
         ];
         for (int i = 1; i < fields.length; i++) {
           var league_name_and_vs = fields[i][0].toString().split('_')[0] +
@@ -96,6 +97,7 @@ class importcsv {
       }
 
       print('chus ${league_data[league_data.keys.toList()[0]].length}');
+      print('league_data $league_data');
       return league_data;
     } else {
       return null;

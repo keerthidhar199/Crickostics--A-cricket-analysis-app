@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:datascrap/analysis.dart';
 import 'package:ext_storage/ext_storage.dart';
 import 'package:csv/csv.dart';
+import 'package:datascrap/globals.dart' as globals;
 
 class exportcsv {
   static Future<void> getcsv() async {
@@ -23,9 +24,11 @@ class exportcsv {
     Set distinct_teams = {};
     Map<String, List<dynamic>> mapteamwise = {};
     List<dynamic> row = [];
+    List<String> teamlogos = [globals.team1logo, globals.team2logo];
     row.add("Team");
 
     row.add('Player Stats');
+    row.add('Teamlogo');
     rows.add(row);
 
     existing_table_rows.add([]);
@@ -47,13 +50,16 @@ class exportcsv {
           teamwise.add(finalMap[j] + [category]);
         }
       }
+      // print('ik1 ${distinct_teams.toList().indexOf(k)}');
       mapteamwise[k] = teamwise;
+
       row.add(k);
       row.add(teamwise);
+      row.add(teamlogos[distinct_teams.toList().indexOf(k)]);
       existing_table_rows.add(row);
       rows.add(row);
     }
-    print(rows);
+    print('rows $rows');
 
     String dir = await ExtStorage.getExternalStoragePublicDirectory(
         ExtStorage.DIRECTORY_DOWNLOADS);
