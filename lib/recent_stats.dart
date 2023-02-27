@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:datascrap/recentplayersform.dart';
 import 'package:datascrap/skeleton.dart';
+import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'globals.dart' as globals;
 import 'package:skeletons/skeletons.dart';
+import 'package:flip_card/flip_card.dart';
 
 class recentmatchdata extends StatefulWidget {
   const recentmatchdata({Key key}) : super(key: key);
@@ -304,7 +307,8 @@ class _recentmatchdataState extends State<recentmatchdata> {
                     globals.team1logo,
                     globals.team2logo
                   ];
-
+                  List<Map<String, List<dynamic>>> recentplayers = [];
+                  FlipCardController flipcardcontrol = FlipCardController();
                   // return Text(snapshot.data[1].toString());
                   return SingleChildScrollView(
                     child: Container(
@@ -322,11 +326,10 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                   Color(0xff4F91CD),
                                 ],
                               )),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                              child: Column(
                                 children: [
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       teamlogos[snapshot.data.indexOf(e)] !=
                                               null
@@ -355,6 +358,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
                                                 fontSize: 20.0,
+                                                fontFamily: 'Cocosharp',
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -365,31 +369,46 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                     ],
                                   ),
                                   Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: e['winsloss'][0]
                                           .toString()
                                           .split(',')
-                                          .map((character) {
-                                    return Container(
-                                      child: Text(
-                                        '${character}',
-                                        style: TextStyle(
-                                          fontSize: 20.0,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      decoration: new BoxDecoration(
-                                        borderRadius: new BorderRadius.all(
-                                            new Radius.circular(10.0)),
-                                        color: character == 'W'
-                                            ? Colors.green
-                                            : character == 'L'
-                                                ? Colors.red
-                                                : Colors.grey,
-                                      ),
-                                      padding: new EdgeInsets.all(5),
-                                    );
-                                  }).toList()),
+                                          .map((character) => Row(
+                                                children: [
+                                                  Text('-'),
+                                                  Container(
+                                                    child: Text(
+                                                      '${character}',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Cocosharp',
+                                                        fontSize: 20.0,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                    decoration:
+                                                        new BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: character == 'W'
+                                                          ? Colors.green
+                                                          : character == 'L'
+                                                              ? Colors.red
+                                                              : Colors.grey,
+                                                    ),
+                                                    padding:
+                                                        new EdgeInsets.all(10),
+                                                  ),
+                                                  Text('-'),
+                                                  // SizedBox(
+                                                  //   width:
+                                                  //       MediaQuery.of(context)
+                                                  //               .size
+                                                  //               .width /
+                                                  //           18,
+                                                  // )
+                                                ],
+                                              ))
+                                          .toList()),
                                 ],
                               ),
                             ),
@@ -399,117 +418,180 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                 color: Colors.yellow.shade300,
                                 size: 25,
                               ),
-                              title: Text(
-                                "More details",
-                                style: TextStyle(
-                                  fontSize: 13.0,
-                                  color: Colors.yellow.shade300,
-                                  fontStyle: FontStyle.italic,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              title: Text("More details",
+                                  style: TextStyle(
+                                    fontFamily: 'Cocosharp',
+                                    color: Colors.yellow.shade300,
+                                  )),
                               children: [
                                 for (var i = 0;
                                     i < e['matches_details'].length;
                                     i++)
-                                  Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              //Faceoff
-                                              Container(
-                                                decoration: new BoxDecoration(
-                                                    borderRadius:
-                                                        new BorderRadius.all(
-                                                            new Radius.circular(
-                                                                10.0)),
-                                                    color: Colors.white60),
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Text(
-                                                  e['matches_details'][i]
-                                                      .toString()
-                                                      .split(',')
-                                                      .first,
-                                                  style: TextStyle(
-                                                    fontSize: 15.0,
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  textAlign: TextAlign.left,
-                                                  maxLines: 4,
+                                  FlipCard(
+                                      fill: Fill
+                                          .fillBack, // Fill the back side of the card to make in the same size as the front.
+                                      direction:
+                                          FlipDirection.HORIZONTAL, // default
+                                      side: CardSide.FRONT,
+                                      front: Container(
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    //Faceoff
+
+                                                    Container(
+                                                      decoration: new BoxDecoration(
+                                                          borderRadius:
+                                                              new BorderRadius
+                                                                  .all(new Radius
+                                                                      .circular(
+                                                                  10.0)),
+                                                          color:
+                                                              Colors.white60),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: TextButton(
+                                                        child: Text(
+                                                          e['matches_details']
+                                                                  [i]
+                                                              .toString()
+                                                              .split(',')
+                                                              .first,
+                                                          style: TextStyle(
+                                                            fontSize: 15.0,
+                                                            fontFamily:
+                                                                'Cocosharp',
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          maxLines: 4,
+                                                        ),
+                                                        onPressed: () {},
+                                                      ),
+                                                    ),
+
+                                                    //Date of the match happened
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Text(
+                                                        "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').substring(1).trim()}",
+                                                        style: TextStyle(
+                                                          fontSize: 10.0,
+                                                          color: Colors.white70,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    //Winner of the match
+                                                    Container(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10.0),
+                                                      child: Text(
+                                                        e['match_winner'][i]
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 12.0,
+                                                            color: Colors.teal,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontStyle: FontStyle
+                                                                .italic),
+                                                        maxLines: 4,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
-                                              //Date of the match happened
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').substring(1).trim()}",
-                                                  style: TextStyle(
-                                                    fontSize: 10.0,
-                                                    color: Colors.white70,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-                                              //Winner of the match
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.all(10.0),
-                                                child: Text(
-                                                  e['match_winner'][i]
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                      fontSize: 12.0,
-                                                      color: Colors.teal,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontStyle:
-                                                          FontStyle.italic),
-                                                  maxLines: 4,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          e['winsloss'][0]
-                                              .split(',')
-                                              .map((character) {
-                                            return Container(
-                                              child: Text(
-                                                '${character}',
-                                                style: TextStyle(
-                                                  fontSize: 20.0,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              decoration: new BoxDecoration(
-                                                borderRadius: new BorderRadius
-                                                        .all(
-                                                    new Radius.circular(10.0)),
-                                                color: character == 'W'
-                                                    ? Colors.green
-                                                    : character == 'L'
-                                                        ? Colors.red
-                                                        : Colors.grey,
-                                              ),
-                                              padding: new EdgeInsets.all(8),
-                                            );
-                                          }).toList()[i]
-                                        ],
+                                                e['winsloss'][0]
+                                                    .split(',')
+                                                    .map((character) {
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      child: Text(
+                                                        '${character}',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Cocosharp',
+                                                          fontSize: 20.0,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      decoration:
+                                                          new BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: character == 'W'
+                                                            ? Colors.green
+                                                            : character == 'L'
+                                                                ? Colors.red
+                                                                : Colors.grey,
+                                                      ),
+                                                      padding:
+                                                          new EdgeInsets.all(
+                                                              10),
+                                                    ),
+                                                  );
+                                                }).toList()[i]
+                                              ],
+                                            ),
+                                            Divider(
+                                              color: Colors.white,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      Divider(
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
+                                      back: FutureBuilder<
+                                          List<Map<String, List<dynamic>>>>(
+                                        future: gettingplayers()
+                                            .getplayersinForm(
+                                                e['scoreboard_for_matches_links']
+                                                    [i]) // async work
+                                        ,
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<
+                                                    List<
+                                                        Map<String,
+                                                            List<dynamic>>>>
+                                                snapshot) {
+                                          switch (snapshot.connectionState) {
+                                            case ConnectionState.waiting:
+                                              return Container(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            default:
+                                              if (snapshot.hasError)
+                                                return Text(
+                                                    'Error: ${snapshot.error}');
+                                              else
+                                                return Column(
+                                                  children: snapshot.data
+                                                      .map((e) => Container(
+                                                            child: Text(e.values
+                                                                .toString()),
+                                                          ))
+                                                      .toList(),
+                                                );
+                                          }
+                                        },
+                                      )),
                               ],
                             ),
                           ],
