@@ -413,14 +413,14 @@ class _recentmatchdataState extends State<recentmatchdata> {
                               ),
                             ),
                             ExpansionTile(
+                              initiallyExpanded: true,
                               trailing: Icon(
                                 Icons.arrow_drop_down_circle,
                                 color: Colors.yellow.shade300,
                                 size: 25,
                               ),
-                              title: Text("More details",
+                              title: Text("More details}",
                                   style: TextStyle(
-                                    fontFamily: 'Cocosharp',
                                     color: Colors.yellow.shade300,
                                   )),
                               children: [
@@ -446,7 +446,6 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     //Faceoff
-
                                                     Container(
                                                       decoration: new BoxDecoration(
                                                           borderRadius:
@@ -515,6 +514,11 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                                         maxLines: 4,
                                                       ),
                                                     ),
+
+                                                    Text(
+                                                      'Tap to view results of top performers of this match',
+                                                      style: globals.noble1,
+                                                    )
                                                   ],
                                                 ),
                                                 e['winsloss'][0]
@@ -558,37 +562,36 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                         ),
                                       ),
                                       back: FutureBuilder<
-                                          List<Map<String, List<dynamic>>>>(
+                                          Map<String, List<dynamic>>>(
                                         future: gettingplayers()
                                             .getplayersinForm(
                                                 e['scoreboard_for_matches_links']
-                                                    [i]) // async work
+                                                    [i],
+                                                teamnames[snapshot.data
+                                                    .indexOf(e)]) // async work
                                         ,
                                         builder: (BuildContext context,
                                             AsyncSnapshot<
-                                                    List<
-                                                        Map<String,
-                                                            List<dynamic>>>>
-                                                snapshot) {
-                                          switch (snapshot.connectionState) {
+                                                    Map<String, List<dynamic>>>
+                                                playerformmap) {
+                                          switch (
+                                              playerformmap.connectionState) {
                                             case ConnectionState.waiting:
                                               return Container(
                                                 child:
                                                     CircularProgressIndicator(),
                                               );
                                             default:
-                                              if (snapshot.hasError)
+                                              if (playerformmap.hasError)
                                                 return Text(
                                                     'Error: ${snapshot.error}');
                                               else
-                                                return Column(
-                                                  children: snapshot.data
-                                                      .map((e) => Container(
-                                                            child: Text(e.values
-                                                                .toString()),
-                                                          ))
-                                                      .toList(),
-                                                );
+                                                return recentplayersform(
+                                                    listofrecentplayers:
+                                                        playerformmap.data,
+                                                    teamname: teamnames[snapshot
+                                                        .data
+                                                        .indexOf(e)]);
                                           }
                                         },
                                       )),

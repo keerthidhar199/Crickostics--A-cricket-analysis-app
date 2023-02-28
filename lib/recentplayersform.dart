@@ -1,23 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
-import 'dart:convert';
-import 'package:datascrap/recent_stats_testing.dart';
-import 'package:datascrap/skeleton.dart';
-import 'package:datascrap/typeofstats.dart';
-import 'package:datascrap/views/fantasy_players_UI.dart';
-import 'package:datascrap/webscrap.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'package:page_transition/page_transition.dart';
 import 'globals.dart' as globals;
-import 'package:animated_splash_screen/animated_splash_screen.dart';
-import 'package:skeletons/skeletons.dart';
 
 class gettingplayers {
-  Future<List<Map<String, List<dynamic>>>> getplayersinForm(matchlink1) async {
+  Future<Map<String, List<dynamic>>> getplayersinForm(
+      matchlink1, teamname) async {
     String editmathclink =
         matchlink1.replaceAll(matchlink1.split('/').last, 'live-cricket-score');
     var response = await http.Client()
@@ -32,60 +23,101 @@ class gettingplayers {
         .children[1]
         .children;
 
-    Map<String, List<dynamic>> batrecentplayers = {};
-    Map<String, List<dynamic>> bowlrecentplayers = {};
+    Map<String, List<dynamic>> teamrecentplayers = {};
+    List<String> team1 = [];
+    List<String> team2 = [];
+
     for (var i in fuic) {
-      String teamandinnings = i.children[0].text;
+      String teamandinnings = i.children[0].text.split('•').first.trim();
       var players = i.children[1].children;
-      List<String> batters = [];
-      List<String> bowlers = [];
+
+      // print('nuvvu ${teamandinnings.split('•').first}');
 
       for (var batter in players) {
-        batters.add(batter.children[0].text);
-        bowlers.add(batter.children[1].text);
+        if (teamandinnings == teamname) {
+          print('nuvvu $teamname $teamandinnings');
+
+          team1.add(batter.children[0].text);
+          team2.add(batter.children[1].text);
+        } else {
+          team2.add(batter.children[0].text);
+          team1.add(batter.children[1].text);
+        }
       }
-      batrecentplayers[teamandinnings] = batters;
-      bowlrecentplayers[teamandinnings] = bowlers;
-      print('fuicBAT $batrecentplayers');
-      print('fuicBOWL $bowlrecentplayers');
+      teamrecentplayers[teamname] = team1;
+      // teamrecentplayers[globals.team2_name] = team2;
     }
-    return [batrecentplayers, bowlrecentplayers];
+    print('fuicTeam $teamrecentplayers');
+    return teamrecentplayers;
   }
 }
 
-class recentplayersform extends StatefulWidget {
+class recentplayersform extends StatelessWidget {
   final listofrecentplayers;
-
-  const recentplayersform({Key key, this.listofrecentplayers})
+  final teamname;
+  const recentplayersform({Key key, this.listofrecentplayers, this.teamname})
       : super(key: key);
 
   @override
-  State<recentplayersform> createState() =>
-      _recentplayersformState(this.listofrecentplayers);
-}
-
-class _recentplayersformState extends State<recentplayersform> {
-  List<Map<String, List<dynamic>>> listofrecentplayers;
-
-  _recentplayersformState(listofrecentplayers);
-
-  @override
   Widget build(BuildContext context) {
+    Map<String, List<dynamic>> listofrecentplayers = this.listofrecentplayers;
     print('listofrecentplayers $listofrecentplayers');
-    return listofrecentplayers.isEmpty
-        ? Container(
-            child: CircularProgressIndicator(),
-          )
-        : Column(
-            children: listofrecentplayers
-                .map((e) => Container(
-                      child: Text(e.values.toString()),
-                    ))
-                .toList(),
-          );
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text('Batters', style: globals.Louisgeorge),
+            Text('Bowlers', style: globals.Louisgeorge),
+          ],
+        ),
+        FittedBox(
+          child: Container(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: listofrecentplayers[teamname]
+                      .map((e) => !e.toString().contains('/')
+                          ? Text(
+                              e.toString(),
+                              style: globals.Louisgeorge,
+                            )
+                          : Container())
+                      .toList(),
+                ),
+                VerticalDivider(
+                  thickness: 5,
+                  color: Colors.white,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: listofrecentplayers[teamname]
+                      .map((e) => e.toString().contains('/')
+                          ? Text(
+                              e.toString().split(RegExp(r'[0-9]')).first +
+                                  ' - ' +
+                                  e.toString().replaceAll(
+                                      e
+                                          .toString()
+                                          .split(RegExp(r'[0-9]'))
+                                          .first,
+                                      ''),
+                              style: globals.Louisgeorge)
+                          : Container())
+                      .toList(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+    // Text(listofrecentplayers.keys .toString()),
+    // Text(listofrecentplayers.values.toString()),
   }
 }
-
 
 
 
