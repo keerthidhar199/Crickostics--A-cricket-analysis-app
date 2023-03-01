@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:datascrap/recent_stats_expansionblock.dart';
 import 'package:datascrap/recentplayersform.dart';
 import 'package:datascrap/skeleton.dart';
 import 'package:flip_card/flip_card_controller.dart';
@@ -413,307 +414,316 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                 ],
                               ),
                             ),
-                            ExpansionTile(
-                              initiallyExpanded: true,
-                              trailing: Icon(
-                                Icons.arrow_drop_down_circle,
-                                color: Colors.yellow.shade300,
-                                size: 25,
-                              ),
-                              title: Text("More details",
-                                  style: TextStyle(
-                                    fontFamily: 'Cocosharp',
-                                    color: Colors.yellow.shade300,
-                                  )),
-                              children: [
-                                for (var i = 0;
-                                    i < e['matches_details'].length;
-                                    i++)
-                                  AnimationLimiter(
-                                    child: AnimationConfiguration.staggeredList(
-                                      duration:
-                                          const Duration(milliseconds: 700),
-                                      position: i,
-                                      child: ScaleAnimation(
-                                        child: SlideAnimation(
-                                          child: FlipCard(
-                                              fill: Fill
-                                                  .fillBack, // Fill the back side of the card to make in the same size as the front.
-                                              direction: FlipDirection
-                                                  .HORIZONTAL, // default
-                                              side: CardSide.FRONT,
-                                              front: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(2.0),
-                                                child: Container(
-                                                  decoration: new BoxDecoration(
-                                                      border: Border.all(
-                                                          color:
-                                                              Colors.white54),
-                                                      borderRadius:
-                                                          new BorderRadius.all(
-                                                              new Radius
-                                                                      .circular(
-                                                                  10.0)),
-                                                      gradient: LinearGradient(
-                                                        begin:
-                                                            Alignment.topLeft,
-                                                        end: Alignment
-                                                            .bottomRight,
-                                                        colors: [
-                                                          Color(0xff005874),
-                                                          Color(0xff1C819E),
+                            expansionTile(
+                              e: e,
+                              snapshot: snapshot.data,
+                            )
+                            // ExpansionTile(
+                            //   initiallyExpanded: true,
+                            //   trailing: Icon(
+                            //     Icons.arrow_drop_down_circle,
+                            //     color: Colors.yellow.shade300,
+                            //     size: 25,
+                            //   ),
+                            //   title: Text("More details",
+                            //       style: TextStyle(
+                            //         fontFamily: 'Cocosharp',
+                            //         color: Colors.yellow.shade300,
+                            //       )),
+                            //   children: [
+                            //     for (var i = 0;
+                            //         i < e['matches_details'].length;
+                            //         i++)
+                            //       AnimationLimiter(
+                            //         child: AnimationConfiguration.staggeredList(
+                            //           duration:
+                            //               const Duration(milliseconds: 700),
+                            //           position: i,
+                            //           child: ScaleAnimation(
+                            //             child: SlideAnimation(
+                            //               child: FlipCard(
+                            //                   fill: Fill
+                            //                       .fillBack, // Fill the back side of the card to make in the same size as the front.
+                            //                   direction: FlipDirection
+                            //                       .HORIZONTAL, // default
+                            //                   side: CardSide.FRONT,
+                            //                   front: Padding(
+                            //                     padding:
+                            //                         const EdgeInsets.all(2.0),
+                            //                     child: Container(
+                            //                       decoration: new BoxDecoration(
+                            //                           border: Border.all(
+                            //                               color:
+                            //                                   Colors.white54),
+                            //                           borderRadius:
+                            //                               new BorderRadius.all(
+                            //                                   new Radius
+                            //                                           .circular(
+                            //                                       10.0)),
+                            //                           gradient: LinearGradient(
+                            //                             begin:
+                            //                                 Alignment.topLeft,
+                            //                             end: Alignment
+                            //                                 .bottomRight,
+                            //                             colors: [
+                            //                               Color(0xff005874),
+                            //                               Color(0xff1C819E),
 
-                                                          // Colors.white38,
-                                                        ],
-                                                      )),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              //Faceoff
-                                                              Container(
-                                                                margin:
-                                                                    const EdgeInsets
-                                                                        .all(8),
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(8),
-                                                                decoration: new BoxDecoration(
-                                                                    borderRadius: new BorderRadius
-                                                                        .all(new Radius
-                                                                            .circular(
-                                                                        10.0)),
-                                                                    color: Colors
-                                                                        .white60),
-                                                                child: Text(
-                                                                  e['matches_details']
-                                                                          [i]
-                                                                      .toString()
-                                                                      .split(
-                                                                          ',')
-                                                                      .first,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        15.0,
-                                                                    fontFamily:
-                                                                        'Cocosharp',
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
+                            //                               // Colors.white38,
+                            //                             ],
+                            //                           )),
+                            //                       child: Column(
+                            //                         children: [
+                            //                           Row(
+                            //                             mainAxisAlignment:
+                            //                                 MainAxisAlignment
+                            //                                     .spaceBetween,
+                            //                             children: [
+                            //                               Column(
+                            //                                 crossAxisAlignment:
+                            //                                     CrossAxisAlignment
+                            //                                         .start,
+                            //                                 children: [
+                            //                                   //Faceoff
+                            //                                   Container(
+                            //                                     margin:
+                            //                                         const EdgeInsets
+                            //                                             .all(8),
+                            //                                     padding:
+                            //                                         const EdgeInsets
+                            //                                             .all(8),
+                            //                                     decoration: new BoxDecoration(
+                            //                                         borderRadius: new BorderRadius
+                            //                                             .all(new Radius
+                            //                                                 .circular(
+                            //                                             10.0)),
+                            //                                         color: Colors
+                            //                                             .white60),
+                            //                                     child: Text(
+                            //                                       e['matches_details']
+                            //                                               [i]
+                            //                                           .toString()
+                            //                                           .split(
+                            //                                               ',')
+                            //                                           .first,
+                            //                                       style:
+                            //                                           TextStyle(
+                            //                                         fontSize:
+                            //                                             15.0,
+                            //                                         fontFamily:
+                            //                                             'Cocosharp',
+                            //                                         color: Colors
+                            //                                             .black,
+                            //                                         fontWeight:
+                            //                                             FontWeight
+                            //                                                 .bold,
+                            //                                       ),
+                            //                                     ),
+                            //                                   ),
 
-                                                              //Date of the match happened
-                                                              Container(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        8.0),
-                                                                child: Text(
-                                                                  "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').substring(1).trim()}",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Louisgeorge',
-                                                                    color: Colors
-                                                                        .white70,
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              //Winner of the match
-                                                              Container(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        10.0),
-                                                                child: Text(
-                                                                  e['match_winner']
-                                                                          [i]
-                                                                      .toString(),
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          12,
-                                                                      fontFamily:
-                                                                          'Louisgeorge',
-                                                                      color: Colors
-                                                                          .teal
-                                                                          .shade500,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontStyle:
-                                                                          FontStyle
-                                                                              .italic),
-                                                                ),
-                                                              ),
+                            //                                   //Date of the match happened
+                            //                                   Container(
+                            //                                     padding:
+                            //                                         const EdgeInsets
+                            //                                                 .all(
+                            //                                             8.0),
+                            //                                     child: Text(
+                            //                                       "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').substring(1).trim()}",
+                            //                                       style:
+                            //                                           TextStyle(
+                            //                                         fontFamily:
+                            //                                             'Louisgeorge',
+                            //                                         color: Colors
+                            //                                             .white70,
+                            //                                         fontSize:
+                            //                                             12,
+                            //                                         fontWeight:
+                            //                                             FontWeight
+                            //                                                 .bold,
+                            //                                       ),
+                            //                                     ),
+                            //                                   ),
+                            //                                   //Winner of the match
+                            //                                   Container(
+                            //                                     padding:
+                            //                                         const EdgeInsets
+                            //                                                 .all(
+                            //                                             10.0),
+                            //                                     child: Text(
+                            //                                       e['match_winner']
+                            //                                               [i]
+                            //                                           .toString(),
+                            //                                       style: TextStyle(
+                            //                                           fontSize:
+                            //                                               12,
+                            //                                           fontFamily:
+                            //                                               'Louisgeorge',
+                            //                                           color: Colors
+                            //                                               .teal
+                            //                                               .shade500,
+                            //                                           fontWeight:
+                            //                                               FontWeight
+                            //                                                   .bold,
+                            //                                           fontStyle:
+                            //                                               FontStyle
+                            //                                                   .italic),
+                            //                                     ),
+                            //                                   ),
 
-                                                              Container(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        10.0),
-                                                                child: Text(
-                                                                    'Tap to view top performers of this match.',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            12,
-                                                                        fontFamily:
-                                                                            'Louisgeorge',
-                                                                        color: Colors
-                                                                            .white24)),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          e['winsloss'][0]
-                                                              .split(',')
-                                                              .map((character) {
-                                                            return Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8.0),
-                                                              child: Container(
-                                                                child: Text(
-                                                                  '${character}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Cocosharp',
-                                                                    fontSize:
-                                                                        20.0,
-                                                                    color: Colors
-                                                                        .black,
-                                                                  ),
-                                                                ),
-                                                                decoration:
-                                                                    new BoxDecoration(
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                  color: character ==
-                                                                          'W'
-                                                                      ? Colors
-                                                                          .green
-                                                                      : character ==
-                                                                              'L'
-                                                                          ? Colors
-                                                                              .red
-                                                                          : Colors
-                                                                              .grey,
-                                                                ),
-                                                                padding:
-                                                                    new EdgeInsets
-                                                                        .all(10),
-                                                              ),
-                                                            );
-                                                          }).toList()[i]
-                                                        ],
-                                                      ),
-                                                      // Divider(
-                                                      //   color: Colors.white,
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              back: FutureBuilder<
-                                                  Map<String, List<dynamic>>>(
-                                                future: gettingplayers()
-                                                    .getplayersinForm(
-                                                        e['scoreboard_for_matches_links']
-                                                            [i],
-                                                        teamnames[snapshot.data
-                                                            .indexOf(
-                                                                e)]), // async work,
-                                                builder: (BuildContext context,
-                                                    AsyncSnapshot<
-                                                            Map<String,
-                                                                List<dynamic>>>
-                                                        playerformmap) {
-                                                  switch (playerformmap
-                                                      .connectionState) {
-                                                    case ConnectionState
-                                                        .waiting:
-                                                      return Center(
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          backgroundColor:
-                                                              Color(0xff005874),
-                                                          semanticsValue:
-                                                              'Loading..',
-                                                        ),
-                                                      );
-                                                    default:
-                                                      if (playerformmap
-                                                          .hasError)
-                                                        return Text(
-                                                            'Error: ${snapshot.error}');
-                                                      else
-                                                        return Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(2.0),
-                                                          child: Container(
-                                                            decoration:
-                                                                new BoxDecoration(
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .white54),
-                                                                    borderRadius: new BorderRadius
-                                                                        .all(new Radius
-                                                                            .circular(
-                                                                        10.0)),
-                                                                    gradient:
-                                                                        LinearGradient(
-                                                                      begin: Alignment
-                                                                          .topLeft,
-                                                                      end: Alignment
-                                                                          .bottomRight,
-                                                                      colors: [
-                                                                        Color(
-                                                                            0xff005874),
-                                                                        Color(
-                                                                            0xff1C819E),
+                            //                                   Container(
+                            //                                     padding:
+                            //                                         const EdgeInsets
+                            //                                                 .all(
+                            //                                             10.0),
+                            //                                     child: Text(
+                            //                                         'Tap to view top performers of this match.',
+                            //                                         style: TextStyle(
+                            //                                             fontSize:
+                            //                                                 12,
+                            //                                             fontFamily:
+                            //                                                 'Louisgeorge',
+                            //                                             color: Colors
+                            //                                                 .white24)),
+                            //                                   )
+                            //                                 ],
+                            //                               ),
+                            //                               e['winsloss'][0]
+                            //                                   .split(',')
+                            //                                   .map((character) {
+                            //                                 return Padding(
+                            //                                   padding:
+                            //                                       const EdgeInsets
+                            //                                           .all(8.0),
+                            //                                   child: Container(
+                            //                                     child: Text(
+                            //                                       '${character}',
+                            //                                       style:
+                            //                                           TextStyle(
+                            //                                         fontFamily:
+                            //                                             'Cocosharp',
+                            //                                         fontSize:
+                            //                                             20.0,
+                            //                                         color: Colors
+                            //                                             .black,
+                            //                                       ),
+                            //                                     ),
+                            //                                     decoration:
+                            //                                         new BoxDecoration(
+                            //                                       shape: BoxShape
+                            //                                           .circle,
+                            //                                       color: character ==
+                            //                                               'W'
+                            //                                           ? Colors
+                            //                                               .green
+                            //                                           : character ==
+                            //                                                   'L'
+                            //                                               ? Colors
+                            //                                                   .red
+                            //                                               : Colors
+                            //                                                   .grey,
+                            //                                     ),
+                            //                                     padding:
+                            //                                         new EdgeInsets
+                            //                                             .all(10),
+                            //                                   ),
+                            //                                 );
+                            //                               }).toList()[i]
+                            //                             ],
+                            //                           ),
+                            //                           // Divider(
+                            //                           //   color: Colors.white,
+                            //                           // ),
+                            //                         ],
+                            //                       ),
+                            //                     ),
+                            //                   ),
+                            //                   back: FutureBuilder<
+                            //                       List<
+                            //                           Map<String,
+                            //                               List<dynamic>>>>(
+                            //                     future: gettingplayers()
+                            //                         .getplayersinForm(
+                            //                             e[
+                            //                                 'scoreboard_for_matches_links'],
+                            //                             teamnames[snapshot.data
+                            //                                 .indexOf(
+                            //                                     e)]), // async work,
+                            //                     builder: (BuildContext context,
+                            //                         AsyncSnapshot<
+                            //                                 List<
+                            //                                     Map<
+                            //                                         String,
+                            //                                         List<
+                            //                                             dynamic>>>>
+                            //                             playerformmap) {
+                            //                       switch (playerformmap
+                            //                           .connectionState) {
+                            //                         case ConnectionState
+                            //                             .waiting:
+                            //                           return Center(
+                            //                             child:
+                            //                                 CircularProgressIndicator(
+                            //                               backgroundColor:
+                            //                                   Color(0xff005874),
+                            //                               semanticsValue:
+                            //                                   'Loading..',
+                            //                             ),
+                            //                           );
+                            //                         default:
+                            //                           if (playerformmap
+                            //                               .hasError)
+                            //                             return Text(
+                            //                                 'Error: ${snapshot.error}');
+                            //                           else
+                            //                             return Padding(
+                            //                               padding:
+                            //                                   const EdgeInsets
+                            //                                       .all(2.0),
+                            //                               child: Container(
+                            //                                 decoration:
+                            //                                     new BoxDecoration(
+                            //                                         border: Border.all(
+                            //                                             color: Colors
+                            //                                                 .white54),
+                            //                                         borderRadius: new BorderRadius
+                            //                                             .all(new Radius
+                            //                                                 .circular(
+                            //                                             10.0)),
+                            //                                         gradient:
+                            //                                             LinearGradient(
+                            //                                           begin: Alignment
+                            //                                               .topLeft,
+                            //                                           end: Alignment
+                            //                                               .bottomRight,
+                            //                                           colors: [
+                            //                                             Color(
+                            //                                                 0xff005874),
+                            //                                             Color(
+                            //                                                 0xff1C819E),
 
-                                                                        // Colors.white38,
-                                                                      ],
-                                                                    )),
-                                                            child: recentplayersform(
-                                                                listofrecentplayers:
-                                                                    playerformmap
-                                                                        .data,
-                                                                teamname: teamnames[
-                                                                    snapshot
-                                                                        .data
-                                                                        .indexOf(
-                                                                            e)]),
-                                                          ),
-                                                        );
-                                                  }
-                                                },
-                                              )),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
+                            //                                             // Colors.white38,
+                            //                                           ],
+                            //                                         )),
+                            //                                 child: recentplayersform(
+                            //                                     listofrecentplayers:
+                            //                                         playerformmap
+                            //                                             .data,
+                            //                                     teamname: teamnames[
+                            //                                         snapshot
+                            //                                             .data
+                            //                                             .indexOf(
+                            //                                                 e)]),
+                            //                               ),
+                            //                             );
+                            //                       }
+                            //                     },
+                            //                   )),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ),
+                            //   ],
+                            // ),
                           ],
                         );
                       }).toList()),

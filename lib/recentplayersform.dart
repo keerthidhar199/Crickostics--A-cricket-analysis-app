@@ -7,143 +7,155 @@ import 'package:html/parser.dart' as parser;
 import 'globals.dart' as globals;
 
 class gettingplayers {
-  Future<Map<String, List<dynamic>>> getplayersinForm(
-      matchlink1, teamname) async {
-    String editmathclink =
-        matchlink1.replaceAll(matchlink1.split('/').last, 'live-cricket-score');
-    var response = await http.Client()
-        .get(Uri.parse('https://www.espncricinfo.com/' + editmathclink));
+  Future<List<Map<String, List<dynamic>>>> getplayersinForm(
+      allmatchlinks, teamname) async {
+    List<Map<String, List<dynamic>>> listofallplayersform = [];
+    for (var matchlink in allmatchlinks) {
+      String editmathclink =
+          matchlink.replaceAll(matchlink.split('/').last, 'live-cricket-score');
+      var response = await http.Client()
+          .get(Uri.parse('https://www.espncricinfo.com/' + editmathclink));
 
-    dom.Document document = parser.parse(response.body);
-    var fuic = document
-        .getElementsByClassName(
-            'ds-text-tight-s ds-font-regular ds-uppercase ds-bg-fill-content-alternate ds-p-3')
-        .first
-        .parent
-        .children[1]
-        .children;
+      dom.Document document = parser.parse(response.body);
+      var fuic = document
+          .getElementsByClassName(
+              'ds-text-tight-s ds-font-regular ds-uppercase ds-bg-fill-content-alternate ds-p-3')
+          .first
+          .parent
+          .children[1]
+          .children;
 
-    Map<String, List<dynamic>> teamrecentplayers = {};
-    List<String> team1 = [];
-    List<String> team2 = [];
+      Map<String, List<dynamic>> teamrecentplayers = {};
+      List<String> team1 = [];
+      List<String> team2 = [];
 
-    for (var i in fuic) {
-      String teamandinnings = i.children[0].text.split('•').first.trim();
-      var players = i.children[1].children;
+      for (var i in fuic) {
+        String teamandinnings = i.children[0].text.split('•').first.trim();
+        var players = i.children[1].children;
 
-      // print('nuvvu ${teamandinnings.split('•').first}');
+        // print('nuvvu ${teamandinnings.split('•').first}');
 
-      for (var batter in players) {
-        if (teamandinnings == teamname) {
-          print('nuvvu $teamname $teamandinnings');
+        for (var batter in players) {
+          if (teamandinnings == teamname) {
+            print('nuvvu $teamname $teamandinnings');
 
-          team1.add(batter.children[0].text);
-          team2.add(batter.children[1].text);
-        } else {
-          team2.add(batter.children[0].text);
-          team1.add(batter.children[1].text);
+            team1.add(batter.children[0].text);
+            team2.add(batter.children[1].text);
+          } else {
+            team2.add(batter.children[0].text);
+            team1.add(batter.children[1].text);
+          }
         }
+        teamrecentplayers['Match' +
+            (allmatchlinks.indexOf(matchlink) + 1).toString()] = team1;
+        // teamrecentplayers[globals.team2_name] = team2;
       }
-      teamrecentplayers[teamname] = team1;
-      // teamrecentplayers[globals.team2_name] = team2;
+
+      listofallplayersform.add(teamrecentplayers);
     }
-    print('fuicTeam $teamrecentplayers');
-    return teamrecentplayers;
+    print('fuicTeam $listofallplayersform');
+    return listofallplayersform;
   }
 }
 
-class recentplayersform extends StatelessWidget {
-  final listofrecentplayers;
-  final teamname;
-  const recentplayersform({Key key, this.listofrecentplayers, this.teamname})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    Map<String, List<dynamic>> listofrecentplayers = this.listofrecentplayers;
-    print('listofrecentplayers $listofrecentplayers');
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text('Batters', style: globals.Louisgeorge),
-            Text('Bowlers', style: globals.Louisgeorge),
-          ],
-        ),
-        FittedBox(
-          child: Container(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: listofrecentplayers[teamname]
-                      .map((e) => !e.toString().contains('/')
-                          ? Text(
-                              e.toString(),
-                              style: globals.Louisgeorge,
-                            )
-                          : Container())
-                      .toList(),
-                ),
-                VerticalDivider(
-                  thickness: 3,
-                  color: Colors.white,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: listofrecentplayers[teamname]
-                      .map((e) => e.toString().contains('/')
-                          ? Text(
-                              e.toString().split(RegExp(r'[0-9]')).first +
-                                  ' - ' +
-                                  e.toString().replaceAll(
-                                      e
-                                          .toString()
-                                          .split(RegExp(r'[0-9]'))
-                                          .first,
-                                      ''),
-                              style: globals.Louisgeorge)
-                          : Container())
-                      .toList(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-    // Text(listofrecentplayers.keys .toString()),
-    // Text(listofrecentplayers.values.toString()),
-  }
-}
-
-
-
-
-// class RecentPlayersinForm extends StatefulWidget {
+// class recentplayersform extends StatelessWidget {
 //   final listofrecentplayers;
-//   const RecentPlayersinForm({Key key, this.listofrecentplayers}) : super(key: key);
-
-//   @override
-//   State<RecentPlayersinForm> createState() =>
-//       _RecentPlayersinFormState(this.listofrecentplayers);
-// }
-
-// class _RecentPlayersinFormState extends State<RecentPlayersinForm> {
-//   String listofrecentplayers;
-
-//   _RecentPlayersinFormState(listofrecentplayers);
+//   final teamname;
+//   const recentplayersform({Key key, this.listofrecentplayers, this.teamname})
+//       : super(key: key);
 
 //   @override
 //   Widget build(BuildContext context) {
-//     print('listofrecentplayers $listofrecentplayers');
+//     String filterplayer = '';
+//     _onClick(String string) {
+//       filterplayer = string;
+//       print('fuic $filterplayer');
+//     }
 
-//     // getplayersinForm(listofrecentplayers).then((value) {
-//     //   print('listofrecentplayers $listofrecentplayers');
-//     // });
-//     return Container();
+//     print('fuic $filterplayer');
+
+//     Map<String, List<dynamic>> listofrecentplayers = this.listofrecentplayers;
+//     print('listofrecentplayers $listofrecentplayers');
+//     return Column(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       children: [
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceAround,
+//           children: [
+//             Text('Batters', style: globals.Louisgeorge),
+//             Text('Bowlers', style: globals.Louisgeorge),
+//           ],
+//         ),
+//         FittedBox(
+//           child: Container(
+//             padding: const EdgeInsets.all(8.0),
+//             child: Row(
+//               children: [
+//                 Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: listofrecentplayers[teamname]
+//                       .map((e) => !e.toString().contains('/')
+//                           ? TextButton(
+//                               style: TextButton.styleFrom(
+//                                   padding: EdgeInsets.zero,
+//                                   minimumSize: Size(50, 30),
+//                                   tapTargetSize:
+//                                       MaterialTapTargetSize.shrinkWrap,
+//                                   alignment: Alignment.centerLeft),
+//                               onPressed: () {
+//                                 _onClick(e.toString());
+//                               },
+//                               child: Text(
+//                                 e.toString(),
+//                                 style: globals.Louisgeorge,
+//                               ),
+//                             )
+//                           : Container())
+//                       .toList(),
+//                 ),
+//                 VerticalDivider(
+//                   thickness: 3,
+//                   color: Colors.white,
+//                 ),
+//                 Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: listofrecentplayers[teamname]
+//                       .map((e) => e.toString().contains('/')
+//                           ? TextButton(
+//                               style: TextButton.styleFrom(
+//                                   padding: EdgeInsets.zero,
+//                                   minimumSize: Size(50, 30),
+//                                   tapTargetSize:
+//                                       MaterialTapTargetSize.shrinkWrap,
+//                                   alignment: Alignment.centerLeft),
+//                               onPressed: () {
+//                                 _onClick(e.toString());
+//                               },
+//                               child: Text(
+//                                   e.toString().split(RegExp(r'[0-9]')).first +
+//                                       ' - ' +
+//                                       e.toString().replaceAll(
+//                                           e
+//                                               .toString()
+//                                               .split(RegExp(r'[0-9]'))
+//                                               .first,
+//                                           ''),
+//                                   style: globals.Louisgeorge),
+//                             )
+//                           : Container())
+//                       .toList(),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//     // Text(listofrecentplayers.keys .toString()),
+//     // Text(listofrecentplayers.values.toString()),
 //   }
 // }
+
+
+
+

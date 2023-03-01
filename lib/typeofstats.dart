@@ -44,39 +44,47 @@ class _typeofstatsState extends State<typeofstats> {
                         Color(0xff1A3263).withOpacity(0.5),
                       ],
                     )),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                child: Row(
                   children: <Widget>[
-                    const ListTile(
-                      leading: Icon(
-                        Icons.stacked_bar_chart,
-                        color: Colors.white,
-                        size: 50,
-                      ),
-                      title: Text(
-                        'Stats by Pitch',
-                        style: TextStyle(
-                          fontFamily: 'Louisgeorge',
-                          fontSize: 15.0,
+                    Flexible(
+                      child: const ListTile(
+                        leading: Icon(
+                          Icons.stacked_bar_chart,
                           color: Colors.white,
+                          size: 50,
                         ),
-                      ),
-                      subtitle: Text(
-                        'Gives you an analysis of matches based on the venue played.',
-                        style: TextStyle(
-                          fontFamily: 'Louisgeorge',
-                          fontSize: 15.0,
-                          color: Colors.grey,
+                        title: Text(
+                          'Stats by Pitch',
+                          style: TextStyle(
+                            fontFamily: 'Louisgeorge',
+                            fontSize: 15.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '\nGives you an analysis of matches based on the venue played.',
+                          style: TextStyle(
+                            fontFamily: 'Louisgeorge',
+                            fontSize: 15.0,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
-                    TextButton(
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: Size(100, 100),
+                        side: BorderSide(width: 1.0, color: Colors.white),
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0)),
+                      ),
                       child: const Text(
                         'CRICKOLIZE',
                         style: TextStyle(
                           fontFamily: 'RestaurantMenu',
                           fontSize: 20.0,
                           color: Colors.white,
+                          decorationColor: Colors.red,
                         ),
                       ),
                       onPressed: () {
@@ -87,7 +95,6 @@ class _typeofstatsState extends State<typeofstats> {
                             ));
                       },
                     ),
-                    const SizedBox(width: 8),
                   ],
                 )),
             SizedBox(
@@ -106,33 +113,40 @@ class _typeofstatsState extends State<typeofstats> {
                         // Color(0xff1A3263).withOpacity(0.5),
                       ],
                     )),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    const ListTile(
-                      leading: Icon(
-                        Icons.pie_chart_outline_outlined,
-                        color: Colors.white,
-                        size: 50,
-                      ),
-                      title: Text(
-                        'Stats by Recent matches',
-                        style: TextStyle(
-                          fontFamily: 'Louisgeorge',
-                          fontSize: 15.0,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: const ListTile(
+                        leading: Icon(
+                          Icons.pie_chart_outline_outlined,
                           color: Colors.white,
+                          size: 50,
                         ),
-                      ),
-                      subtitle: Text(
-                        'Gives you an analysis of report based upon the last five matches played by the each team.',
-                        style: TextStyle(
-                          fontFamily: 'Louisgeorge',
-                          fontSize: 15.0,
-                          color: Colors.grey,
+                        title: Text(
+                          'Stats by Recent matches',
+                          style: TextStyle(
+                            fontFamily: 'Louisgeorge',
+                            fontSize: 15.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        subtitle: Text(
+                          '\nGives you an analysis of report based upon the last five matches played by the each team.',
+                          style: TextStyle(
+                            fontFamily: 'Louisgeorge',
+                            fontSize: 15.0,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
-                    TextButton(
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0)),
+                        minimumSize: Size(100, 150),
+                        side: BorderSide(width: 1.0, color: Colors.white),
+                      ),
                       child: const Text(
                         'CRICKOLIZE',
                         style: TextStyle(
@@ -149,7 +163,7 @@ class _typeofstatsState extends State<typeofstats> {
                             ));
                       },
                     ),
-                    const SizedBox(width: 8),
+                    // const SizedBox(width: 8),
                   ],
                 )),
           ],
