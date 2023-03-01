@@ -63,6 +63,7 @@ class recentplayersform extends StatelessWidget {
     Map<String, List<dynamic>> listofrecentplayers = this.listofrecentplayers;
     print('listofrecentplayers $listofrecentplayers');
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -88,7 +89,7 @@ class recentplayersform extends StatelessWidget {
                       .toList(),
                 ),
                 VerticalDivider(
-                  thickness: 5,
+                  thickness: 3,
                   color: Colors.white,
                 ),
                 Column(

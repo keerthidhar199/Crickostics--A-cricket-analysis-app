@@ -100,8 +100,10 @@ class _typeofstatsState extends State<typeofstats> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xff1A3263),
-                        Color(0xff1A3263).withOpacity(0.5),
+                        Color(0xff005874),
+                        Color(0xff005874).withOpacity(0.5),
+                        // Color(0xff1A3263),
+                        // Color(0xff1A3263).withOpacity(0.5),
                       ],
                     )),
                 child: Column(
