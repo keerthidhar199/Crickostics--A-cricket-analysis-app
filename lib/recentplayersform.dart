@@ -42,12 +42,16 @@ class gettingplayers {
             team1.add(batter.children[0].text);
             team2.add(batter.children[1].text);
           } else {
+            print('nuvvu $teamname $teamandinnings');
+
             team2.add(batter.children[0].text);
             team1.add(batter.children[1].text);
           }
         }
         teamrecentplayers['Match' +
             (allmatchlinks.indexOf(matchlink) + 1).toString()] = team1;
+
+        print('shuffle $team1');
         // teamrecentplayers[globals.team2_name] = team2;
       }
 

@@ -30,18 +30,18 @@ class _expansionTileState extends State<expansionTile> {
   _onClick(String string) {
     setState(() {
       if (!string.contains('*')) {
-        filterplayer = string.toString().split(RegExp(r'[0-9]')).first;
+        filterplayer = string.toString().split(RegExp(r'[0-9]')).first.trim();
       } else {
-        filterplayer = string.toString().split('*').first;
+        filterplayer = string.toString().split('*').first.trim();
       }
     });
-    print('$filterplayer');
+    // print('$filterplayer');
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, List<String>> e = widget.e;
-    List<Map<String, List<String>>> snapshot = widget.snapshot;
+    Map<String, List<dynamic>> e = widget.e;
+    List<Map<String, List<dynamic>>> snapshot = widget.snapshot;
     return ExpansionTile(
       initiallyExpanded: true,
       trailing: Icon(
@@ -187,166 +187,160 @@ class _expansionTileState extends State<expansionTile> {
                           ),
                         ),
                       ),
-                      back: FutureBuilder<List<Map<String, List<dynamic>>>>(
-                        future: gettingplayers().getplayersinForm(
-                            e['scoreboard_for_matches_links'],
-                            teamnames[snapshot.indexOf(e)]), // async work,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<Map<String, List<dynamic>>>>
-                                playerformmap) {
-                          switch (playerformmap.connectionState) {
-                            case ConnectionState.waiting:
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  backgroundColor: Color(0xff005874),
-                                  semanticsValue: 'Loading..',
-                                ),
-                              );
-                            default:
-                              if (playerformmap.hasError)
-                                return Text('Error: ${playerformmap.error}');
-                              else
-                                return Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Container(
-                                      decoration: new BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.white54),
-                                          borderRadius: new BorderRadius.all(
-                                              new Radius.circular(10.0)),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Color(0xff005874),
-                                              Color(0xff1C819E),
+                      back: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Container(
+                            decoration: new BoxDecoration(
+                                border: Border.all(color: Colors.white54),
+                                borderRadius: new BorderRadius.all(
+                                    new Radius.circular(10.0)),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(0xff005874),
+                                    Color(0xff1C819E),
 
-                                              // Colors.white38,
-                                            ],
-                                          )),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              Text('Batters',
-                                                  style: globals.Louisgeorge),
-                                              Text('Bowlers',
-                                                  style: globals.Louisgeorge),
-                                            ],
-                                          ),
-                                          FittedBox(
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Row(
-                                                children: [
-                                                  //batters
-                                                  Column(
-                                                    children: playerformmap
-                                                        .data[i]['Match' +
-                                                            (i + 1).toString()]
-                                                        .map((e) =>
-                                                            !e
+                                    // Colors.white38,
+                                  ],
+                                )),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Text('Batters', style: globals.Louisgeorge),
+                                    Text('Bowlers', style: globals.Louisgeorge),
+                                  ],
+                                ),
+                                FittedBox(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        //batters
+                                        Column(
+                                          children: e['listofallrecentplayers']
+                                                      [i]
+                                                  ['Match' + (i + 1).toString()]
+                                              .map<Widget>((recentplayer) =>
+                                                  !recentplayer
+                                                          .toString()
+                                                          .contains('/')
+                                                      ? TextButton(
+                                                          style: TextButton.styleFrom(
+                                                              backgroundColor: (filterplayer
+                                                                          .isNotEmpty &&
+                                                                      (recentplayer.toString().split(RegExp(r'[0-9]')).first.trim() ==
+                                                                              filterplayer ||
+                                                                          recentplayer.toString().split('*').first.trim() ==
+                                                                              filterplayer))
+                                                                  ? Colors.green
+                                                                  : Colors
+                                                                      .transparent,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .zero,
+                                                              minimumSize:
+                                                                  Size(50, 30),
+                                                              tapTargetSize:
+                                                                  MaterialTapTargetSize
+                                                                      .shrinkWrap,
+                                                              alignment: Alignment
+                                                                  .centerLeft),
+                                                          onPressed: () {
+                                                            print(
+                                                                'sug ${recentplayer.toString().split('*').first.trim().length} ${filterplayer.length}');
+
+                                                            _onClick(
+                                                                recentplayer
                                                                     .toString()
-                                                                    .contains(
-                                                                        '/')
-                                                                ? TextButton(
-                                                                    style: TextButton.styleFrom(
-                                                                        backgroundColor: (filterplayer.isNotEmpty && (e.toString().split(RegExp(r'[0-9]')).first == filterplayer || e.toString().split('*').first == filterplayer))
-                                                                            ? Colors
-                                                                                .green
-                                                                            : Colors
-                                                                                .transparent,
-                                                                        padding:
-                                                                            EdgeInsets
-                                                                                .zero,
-                                                                        minimumSize: Size(
-                                                                            50,
-                                                                            30),
-                                                                        tapTargetSize:
-                                                                            MaterialTapTargetSize
-                                                                                .shrinkWrap,
-                                                                        alignment:
-                                                                            Alignment.centerLeft),
-                                                                    onPressed:
-                                                                        () {
-                                                                      _onClick(e
-                                                                          .toString());
-                                                                    },
-                                                                    child: Text(
-                                                                      e.toString(),
-                                                                      style: globals
-                                                                          .Louisgeorge,
-                                                                    ),
-                                                                  )
-                                                                : Container())
-                                                        .toList(),
-                                                  ),
-                                                  VerticalDivider(
-                                                    thickness: 3,
-                                                    color: Colors.white,
-                                                  ),
-                                                  Column(
-                                                    children:
-                                                        playerformmap
-                                                            .data[i]['Match' +
-                                                                (i + 1)
-                                                                    .toString()]
-                                                            .map((e) => e
-                                                                    .toString()
-                                                                    .contains(
-                                                                        '/')
-                                                                ? TextButton(
-                                                                    style: TextButton.styleFrom(
-                                                                        backgroundColor: (filterplayer.isNotEmpty && (e.toString().split(RegExp(r'[0-9]')).first == filterplayer || e.toString().split('*').first == filterplayer))
-                                                                            ? Colors
-                                                                                .green
-                                                                            : Colors
-                                                                                .transparent,
-                                                                        padding:
-                                                                            EdgeInsets
-                                                                                .zero,
-                                                                        minimumSize: Size(
-                                                                            50,
-                                                                            30),
-                                                                        tapTargetSize:
-                                                                            MaterialTapTargetSize
-                                                                                .shrinkWrap,
-                                                                        alignment:
-                                                                            Alignment.centerLeft),
-                                                                    onPressed:
-                                                                        () {
-                                                                      _onClick(e
-                                                                          .toString());
-                                                                    },
-                                                                    child: Text(
-                                                                        e.toString().split(RegExp(r'[0-9]')).first +
-                                                                            ' - ' +
-                                                                            e.toString().replaceAll(e.toString().split(RegExp(r'[0-9]')).first,
-                                                                                ''),
-                                                                        style: globals.Louisgeorge),
-                                                                  )
-                                                                : Container())
-                                                            .toList(),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                );
-                          }
-                        },
+                                                                    .trim());
+                                                          },
+                                                          child: Text(
+                                                            recentplayer
+                                                                .toString(),
+                                                            style: globals
+                                                                .Louisgeorge,
+                                                          ),
+                                                        )
+                                                      : Container())
+                                              .toList(),
+                                        ),
+                                        VerticalDivider(
+                                          thickness: 3,
+                                          color: Colors.white,
+                                        ),
+                                        Column(
+                                          children: e['listofallrecentplayers']
+                                                      [i]
+                                                  ['Match' + (i + 1).toString()]
+                                              .map<Widget>(
+                                                  (recentplayer) =>
+                                                      recentplayer
+                                                              .toString()
+                                                              .contains('/')
+                                                          ? TextButton(
+                                                              style: TextButton.styleFrom(
+                                                                  backgroundColor: (filterplayer
+                                                                              .isNotEmpty &&
+                                                                          recentplayer.toString().split(RegExp(r'[0-9]')).first.trim() ==
+                                                                              filterplayer)
+                                                                      ? Colors
+                                                                          .green
+                                                                      : Colors
+                                                                          .transparent,
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  minimumSize:
+                                                                      Size(50,
+                                                                          30),
+                                                                  tapTargetSize:
+                                                                      MaterialTapTargetSize
+                                                                          .shrinkWrap,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .centerLeft),
+                                                              onPressed: () {
+                                                                _onClick(
+                                                                    recentplayer
+                                                                        .toString()
+                                                                        .trim());
+                                                              },
+                                                              child: Text(
+                                                                  recentplayer
+                                                                          .toString()
+                                                                          .split(RegExp(
+                                                                              r'[0-9]'))
+                                                                          .first +
+                                                                      ' - ' +
+                                                                      recentplayer.toString().replaceAll(
+                                                                          recentplayer
+                                                                              .toString()
+                                                                              .split(RegExp(
+                                                                                  r'[0-9]'))
+                                                                              .first,
+                                                                          ''),
+                                                                  style: globals
+                                                                      .Louisgeorge),
+                                                            )
+                                                          : Container())
+                                              .toList(),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
                       )),
                 ),
               ),
             ),
-          ),
+          )
       ],
     );
   }
