@@ -27,7 +27,6 @@ class gettingplayers {
 
       Map<String, List<dynamic>> teamrecentplayers = {};
       List<String> team1 = [];
-      List<String> team2 = [];
 
       for (var i in fuic) {
         String teamandinnings = i.children[0].text.split('•').first.trim();
@@ -36,15 +35,13 @@ class gettingplayers {
         // print('nuvvu ${teamandinnings.split('•').first}');
 
         for (var batter in players) {
-          if (teamandinnings == teamname) {
+          if (teamandinnings == teamname || teamandinnings.contains(teamname)) {
             print('nuvvu $teamname $teamandinnings');
 
             team1.add(batter.children[0].text);
-            team2.add(batter.children[1].text);
           } else {
             print('nuvvu $teamname $teamandinnings');
 
-            team2.add(batter.children[0].text);
             team1.add(batter.children[1].text);
           }
         }

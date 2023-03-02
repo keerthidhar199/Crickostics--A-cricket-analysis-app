@@ -64,9 +64,20 @@ class _expansionTileState extends State<expansionTile> {
                 child: SlideAnimation(
                   child: FlipCard(
                       fill: Fill
-                          .fillBack, // Fill the back side of the card to make in the same size as the front.
+                          .none, // Fill the back side of the card to make in the same size as the front.
                       direction: FlipDirection.HORIZONTAL, // default
                       side: CardSide.FRONT,
+                      //front of the card MAP format
+                      // [{Name: [England],
+                      //winsloss: [W,W,L,L,L],
+                      //matches_details:
+                      //[England vs Bangladesh,  March 01, 2023, 1st ODI,,
+                      //England vs South Africa, February 01, 2023, 3rd ODI,,
+                      //England vs South Africa, January 29, 2023, 2nd ODI,,
+                      //England vs South Africa, January 27, 2023, 1st ODI,,
+                      //England vs Australia, November 22, 2022, 3rd ODI,],
+                      //scoreboard_for_matches_links: [/series/england-in-bangladesh-2022-23-1351394/bangladesh-vs-england-1st-odi-1351397/full-scorecard, /series/england-in-south-africa-2022-23-1339564/south-africa-vs-england-3rd-odi-1339597/full-scorecard, /series/england-in-south-africa-2022-23-1339564/south-africa-vs-england-2nd-odi-1339596/full-scorecard, /series/england-in-south-africa-2022-23-1339564/south-africa-vs-england-1st-odi-1339595/full-scorecard, /series/england-in-australia-2022-23-1317467/australia-vs-england-3rd-odi-1317491/full-scorecard]
+                      //listofallrecentplayers: [{Match1: [Jofra Archer2/37 (10), Mark Wood2/34 (8), Dawid Malan *114 (145), Will Jacks 26 (31)]}, {Match2:
                       front: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Container(
@@ -187,6 +198,13 @@ class _expansionTileState extends State<expansionTile> {
                           ),
                         ),
                       ),
+
+                      // back of the card MAP format for the recent five matches
+                      //[{Match1: [Jofra Archer2/37 (10), Mark Wood2/34 (8), Dawid Malan *114 (145), Will Jacks 26 (31)]},
+                      //{Match2: [Jos Buttler 131 (127), Dawid Malan 118 (114), Jofra Archer6/40 (9.1), Adil Rashid3/68 (10)]},
+                      //{Match3: [Jos Buttler *94 (81), Harry Brook 80 (75), Olly Stone2/48 (10), Adil Rashid2/72 (10)]},
+                      // {Match4: [Sam Curran3/35 (9), Olly Stone1/37 (7), Jason Roy 113 (91), Dawid Malan 59 (55)]},
+                      // {Match5: [Olly Stone4/85 (10), Liam Dawson1/75 (10), Jason Roy 33 (48), James Vince 22 (45)]}]
                       back: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Container(
@@ -216,63 +234,71 @@ class _expansionTileState extends State<expansionTile> {
                                   ],
                                 ),
                                 FittedBox(
+                                  fit: BoxFit.fitWidth,
                                   child: Container(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
                                         //batters
+                                        //if the element in the array dont have a / mark they are batters
                                         Column(
                                           children: e['listofallrecentplayers']
                                                       [i]
                                                   ['Match' + (i + 1).toString()]
-                                              .map<Widget>((recentplayer) =>
-                                                  !recentplayer
-                                                          .toString()
-                                                          .contains('/')
-                                                      ? TextButton(
-                                                          style: TextButton.styleFrom(
-                                                              backgroundColor: (filterplayer
-                                                                          .isNotEmpty &&
-                                                                      (recentplayer.toString().split(RegExp(r'[0-9]')).first.trim() ==
-                                                                              filterplayer ||
-                                                                          recentplayer.toString().split('*').first.trim() ==
-                                                                              filterplayer))
-                                                                  ? Colors.green
-                                                                  : Colors
-                                                                      .transparent,
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .zero,
-                                                              minimumSize:
-                                                                  Size(50, 30),
-                                                              tapTargetSize:
-                                                                  MaterialTapTargetSize
-                                                                      .shrinkWrap,
-                                                              alignment: Alignment
-                                                                  .centerLeft),
-                                                          onPressed: () {
-                                                            print(
-                                                                'sug ${recentplayer.toString().split('*').first.trim().length} ${filterplayer.length}');
+                                              .map<Widget>(
+                                                  (recentplayer) =>
+                                                      !recentplayer
+                                                              .toString()
+                                                              .contains('/')
+                                                          ? TextButton(
+                                                              style: TextButton
+                                                                  .styleFrom(
+                                                                      backgroundColor: (filterplayer.isNotEmpty &&
+                                                                              (recentplayer.toString().split(RegExp(r'[0-9]')).first.trim() == filterplayer ||
+                                                                                  recentplayer.toString().split('*').first.trim() ==
+                                                                                      filterplayer)) //check if the clicked name is common in batters and bowlers
+                                                                          ? Colors
+                                                                              .green // and highlight the name that is clicked
+                                                                          : Colors
+                                                                              .transparent,
+                                                                      padding:
+                                                                          EdgeInsets
+                                                                              .zero,
+                                                                      minimumSize:
+                                                                          Size(
+                                                                              50,
+                                                                              30),
+                                                                      tapTargetSize:
+                                                                          MaterialTapTargetSize
+                                                                              .shrinkWrap,
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerLeft),
+                                                              onPressed: () {
+                                                                print(
+                                                                    'sug ${recentplayer.toString().split('*').first.trim().length} ${filterplayer.length}');
 
-                                                            _onClick(
+                                                                _onClick(
+                                                                    recentplayer
+                                                                        .toString()
+                                                                        .trim());
+                                                              },
+                                                              child: Text(
                                                                 recentplayer
-                                                                    .toString()
-                                                                    .trim());
-                                                          },
-                                                          child: Text(
-                                                            recentplayer
-                                                                .toString(),
-                                                            style: globals
-                                                                .Louisgeorge,
-                                                          ),
-                                                        )
-                                                      : Container())
+                                                                    .toString(),
+                                                                style: globals
+                                                                    .Louisgeorge,
+                                                              ),
+                                                            )
+                                                          : Container())
                                               .toList(),
                                         ),
                                         VerticalDivider(
                                           thickness: 3,
                                           color: Colors.white,
                                         ),
+                                        //bowlers
+                                        //if the element in the array  have a / mark they are bowlers
                                         Column(
                                           children: e['listofallrecentplayers']
                                                       [i]
@@ -283,27 +309,28 @@ class _expansionTileState extends State<expansionTile> {
                                                               .toString()
                                                               .contains('/')
                                                           ? TextButton(
-                                                              style: TextButton.styleFrom(
-                                                                  backgroundColor: (filterplayer
-                                                                              .isNotEmpty &&
-                                                                          recentplayer.toString().split(RegExp(r'[0-9]')).first.trim() ==
-                                                                              filterplayer)
-                                                                      ? Colors
-                                                                          .green
-                                                                      : Colors
-                                                                          .transparent,
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  minimumSize:
-                                                                      Size(50,
-                                                                          30),
-                                                                  tapTargetSize:
-                                                                      MaterialTapTargetSize
-                                                                          .shrinkWrap,
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft),
+                                                              style: TextButton
+                                                                  .styleFrom(
+                                                                      backgroundColor: (filterplayer.isNotEmpty &&
+                                                                              recentplayer.toString().split(RegExp(r'[0-9]')).first.trim() ==
+                                                                                  filterplayer) //check if the clicked name is common in batters and bowlers
+                                                                          ? Colors
+                                                                              .green // and highlight the name that is clicked
+                                                                          : Colors
+                                                                              .transparent,
+                                                                      padding:
+                                                                          EdgeInsets
+                                                                              .zero,
+                                                                      minimumSize:
+                                                                          Size(
+                                                                              50,
+                                                                              30),
+                                                                      tapTargetSize:
+                                                                          MaterialTapTargetSize
+                                                                              .shrinkWrap,
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .centerLeft),
                                                               onPressed: () {
                                                                 _onClick(
                                                                     recentplayer
