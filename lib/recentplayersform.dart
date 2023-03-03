@@ -8,7 +8,7 @@ import 'globals.dart' as globals;
 
 class gettingplayers {
   Future<List<Map<String, List<dynamic>>>> getplayersinForm(
-      allmatchlinks, teamname) async {
+      allmatchlinks, teamname, longteamname) async {
     List<Map<String, List<dynamic>>> listofallplayersform = [];
     for (var matchlink in allmatchlinks) {
       String editmathclink =
@@ -35,7 +35,7 @@ class gettingplayers {
         // print('nuvvu ${teamandinnings.split('•').first}');
 
         for (var batter in players) {
-          if (teamandinnings == teamname || teamandinnings.contains(teamname)) {
+          if (teamandinnings == teamname || teamandinnings == longteamname) {
             print('nuvvu $teamname $teamandinnings');
 
             team1.add(batter.children[0].text);

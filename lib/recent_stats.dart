@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:datascrap/recent_stats_expansionblock.dart';
 import 'package:datascrap/recentplayersform.dart';
 import 'package:datascrap/skeleton.dart';
@@ -129,7 +130,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
         List<String> matches_played_details2 = [];
         List<String> matches_played_links2 = [];
         List<String> match_winner2 = [];
-
+        print('nuiv ${globals.team1_name} ${globals.team2_name}');
         team1['Name'] = [team1_recentname];
         team1['winsloss'] = [
           team1_winsloss
@@ -164,8 +165,10 @@ class _recentmatchdataState extends State<recentmatchdata> {
         }
         team1['matches_details'] = matches_played_details1;
         team1['scoreboard_for_matches_links'] = matches_played_links1;
+
         team1['listofallrecentplayers'] = await gettingplayers()
-            .getplayersinForm(matches_played_links1, team1_recentname);
+            .getplayersinForm(
+                matches_played_links1, team1_recentname, globals.team1_name);
 
         team1['match_winner'] = match_winner1;
 
@@ -189,7 +192,8 @@ class _recentmatchdataState extends State<recentmatchdata> {
         team2['scoreboard_for_matches_links'] = matches_played_links2;
 
         team2['listofallrecentplayers'] = await gettingplayers()
-            .getplayersinForm(matches_played_links2, team2_recentname);
+            .getplayersinForm(
+                matches_played_links2, team2_recentname, globals.team2_name);
 
         team2['match_winner'] = match_winner2;
       }

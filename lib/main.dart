@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:datascrap/notificationview.dart';
 import 'package:datascrap/recent_stats_testing.dart';
 import 'package:datascrap/skeleton.dart';
 import 'package:datascrap/typeofstats.dart';
@@ -229,8 +230,9 @@ class _HomepageState extends State<Homepage> {
                                           Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) =>
-                                                    recentmatchtestdata(),
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        NotificationsBar(),
                                               ));
                                         },
                                         child: Container(
