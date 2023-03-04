@@ -4,13 +4,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class typeofstats extends StatefulWidget {
-  const typeofstats({Key key}) : super(key: key);
+  final disablerecentstats;
+  const typeofstats({Key key, this.disablerecentstats}) : super(key: key);
 
   @override
-  State<typeofstats> createState() => _typeofstatsState();
+  State<typeofstats> createState() =>
+      _typeofstatsState(this.disablerecentstats);
 }
 
 class _typeofstatsState extends State<typeofstats> {
+  _typeofstatsState(disablerecentstats);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,29 +75,32 @@ class _typeofstatsState extends State<typeofstats> {
                         ),
                       ),
                     ),
-                    OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: Size(100, 100),
-                        side: BorderSide(width: 1.0, color: Colors.white),
-                        shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(20.0)),
-                      ),
-                      child: const Text(
-                        'CRICKOLIZE',
-                        style: TextStyle(
-                          fontFamily: 'RestaurantMenu',
-                          fontSize: 20.0,
-                          color: Colors.white,
-                          decorationColor: Colors.red,
+                    IgnorePointer(
+                      ignoring: widget.disablerecentstats,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: Size(100, 100),
+                          side: BorderSide(width: 1.0, color: Colors.white),
+                          shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(20.0)),
                         ),
+                        child: const Text(
+                          'CRICKOLIZE',
+                          style: TextStyle(
+                            fontFamily: 'RestaurantMenu',
+                            fontSize: 20.0,
+                            color: Colors.white,
+                            decorationColor: Colors.red,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Analysis(),
+                              ));
+                        },
                       ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Analysis(),
-                            ));
-                      },
                     ),
                   ],
                 )),
@@ -156,11 +163,26 @@ class _typeofstatsState extends State<typeofstats> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => recentmatchdata(),
-                            ));
+                        if (widget.disablerecentstats == true) {
+                          setState(() {});
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.grey,
+                            duration: Duration(seconds: 2),
+                            content: Text(
+                              'Stats by Recent Matches can not be shown once the match has started !!',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                  fontFamily: 'Cocosharp'),
+                            ),
+                          ));
+                        } else {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => recentmatchdata(),
+                              ));
+                        }
                       },
                     ),
                     // const SizedBox(width: 8),

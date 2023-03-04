@@ -499,40 +499,60 @@ class _datascrapState extends State<datascrap> {
                                       shadowColor: Colors.white,
                                       child: new InkWell(
                                         onTap: () {
-                                          setState(() {
-                                            globals.team1_name = snapshot
-                                                .data[i]['Team1']
-                                                .trim();
-                                            globals.team2_name = snapshot
-                                                .data[i]['Team2']
-                                                .trim();
-                                            globals.team1__short_name = snapshot
-                                                .data[i]['Team1_short']
-                                                .trim();
-                                            globals.team2__short_name = snapshot
-                                                .data[i]['Team2_short']
-                                                .trim();
-                                            globals.team1_stats_link = snapshot
-                                                .data[i]['team1_stats_link'];
-                                            globals.team2_stats_link = snapshot
-                                                .data[i]['team2_stats_link'];
-                                            globals.ground = snapshot.data[i]
-                                                    ['Ground']
-                                                .toString()
-                                                .trim();
-                                            globals.team1logo =
-                                                snapshot.data[i]['team1logo'];
-                                            globals.team2logo =
-                                                snapshot.data[i]['team2logo'];
-                                            globals.ontap =
-                                                snapshot.data[i]['linkaddress'];
-                                          });
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    typeofstats(),
-                                              ));
+                                          if (snapshot.data[i]['MatchStarts']
+                                                  .contains('yet') ||
+                                              snapshot.data[i]['MatchStarts']
+                                                  .contains('chose')) {
+                                            setState(() {
+                                              globals.team1_name = snapshot
+                                                  .data[i]['Team1']
+                                                  .trim();
+                                              globals.team2_name = snapshot
+                                                  .data[i]['Team2']
+                                                  .trim();
+                                              globals.team1__short_name =
+                                                  snapshot.data[i]
+                                                          ['Team1_short']
+                                                      .trim();
+                                              globals.team2__short_name =
+                                                  snapshot.data[i]
+                                                          ['Team2_short']
+                                                      .trim();
+                                              globals.team1_stats_link =
+                                                  snapshot.data[i]
+                                                      ['team1_stats_link'];
+                                              globals.team2_stats_link =
+                                                  snapshot.data[i]
+                                                      ['team2_stats_link'];
+                                              globals.ground = snapshot.data[i]
+                                                      ['Ground']
+                                                  .toString()
+                                                  .trim();
+                                              globals.team1logo =
+                                                  snapshot.data[i]['team1logo'];
+                                              globals.team2logo =
+                                                  snapshot.data[i]['team2logo'];
+                                              globals.ontap = snapshot.data[i]
+                                                  ['linkaddress'];
+                                            });
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      typeofstats(
+                                                    disablerecentstats: false,
+                                                  ),
+                                                ));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      typeofstats(
+                                                    disablerecentstats: true,
+                                                  ),
+                                                ));
+                                          }
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
