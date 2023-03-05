@@ -27,6 +27,8 @@ class gettingplayers {
 
       Map<String, List<dynamic>> teamrecentplayers = {};
       List<String> team1 = [];
+      List<String> batters = [];
+      List<String> bowlers = [];
 
       for (var i in fuic) {
         String teamandinnings = i.children[0].text.split('•').first.trim();
@@ -45,10 +47,30 @@ class gettingplayers {
             team1.add(batter.children[1].text);
           }
         }
-        teamrecentplayers['Match' +
-            (allmatchlinks.indexOf(matchlink) + 1).toString()] = team1;
+        for (var i in team1) {
+          if (i.contains('/')) {
+            var bowler_name = i.split(RegExp(r'[0-9]')).first;
+            bowlers.add(bowler_name + i.replaceAll(bowler_name, '- ').trim());
+          } else {
+            if (i.contains('*')) {
+              var batter_name = i.split('*').first.trim();
+              var batter_score = i.replaceAll(batter_name, '-').trim();
+              batters.add(batter_name + batter_score);
+            } else {
+              var batter_name = i.split(RegExp(r'[0-9]')).first.trim();
+              var batter_score = i.replaceAll(batter_name, '-').trim();
+              batters.add(batter_name + batter_score);
+            }
+          }
+        }
+        teamrecentplayers[
+                'Batters' + (allmatchlinks.indexOf(matchlink) + 1).toString()] =
+            batters.toSet().toList();
+        teamrecentplayers[
+                'Bowlers' + (allmatchlinks.indexOf(matchlink) + 1).toString()] =
+            bowlers.toSet().toList();
 
-        print('shuffle $team1');
+        print('shuffle $teamrecentplayers');
         // teamrecentplayers[globals.team2_name] = team2;
       }
 

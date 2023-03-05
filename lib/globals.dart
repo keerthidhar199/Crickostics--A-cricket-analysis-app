@@ -32,3 +32,16 @@ TextStyle smallnobleblack =
 
 TextStyle smallnoble =
     TextStyle(fontFamily: 'Cocosharp', fontSize: 12, color: Colors.white);
+BoxDecoration recentStatePage_Decoration = new BoxDecoration(
+    border: Border.all(color: Colors.white54),
+    borderRadius: new BorderRadius.all(new Radius.circular(10.0)),
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        Color(0xff005874),
+        Color(0xff1C819E),
+
+        // Colors.white38,
+      ],
+    ));

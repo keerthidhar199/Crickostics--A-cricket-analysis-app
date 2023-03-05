@@ -36,34 +36,30 @@ class _expansionTileState extends State<expansionTile> {
   String filterplayer = '';
   _onClick(String string) {
     setState(() {
-      if (!string.contains('*')) {
-        filterplayer = string.toString().split(RegExp(r'[0-9]')).first.trim();
-      } else {
-        filterplayer = string.toString().split('*').first.trim();
-      }
+      filterplayer = string.toString().split('-').first.trim();
     });
     // print('$filterplayer');
   }
 
-  bool isSwitched = false;
+  bool isBack = false;
 
   void toggleSwitch(bool value) {
-    if (isSwitched == false) {
+    if (isBack == false) {
       setState(() {
-        isSwitched = true;
+        isBack = true; //shows back of the card
         for (int i = 0; i < 5; i++) {
           _controller[i].toggleCard();
         }
       });
-      print('Switch Button is ON');
+      print('Card showing Front');
     } else {
       setState(() {
-        isSwitched = false;
+        isBack = false; //shows front of the card
         for (int i = 0; i < 5; i++) {
           _controller[i].toggleCard();
         }
       });
-      print('Switch Button is OFF');
+      print('Card showing Back');
     }
   }
 
@@ -71,10 +67,33 @@ class _expansionTileState extends State<expansionTile> {
   Widget build(BuildContext context) {
     Map<String, List<dynamic>> e = widget.e;
     List<Map<String, List<dynamic>>> snapshot = widget.snapshot;
+    Map<String, int> countofplayer = {};
     for (int i = 0; i < e['matches_details'].length; i++) {
       _controller[i] = FlipCardController();
+      List<String> batters =
+          e['listofallrecentplayers'][i]['Batters' + (i + 1).toString()];
+      List<String> bowlers =
+          e['listofallrecentplayers'][i]['Bowlers' + (i + 1).toString()];
+      batters.forEach((element) {
+        var batter_name = element.split('-').first;
+        if (!countofplayer.containsKey(batter_name)) {
+          countofplayer[batter_name] = 1;
+        } else {
+          countofplayer[batter_name] += 1;
+        }
+      });
+      bowlers.forEach((element) {
+        var bowler_name = element.split('-').first;
+        if (!countofplayer.containsKey(bowler_name)) {
+          countofplayer[bowler_name] = 1;
+        } else {
+          countofplayer[bowler_name] += 1;
+        }
+      });
+      countofplayer = Map.fromEntries(countofplayer.entries.toList()
+        ..sort((e2, e1) => e1.value.compareTo(e2.value)));
     }
-
+    countofplayer.removeWhere((key, value) => value == 1);
     return ExpansionTile(
       initiallyExpanded: true,
       trailing: Icon(
@@ -89,6 +108,37 @@ class _expansionTileState extends State<expansionTile> {
           )),
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(
+          width: double.infinity,
+          child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 5,
+              runSpacing: 5,
+              children: countofplayer.entries
+                  .map((player) => GestureDetector(
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: globals.recentStatePage_Decoration,
+                          child:
+                              Text(player.key + ' ' + player.value.toString()),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            if (isBack == false) {
+                              isBack = true;
+                              for (int i = 0; i < 5; i++) {
+                                _controller[i].toggleCard();
+                              }
+                              filterplayer = player.key.trim();
+                            } else {
+                              filterplayer = player.key.trim();
+                            }
+                          });
+                          print(isBack);
+                        },
+                      ))
+                  .toList()),
+        ),
         CupertinoSwitch(
           // overrides the default green color of the track
           activeColor: Colors.yellow.shade800,
@@ -96,7 +146,7 @@ class _expansionTileState extends State<expansionTile> {
           // when the switch is off
           // boolean variable value
           onChanged: toggleSwitch,
-          value: isSwitched,
+          value: isBack,
         ),
         for (var i = 0; i < e['matches_details'].length; i++)
           AnimationLimiter(
@@ -131,20 +181,7 @@ class _expansionTileState extends State<expansionTile> {
                             front: Padding(
                               padding: const EdgeInsets.all(2.0),
                               child: Container(
-                                decoration: new BoxDecoration(
-                                    border: Border.all(color: Colors.white54),
-                                    borderRadius: new BorderRadius.all(
-                                        new Radius.circular(10.0)),
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        Color(0xff005874),
-                                        Color(0xff1C819E),
-
-                                        // Colors.white38,
-                                      ],
-                                    )),
+                                decoration: globals.recentStatePage_Decoration,
                                 child: Column(
                                   children: [
                                     Row(
@@ -271,20 +308,8 @@ class _expansionTileState extends State<expansionTile> {
                             back: Padding(
                               padding: const EdgeInsets.all(2.0),
                               child: Container(
-                                  decoration: new BoxDecoration(
-                                      border: Border.all(color: Colors.white54),
-                                      borderRadius: new BorderRadius.all(
-                                          new Radius.circular(10.0)),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Color(0xff005874),
-                                          Color(0xff1C819E),
-
-                                          // Colors.white38,
-                                        ],
-                                      )),
+                                  decoration:
+                                      globals.recentStatePage_Decoration,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -307,43 +332,40 @@ class _expansionTileState extends State<expansionTile> {
                                               //batters
                                               //if the element in the array dont have a / mark they are batters
                                               Column(
-                                                children: e['listofallrecentplayers']
-                                                            [i][
-                                                        'Match' +
-                                                            (i + 1).toString()]
-                                                    .map<Widget>(
-                                                        (recentplayer) =>
-                                                            !recentplayer
-                                                                    .toString()
-                                                                    .contains(
-                                                                        '/')
-                                                                ? TextButton(
-                                                                    style: TextButton.styleFrom(
-                                                                        backgroundColor: (filterplayer.isNotEmpty && (recentplayer.toString().split(RegExp(r'[0-9]')).first.trim() == filterplayer || recentplayer.toString().split('*').first.trim() == filterplayer)) //check if the clicked name is common in batters and bowlers
-                                                                            ? Colors.green // and highlight the name that is clicked
-                                                                            : Colors.transparent,
-                                                                        padding: EdgeInsets.zero,
-                                                                        minimumSize: Size(50, 30),
-                                                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                        alignment: Alignment.centerLeft),
-                                                                    onPressed:
-                                                                        () {
-                                                                      print(
-                                                                          'sug ${recentplayer.toString().split('*').first.trim().length} ${filterplayer.length}');
+                                                children:
+                                                    e['listofallrecentplayers']
+                                                                [i][
+                                                            'Batters' +
+                                                                (i + 1)
+                                                                    .toString()]
+                                                        .map<Widget>(
+                                                            (recentplayer) =>
+                                                                TextButton(
+                                                                  style: TextButton.styleFrom(
+                                                                      backgroundColor: (filterplayer.isNotEmpty && recentplayer.split('-').first.trim() == filterplayer) //check if the clicked name is common in batters and bowlers
+                                                                          ? Colors.green // and highlight the name that is clicked
+                                                                          : Colors.transparent,
+                                                                      padding: EdgeInsets.zero,
+                                                                      minimumSize: Size(50, 30),
+                                                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                      alignment: Alignment.centerLeft),
+                                                                  onPressed:
+                                                                      () {
+                                                                    print(
+                                                                        'sug ${recentplayer.toString().split('-').first.trim().length} ${filterplayer.length}');
 
-                                                                      _onClick(recentplayer
-                                                                          .toString()
-                                                                          .trim());
-                                                                    },
-                                                                    child: Text(
-                                                                      recentplayer
-                                                                          .toString(),
-                                                                      style: globals
-                                                                          .Louisgeorge,
-                                                                    ),
-                                                                  )
-                                                                : Container())
-                                                    .toList(),
+                                                                    _onClick(recentplayer
+                                                                        .toString()
+                                                                        .trim());
+                                                                  },
+                                                                  child: Text(
+                                                                    recentplayer
+                                                                        .toString(),
+                                                                    style: globals
+                                                                        .Louisgeorge,
+                                                                  ),
+                                                                ))
+                                                        .toList(),
                                               ),
                                               VerticalDivider(
                                                 thickness: 3,
@@ -352,40 +374,36 @@ class _expansionTileState extends State<expansionTile> {
                                               //bowlers
                                               //if the element in the array  have a / mark they are bowlers
                                               Column(
-                                                children: e['listofallrecentplayers']
-                                                            [i][
-                                                        'Match' +
-                                                            (i + 1).toString()]
-                                                    .map<Widget>(
-                                                        (recentplayer) =>
-                                                            recentplayer
-                                                                    .toString()
-                                                                    .contains(
-                                                                        '/')
-                                                                ? TextButton(
-                                                                    style: TextButton.styleFrom(
-                                                                        backgroundColor: (filterplayer.isNotEmpty && recentplayer.toString().split(RegExp(r'[0-9]')).first.trim() == filterplayer) //check if the clicked name is common in batters and bowlers
-                                                                            ? Colors.green // and highlight the name that is clicked
-                                                                            : Colors.transparent,
-                                                                        padding: EdgeInsets.zero,
-                                                                        minimumSize: Size(50, 30),
-                                                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                        alignment: Alignment.centerLeft),
-                                                                    onPressed:
-                                                                        () {
-                                                                      _onClick(recentplayer
-                                                                          .toString()
-                                                                          .trim());
-                                                                    },
-                                                                    child: Text(
-                                                                        recentplayer.toString().split(RegExp(r'[0-9]')).first +
-                                                                            ' - ' +
-                                                                            recentplayer.toString().replaceAll(recentplayer.toString().split(RegExp(r'[0-9]')).first,
-                                                                                ''),
-                                                                        style: globals.Louisgeorge),
-                                                                  )
-                                                                : Container())
-                                                    .toList(),
+                                                children:
+                                                    e['listofallrecentplayers']
+                                                                [i][
+                                                            'Bowlers' +
+                                                                (i + 1)
+                                                                    .toString()]
+                                                        .map<Widget>(
+                                                            (recentplayer) =>
+                                                                TextButton(
+                                                                  style: TextButton.styleFrom(
+                                                                      backgroundColor: (filterplayer.isNotEmpty && recentplayer.toString().split('-').first.trim() == filterplayer) //check if the clicked name is common in batters and bowlers
+                                                                          ? Colors.green // and highlight the name that is clicked
+                                                                          : Colors.transparent,
+                                                                      padding: EdgeInsets.zero,
+                                                                      minimumSize: Size(50, 30),
+                                                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                      alignment: Alignment.centerLeft),
+                                                                  onPressed:
+                                                                      () {
+                                                                    _onClick(recentplayer
+                                                                        .toString()
+                                                                        .trim());
+                                                                  },
+                                                                  child: Text(
+                                                                      recentplayer
+                                                                          .toString(),
+                                                                      style: globals
+                                                                          .Louisgeorge),
+                                                                ))
+                                                        .toList(),
                                               ),
                                             ],
                                           ),
