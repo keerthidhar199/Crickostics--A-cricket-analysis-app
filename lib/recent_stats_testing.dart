@@ -398,11 +398,11 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                               ),
                             ),
                             ExpansionTile(
-                              trailing: Icon(
-                                Icons.arrow_drop_down_circle,
-                                color: Colors.yellow.shade300,
-                                size: 25,
-                              ),
+                              // trailing: Icon(
+                              //   Icons.arrow_drop_down_circle,
+                              //   color: Colors.yellow.shade300,
+                              //   size: 25,
+                              // ),
                               title: Text("More details",
                                   style: TextStyle(
                                     fontFamily: 'Cocosharp',

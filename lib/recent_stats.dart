@@ -430,7 +430,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                             ),
                             expansionTile(
                               e: e,
-                              snapshot: snapshot.data,
+                              countofPlayers: gettingplayers().getTopPlayers(e),
                             )
                           ],
                         );

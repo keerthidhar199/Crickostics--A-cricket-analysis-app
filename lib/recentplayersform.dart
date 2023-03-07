@@ -79,106 +79,34 @@ class gettingplayers {
     print('fuicTeam $listofallplayersform');
     return listofallplayersform;
   }
+
+  Map<String, int> getTopPlayers(e) {
+    Map<String, int> countofplayer = {};
+    for (int i = 0; i < e['matches_details'].length; i++) {
+      List<String> batters =
+          e['listofallrecentplayers'][i]['Batters' + (i + 1).toString()];
+      List<String> bowlers =
+          e['listofallrecentplayers'][i]['Bowlers' + (i + 1).toString()];
+      batters.forEach((element) {
+        var batter_name = element.split('-').first;
+        if (!countofplayer.containsKey(batter_name)) {
+          countofplayer[batter_name] = 1;
+        } else {
+          countofplayer[batter_name] += 1;
+        }
+      });
+      bowlers.forEach((element) {
+        var bowler_name = element.split('-').first;
+        if (!countofplayer.containsKey(bowler_name)) {
+          countofplayer[bowler_name] = 1;
+        } else {
+          countofplayer[bowler_name] += 1;
+        }
+      });
+      countofplayer = Map.fromEntries(countofplayer.entries.toList()
+        ..sort((e2, e1) => e1.value.compareTo(e2.value)));
+    }
+    countofplayer.removeWhere((key, value) => value == 1);
+    return countofplayer;
+  }
 }
-
-// class recentplayersform extends StatelessWidget {
-//   final listofrecentplayers;
-//   final teamname;
-//   const recentplayersform({Key key, this.listofrecentplayers, this.teamname})
-//       : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     String filterplayer = '';
-//     _onClick(String string) {
-//       filterplayer = string;
-//       print('fuic $filterplayer');
-//     }
-
-//     print('fuic $filterplayer');
-
-//     Map<String, List<dynamic>> listofrecentplayers = this.listofrecentplayers;
-//     print('listofrecentplayers $listofrecentplayers');
-//     return Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceAround,
-//           children: [
-//             Text('Batters', style: globals.Louisgeorge),
-//             Text('Bowlers', style: globals.Louisgeorge),
-//           ],
-//         ),
-//         FittedBox(
-//           child: Container(
-//             padding: const EdgeInsets.all(8.0),
-//             child: Row(
-//               children: [
-//                 Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: listofrecentplayers[teamname]
-//                       .map((e) => !e.toString().contains('/')
-//                           ? TextButton(
-//                               style: TextButton.styleFrom(
-//                                   padding: EdgeInsets.zero,
-//                                   minimumSize: Size(50, 30),
-//                                   tapTargetSize:
-//                                       MaterialTapTargetSize.shrinkWrap,
-//                                   alignment: Alignment.centerLeft),
-//                               onPressed: () {
-//                                 _onClick(e.toString());
-//                               },
-//                               child: Text(
-//                                 e.toString(),
-//                                 style: globals.Louisgeorge,
-//                               ),
-//                             )
-//                           : Container())
-//                       .toList(),
-//                 ),
-//                 VerticalDivider(
-//                   thickness: 3,
-//                   color: Colors.white,
-//                 ),
-//                 Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: listofrecentplayers[teamname]
-//                       .map((e) => e.toString().contains('/')
-//                           ? TextButton(
-//                               style: TextButton.styleFrom(
-//                                   padding: EdgeInsets.zero,
-//                                   minimumSize: Size(50, 30),
-//                                   tapTargetSize:
-//                                       MaterialTapTargetSize.shrinkWrap,
-//                                   alignment: Alignment.centerLeft),
-//                               onPressed: () {
-//                                 _onClick(e.toString());
-//                               },
-//                               child: Text(
-//                                   e.toString().split(RegExp(r'[0-9]')).first +
-//                                       ' - ' +
-//                                       e.toString().replaceAll(
-//                                           e
-//                                               .toString()
-//                                               .split(RegExp(r'[0-9]'))
-//                                               .first,
-//                                           ''),
-//                                   style: globals.Louisgeorge),
-//                             )
-//                           : Container())
-//                       .toList(),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//     // Text(listofrecentplayers.keys .toString()),
-//     // Text(listofrecentplayers.values.toString()),
-//   }
-// }
-
-
-
-

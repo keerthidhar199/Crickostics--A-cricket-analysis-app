@@ -27,32 +27,37 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: AnimatedSplashScreen(
+      duration: 2300,
+      backgroundColor: Color(0xff2B2B28),
       splashIconSize: double.infinity,
-      duration: 2000,
-      splash: Container(
-        color: Color(0xff2B2B28),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Image.asset(
-              'logos/crickostics.png',
-              filterQuality: FilterQuality.high,
-            ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'CRICKOSTICS',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'RestaurantMenu',
-                      fontSize: 50),
-                ),
-              ),
-            )
-          ],
-        ),
+      splash: Image.asset(
+        'logos/intro.gif',
+        // filterQuality: FilterQuality.high,
       ),
+      // Container(
+      //   color: Color(0xff2B2B28),
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //     children: [
+      //       Image.asset(
+      //         'logos/intro.gif',
+      //         filterQuality: FilterQuality.high,
+      //       ),
+      //       Flexible(
+      //         child: Padding(
+      //           padding: const EdgeInsets.all(8.0),
+      //           child: Text(
+      //             'CRICKOSTICS',
+      //             style: TextStyle(
+      //                 color: Colors.white,
+      //                 fontFamily: 'RestaurantMenu',
+      //                 fontSize: 50),
+      //           ),
+      //         ),
+      //       )
+      //     ],
+      //   ),
+      // ),
       nextScreen: Homepage(),
       splashTransition: SplashTransition.fadeTransition,
       // backgroundColor: Colors.indigoAccent,

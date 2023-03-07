@@ -219,10 +219,10 @@ class _fantasyteamState extends State<fantasyteam> {
                                 ],
                               )),
                           child: ExpansionTile(
-                              trailing: Icon(
-                                Icons.arrow_drop_down,
-                                size: 25,
-                              ),
+                              // trailing: Icon(
+                              //   Icons.arrow_drop_down,
+                              //   size: 25,
+                              // ),
                               title: Text(
                                 vs,
                                 style: globals.noble,
