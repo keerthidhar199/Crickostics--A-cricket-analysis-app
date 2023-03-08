@@ -134,8 +134,12 @@ class _expansionTileState extends State<expansionTile> {
                               if (expandTile == true) {
                                 //if expand tille is open
                                 if (cardKeys[i].currentState.isFront == true) {
-                                  //if any of the five cards is not like the rest of the cards.
+                                  //card(s) are front faced
                                   setState(() {
+                                    tapon[topplayer] = true;
+                                    onPlayerclicked[topplayer] = Colors.green;
+                                    filterplayer.add(player.key.trim());
+                                    isBack = true;
                                     cardKeys[i]
                                         .currentState
                                         .toggleCard(); //toggle all the cards to back
