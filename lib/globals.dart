@@ -18,7 +18,7 @@ String team1logo;
 String team2logo;
 TextStyle noble = TextStyle(fontFamily: 'Cocosharp', color: Colors.white);
 TextStyle nobleblack = TextStyle(fontFamily: 'Cocosharp', color: Colors.black);
-TextStyle noble1 = TextStyle(fontFamily: 'Louisgeorge', color: Colors.white);
+TextStyle Louisgeorgewhite = TextStyle(fontFamily: 'Louisgeorge', color: Colors.white);
 TextStyle LouisgeorgeBOLD = TextStyle(
     fontFamily: 'Louisgeorge',
     color: Colors.black,

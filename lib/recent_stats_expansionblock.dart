@@ -34,6 +34,8 @@ class _expansionTileState extends State<expansionTile> {
 
   bool isBack = false;
   bool expandTile = false;
+  List<Color> onPlayerclicked = List.filled(20, Color(0xff005874));
+  List<bool> tapon = List.filled(20, false);
 
   @override
   void initState() {
@@ -41,15 +43,13 @@ class _expansionTileState extends State<expansionTile> {
   }
 
   List<String> teamnames = [globals.team1_name, globals.team2_name];
-  String filterplayer = '';
+  List<String> filterplayer = [];
   _onClick(String string) {
     setState(() {
-      this.filterplayer = string.toString().split('-').first.trim();
+      this.filterplayer.add(string.toString().split('-').first.trim());
     });
     // print('$filterplayer');
   }
-
-  List<Color> onPlayerclicked = List.filled(20, Color(0xff005874));
 
   void toggleSwitch(bool value) {
     if (isBack == false) {
@@ -102,83 +102,102 @@ class _expansionTileState extends State<expansionTile> {
               alignment: WrapAlignment.center,
               spacing: 5,
               runSpacing: 5,
-              children: countofplayer.entries
-                  .map((player) => GestureDetector(
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white54),
-                              borderRadius: new BorderRadius.all(
-                                  new Radius.circular(10.0)),
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  onPlayerclicked[countofplayer.keys
-                                      .toList()
-                                      .indexOf(player
-                                          .key)], //change color when clicked on that player
-                                  Color(0xff1C819E),
+              children: [
+                ...countofplayer.entries
+                    .map((player) => GestureDetector(
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.white54),
+                                borderRadius: new BorderRadius.all(
+                                    new Radius.circular(10.0)),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    onPlayerclicked[countofplayer.keys
+                                        .toList()
+                                        .indexOf(player
+                                            .key)], //change color when clicked on that player
+                                    Color(0xff1C819E),
 
-                                  // Colors.white38,
-                                ],
-                              )),
-                          child: Text(player.key, style: globals.Louisgeorge),
-                        ),
-                        onTap: () {
-                          //open the expansion tile to show more details
-                          for (int i = 0; i < 5; i++) {
-                            if (expandTile == true) {
-                              //if expand tille is open
-                              if (cardKeys[i].currentState.isFront == true) {
-                                //if any of the five cards is not like the rest of the cards.
-                                setState(() {
-                                  cardKeys[i]
-                                      .currentState
-                                      .toggleCard(); //toggle all the cards to back
-                                }); //and turn the switch as well and show the player details
+                                    // Colors.white38,
+                                  ],
+                                )),
+                            child: Text(player.key, style: globals.Louisgeorge),
+                          ),
+                          onTap: () {
+                            int topplayer =
+                                countofplayer.keys.toList().indexOf(player.key);
+                            //open the expansion tile to show more details
+                            for (int i = 0; i < 5; i++) {
+                              if (expandTile == true) {
+                                //if expand tille is open
+                                if (cardKeys[i].currentState.isFront == true) {
+                                  //if any of the five cards is not like the rest of the cards.
+                                  setState(() {
+                                    cardKeys[i]
+                                        .currentState
+                                        .toggleCard(); //toggle all the cards to back
+                                  }); //and turn the switch as well and show the player details
+
+                                } else {
+                                  //if tile is open and the player is clicked again close the expansion tile
+                                  if (tapon[topplayer] == true) {
+                                    setState(() {
+                                      tapon[topplayer] = false;
+                                      filterplayer.removeWhere((element) =>
+                                          element == player.key.trim());
+                                      onPlayerclicked[topplayer] =
+                                          Color(0xff005874);
+                                    });
+                                    //if tile is open and all the cards are back faced, just assign the player value
+                                  } else {
+                                    setState(() {
+                                      tapon[topplayer] = true;
+                                      onPlayerclicked[topplayer] = Colors.green;
+                                      filterplayer.add(player.key.trim());
+                                    });
+                                  }
+                                }
                               } else {
-                                //if tile is open and all the cards are back faced, just assign the player value
                                 setState(() {
-                                  onPlayerclicked[countofplayer.keys
-                                      .toList()
-                                      .indexOf(player.key)] = Colors.green;
-                                  filterplayer = player.key.trim();
+                                  tapon[topplayer] =
+                                      true; //tap to expand the tile
+                                  expandTile = true;
+                                  isBack = true;
+                                  onPlayerclicked[topplayer] = Colors.green;
+
+                                  filterplayer.add(player.key.trim());
                                 });
                               }
-                            } else {
-                              setState(() {
-                                // tapon = true; //tap to expand the tile
-                                expandTile = true;
-                                isBack = true;
-                                onPlayerclicked[countofplayer.keys
-                                    .toList()
-                                    .indexOf(player.key)] = Colors.green;
-
-                                filterplayer = player.key.trim();
-                              });
                             }
-                            print(onPlayerclicked);
-                          }
-
-                          // print(isBack);
-                        },
-                      ))
-                  .toList()),
+                            setState(() {
+                              filterplayer = filterplayer.toSet().toList();
+                            });
+                            print('$filterplayer  $tapon');
+                            // print(isBack);
+                          },
+                        ))
+                    .toList(),
+                GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    child: Text('Clear', style: globals.Louisgeorgewhite),
+                    decoration: globals.recentStatePage_Decoration,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      //Clear all the players, their colours and tapons
+                      onPlayerclicked = List.filled(20, Color(0xff005874));
+                      tapon = List.filled(20, false);
+                      filterplayer.clear();
+                    });
+                  },
+                )
+              ]),
         ),
         ExpansionTile(
-          // onExpansionChanged: (value) {
-          //   print(value);
-          //   if (value) {
-          //     setState(() {
-          //       expandTile = true;
-          //     });
-          //   } else {
-          //     setState(() {
-          //       expandTile = true;
-          //     });
-          //   }
-          // },
           initiallyExpanded: true,
           tilePadding: EdgeInsets.all(0.0),
           // trailing: const SizedBox(),
@@ -469,7 +488,7 @@ class _expansionTileState extends State<expansionTile> {
                                                               (recentplayer) =>
                                                                   TextButton(
                                                                     style: TextButton.styleFrom(
-                                                                        backgroundColor: (filterplayer.isNotEmpty && recentplayer.split('-').first.trim() == filterplayer) //check if the clicked name is common in batters and bowlers
+                                                                        backgroundColor: (filterplayer.isNotEmpty && filterplayer.contains(recentplayer.split('-').first.trim())) //check if the clicked name is common in batters and bowlers
                                                                             ? Colors.green // and highlight the name that is clicked
                                                                             : Colors.transparent,
                                                                         padding: EdgeInsets.zero,
@@ -510,7 +529,7 @@ class _expansionTileState extends State<expansionTile> {
                                                               (recentplayer) =>
                                                                   TextButton(
                                                                     style: TextButton.styleFrom(
-                                                                        backgroundColor: (filterplayer.isNotEmpty && recentplayer.toString().split('-').first.trim() == filterplayer) //check if the clicked name is common in batters and bowlers
+                                                                        backgroundColor: (filterplayer.isNotEmpty && filterplayer.contains(recentplayer.split('-').first.trim())) //check if the clicked name is common in batters and bowlers
                                                                             ? Colors.green // and highlight the name that is clicked
                                                                             : Colors.transparent,
                                                                         padding: EdgeInsets.zero,

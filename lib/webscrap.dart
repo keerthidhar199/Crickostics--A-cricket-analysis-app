@@ -499,10 +499,10 @@ class _datascrapState extends State<datascrap> {
                                       shadowColor: Colors.white,
                                       child: new InkWell(
                                         onTap: () {
-                                          if (snapshot.data[i]['MatchStarts']
-                                                  .contains('yet') ||
-                                              snapshot.data[i]['MatchStarts']
-                                                  .contains('chose')) {
+                                          if (snapshot.data[i]['team1_score']
+                                                  .isEmpty &&
+                                              snapshot.data[i]['team2_score']
+                                                  .isEmpty) {
                                             setState(() {
                                               globals.team1_name = snapshot
                                                   .data[i]['Team1']
