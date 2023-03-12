@@ -262,148 +262,149 @@ class _HomepageState extends State<Homepage> {
                                           ),
                                         ),
                                       )
-                                    : Column(children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            'CHOOSE YOUR LEAGUE:',
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              fontFamily: 'Louisgeorge',
-                                              fontSize: 20.0,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        ...snapshot.data
-                                            .map(
-                                              (matchstate) => Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Text(
-                                                        matchstatetitle[snapshot
-                                                            .data
-                                                            .indexOf(
-                                                                matchstate)],
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Louisgeorge',
-                                                          fontSize: 20.0,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    AnimationLimiter(
-                                                      child: Expanded(
-                                                        child: ListView.builder(
-                                                          itemCount:
-                                                              matchstate.length,
-                                                          itemBuilder:
-                                                              (context, index) {
-                                                            return AnimationConfiguration
-                                                                .staggeredList(
-                                                              duration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          900),
-                                                              position: index,
-                                                              child:
-                                                                  ScaleAnimation(
-                                                                child:
-                                                                    FadeInAnimation(
-                                                                  curve: Curves
-                                                                      .easeInExpo,
-                                                                  child: Card(
-                                                                    shape: RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                20.0),
-                                                                        side: BorderSide(
-                                                                            color:
-                                                                                Colors.white.withOpacity(0.4))),
-                                                                    elevation:
-                                                                        10,
-                                                                    child:
-                                                                        new InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        setState(
-                                                                            () {
-                                                                          globals.league_page =
-                                                                              matchstate[index];
-                                                                          print(
-                                                                              'Globals ${globals.league_page}');
-                                                                        });
-                                                                        Navigator.push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                              builder: (context) => datascrap(),
-                                                                            ));
-                                                                      },
-                                                                      child: Container(
-                                                                          decoration: BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(20.0),
-                                                                              gradient: LinearGradient(
-                                                                                begin: Alignment.topLeft,
-                                                                                end: Alignment.bottomRight,
-                                                                                colors: [
-                                                                                  Color(0xff1A3263),
-                                                                                  Color(0xff1A3263).withOpacity(0.8),
-                                                                                ],
-                                                                              )),
-                                                                          child: Container(
-                                                                            height:
-                                                                                MediaQuery.of(context).size.height / (4 * matchstate.length),
-                                                                            padding:
-                                                                                EdgeInsets.only(left: 10.0, right: 10.0),
-                                                                            child:
-                                                                                Center(
-                                                                              child: Text(
-                                                                                matchstate[index].toString(),
-                                                                                textAlign: TextAlign.center,
-                                                                                style: TextStyle(
-                                                                                  fontFamily: 'Louisgeorge',
-                                                                                  fontSize: 20.0,
-                                                                                  color: Colors.white,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          )),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                    : Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Choose your league',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  fontFamily: 'Louisgeorge',
+                                                  fontSize: 20.0,
+                                                  color: Colors.white,
                                                 ),
                                               ),
-                                              // TextButton(
-                                              //     onPressed: () {
-                                              //       Navigator.push(
-                                              //           context,
-                                              //           MaterialPageRoute(
-                                              //             builder: (BuildContext context) =>
-                                              //                 NotificationsBar(),
-                                              //           ));
-                                              //     },
-                                              //     child: Container(
-                                              //       color: Color(0xffFFB72B),
-                                              //     )),
-                                            )
-                                            .toList(),
-                                      ]),
+                                            ),
+                                            ...snapshot.data
+                                                .map(
+                                                  (matchstate) => Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                            matchstatetitle[snapshot
+                                                                .data
+                                                                .indexOf(
+                                                                    matchstate)],
+                                                            textAlign:
+                                                                TextAlign.left,
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Louisgeorge',
+                                                              fontSize: 15.0,
+                                                              color: Colors.grey
+                                                                  .shade700,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        AnimationLimiter(
+                                                          child: Expanded(
+                                                            child: ListView
+                                                                .builder(
+                                                              itemCount:
+                                                                  matchstate
+                                                                      .length,
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      index) {
+                                                                return AnimationConfiguration
+                                                                    .staggeredList(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          900),
+                                                                  position:
+                                                                      index,
+                                                                  child:
+                                                                      ScaleAnimation(
+                                                                    child:
+                                                                        FadeInAnimation(
+                                                                      curve: Curves
+                                                                          .easeInExpo,
+                                                                      child:
+                                                                          Card(
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(20.0),
+                                                                            side: BorderSide(color: Colors.white.withOpacity(0.4))),
+                                                                        elevation:
+                                                                            10,
+                                                                        child:
+                                                                            new InkWell(
+                                                                          onTap:
+                                                                              () {
+                                                                            setState(() {
+                                                                              globals.league_page = matchstate[index];
+                                                                              print('Globals ${globals.league_page}');
+                                                                            });
+                                                                            Navigator.push(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                  builder: (context) => datascrap(),
+                                                                                ));
+                                                                          },
+                                                                          child: Container(
+                                                                              decoration: BoxDecoration(
+                                                                                  borderRadius: BorderRadius.circular(20.0),
+                                                                                  gradient: LinearGradient(
+                                                                                    begin: Alignment.topLeft,
+                                                                                    end: Alignment.bottomRight,
+                                                                                    colors: [
+                                                                                      Color(0xff1A3263),
+                                                                                      Color(0xff1A3263).withOpacity(0.8),
+                                                                                    ],
+                                                                                  )),
+                                                                              child: Container(
+                                                                                height: MediaQuery.of(context).size.height / (snapshot.data.length * matchstate.length),
+                                                                                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                                                                                child: Center(
+                                                                                  child: Text(
+                                                                                    matchstate[index].toString(),
+                                                                                    textAlign: TextAlign.center,
+                                                                                    style: TextStyle(
+                                                                                      fontFamily: 'Louisgeorge',
+                                                                                      fontSize: 20.0,
+                                                                                      color: Colors.white,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              )),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  // TextButton(
+                                                  //     onPressed: () {
+                                                  //       Navigator.push(
+                                                  //           context,
+                                                  //           MaterialPageRoute(
+                                                  //             builder: (BuildContext context) =>
+                                                  //                 NotificationsBar(),
+                                                  //           ));
+                                                  //     },
+                                                  //     child: Container(
+                                                  //       color: Color(0xffFFB72B),
+                                                  //     )),
+                                                )
+                                                .toList(),
+                                          ]),
                               ),
                             ),
                           ),

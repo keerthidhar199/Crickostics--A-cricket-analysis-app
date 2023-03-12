@@ -225,7 +225,8 @@ class _datascrapState extends State<datascrap> {
                       i['teams'][0]['team']['name'].toString();
                   iplmatch['Team2_short'] =
                       i['teams'][1]['team']['name'].toString();
-                  if (i['teams'][0]['team']['image'] == null) {
+                  if (i['teams'][0]['team']['image'] == null ||
+                      i['teams'][1]['team']['image'] == null) {
                     iplmatch['team1logo'] = null;
 
                     iplmatch['team2logo'] = null;
@@ -252,7 +253,8 @@ class _datascrapState extends State<datascrap> {
                       iplmatch['Team2_short'] =
                           i['teams'][1]['team']['name'].toString();
 
-                      if (i['teams'][0]['team']['image'] == null) {
+                      if (i['teams'][0]['team']['image'] == null ||
+                          i['teams'][1]['team']['image'] == null) {
                         iplmatch['team1logo'] = null;
 
                         iplmatch['team2logo'] = null;
