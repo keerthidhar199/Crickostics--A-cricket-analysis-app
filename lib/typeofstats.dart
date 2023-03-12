@@ -75,32 +75,29 @@ class _typeofstatsState extends State<typeofstats> {
                         ),
                       ),
                     ),
-                    IgnorePointer(
-                      ignoring: widget.disablerecentstats,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: Size(100, 100),
-                          side: BorderSide(width: 1.0, color: Colors.white),
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(20.0)),
-                        ),
-                        child: const Text(
-                          'CRICKOLIZE',
-                          style: TextStyle(
-                            fontFamily: 'RestaurantMenu',
-                            fontSize: 20.0,
-                            color: Colors.white,
-                            decorationColor: Colors.red,
-                          ),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Analysis(),
-                              ));
-                        },
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: Size(100, 100),
+                        side: BorderSide(width: 1.0, color: Colors.white),
+                        shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0)),
                       ),
+                      child: const Text(
+                        'CRICKOLIZE',
+                        style: TextStyle(
+                          fontFamily: 'RestaurantMenu',
+                          fontSize: 20.0,
+                          color: Colors.white,
+                          decorationColor: Colors.red,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Analysis(),
+                            ));
+                      },
                     ),
                   ],
                 )),
@@ -164,7 +161,6 @@ class _typeofstatsState extends State<typeofstats> {
                       ),
                       onPressed: () {
                         if (widget.disablerecentstats == true) {
-                          setState(() {});
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Colors.grey,
                             duration: Duration(seconds: 2),

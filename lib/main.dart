@@ -81,9 +81,10 @@ class _HomepageState extends State<Homepage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicator =
       new GlobalKey<RefreshIndicatorState>();
 
-  Future<List<dynamic>> getValidMatches() async {
+  Future<List<List<dynamic>>> getValidMatches() async {
     List validMatches = [];
-
+    List ongoingmatches = [];
+    List finishedmatches = [];
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
 
@@ -96,21 +97,16 @@ class _HomepageState extends State<Homepage> {
             ['appPageProps']['data']['content']['matches'];
     List takethisimglogosdata = new List.from(imglogosdata)
       ..addAll(imglogosdata1);
-    ;
-
-    var parentdata =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-            ['editionDetails']['navigation']['links'][1]['links'];
 
     for (var i in takethisimglogosdata) {
       if (!i['status'].toString().startsWith('Not covered') &&
-          (i['statusText'].toString().startsWith('Match starts') ||
-              i['statusText'].toString().startsWith('Match yet'))) {
+          (i['state'].toString() == 'PRE')) {
+        validMatches.add(i['series']['longName']);
+      } else {
         // var objectid = i['series']['objectId'];
         // var link = 'https://www.espncricinfo.com/ci/engine/series/' +
         //     objectid.toString() +
         //     '.html?view=records';
-        // validMatches.add(i['series']['longName']);
         // var teamstats = await http.Client().get(Uri.parse(link));
         // dom.Document teamstatsdoc = parser.parse(teamstats.body);
         // var rec1 = teamstatsdoc
@@ -120,15 +116,23 @@ class _HomepageState extends State<Homepage> {
         //     .getElementsByClassName('RecBulAro')
         //     .where((element) => element.text == 'Records by team');
         // if (rec1.toList().isNotEmpty && rec2.toList().isNotEmpty) {
-        //   print(i['series']['longName']);
-        //   print(i['series']['longName']);
-        //   validMatches.add(i['series']['longName']);
-        // }
-        validMatches.add(i['series']['longName']);
+        if (i['state'].toString() == 'POST') {
+          finishedmatches.add(i['series']['longName']);
+        } else if (i['state'].toString() == 'LIVE') {
+          ongoingmatches.add(i['series']['longName']);
+
+          // print(i['series']['longName']);
+          // print(i['series']['longName']);
+          // validMatches.add(i['series']['longName']);
+        }
       }
     }
-    print(validMatches);
-    return validMatches.toSet().toList();
+    print(ongoingmatches);
+    return [
+      validMatches.toSet().toList(),
+      // ongoingmatches.toSet().toList(),
+      // finishedmatches.toSet().toList(),
+    ];
   }
 
   @override
@@ -138,6 +142,8 @@ class _HomepageState extends State<Homepage> {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => _refreshIndicator.currentState.show());
   }
+
+  List<String> matchstatetitle = ['Upcoming', 'Ongoing', 'Completed'];
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +188,7 @@ class _HomepageState extends State<Homepage> {
           backgroundColor: Color(0xff2B2B28),
           key: _refreshIndicator,
           onRefresh: _refresh,
-          child: FutureBuilder<List<dynamic>>(
+          child: FutureBuilder<List<List<dynamic>>>(
               future: getValidMatches(), // async work
               builder: (BuildContext context,
                   AsyncSnapshot<List<dynamic>> snapshot) {
@@ -207,6 +213,7 @@ class _HomepageState extends State<Homepage> {
                     if (snapshot.hasError)
                       return Text('Error: ${snapshot.error}');
                     else
+                      // print(snapshot.data[1]);
                       return Container(
                         color: Color(0xff2B2B28),
                         child: AnimationLimiter(
@@ -215,148 +222,188 @@ class _HomepageState extends State<Homepage> {
                             position: 1,
                             child: ScaleAnimation(
                               child: SlideAnimation(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Choose your League :',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontFamily: 'Louisgeorge',
-                                          fontSize: 20.0,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        NotificationsBar(),
-                                              ));
-                                        },
+                                child: snapshot.data[0].isEmpty
+                                    ? Center(
                                         child: Container(
-                                          color: Color(0xffFFB72B),
-                                        )),
-                                    AnimationLimiter(
-                                      child: Expanded(
-                                        child: ListView.builder(
-                                          itemCount: snapshot.data.length,
-                                          itemBuilder: (context, index) {
-                                            return AnimationConfiguration
-                                                .staggeredList(
-                                              duration: const Duration(
-                                                  milliseconds: 900),
-                                              position: index,
-                                              child: ScaleAnimation(
-                                                child: FadeInAnimation(
-                                                  curve: Curves.easeInExpo,
-                                                  child: Card(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20.0),
-                                                            side: BorderSide(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        0.4))),
-                                                    elevation: 10,
-                                                    child: new InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          globals.league_page =
-                                                              snapshot
-                                                                  .data[index];
-                                                          print(
-                                                              'Globals ${globals.league_page}');
-                                                        });
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      datascrap(),
-                                                            ));
-                                                      },
-                                                      child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              20.0),
-                                                                  gradient:
-                                                                      LinearGradient(
-                                                                    begin: Alignment
-                                                                        .topLeft,
-                                                                    end: Alignment
-                                                                        .bottomRight,
-                                                                    colors: [
-                                                                      Color(
-                                                                          0xff1A3263),
-                                                                      Color(0xff1A3263)
-                                                                          .withOpacity(
-                                                                              0.8),
-                                                                    ],
-                                                                  )),
-                                                          child: Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width -
-                                                                30,
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 10.0,
-                                                                    right:
-                                                                        10.0),
-                                                            height: (MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height /
-                                                                    snapshot
-                                                                        .data
-                                                                        .length) -
-                                                                15,
-                                                            child: Center(
-                                                              child: Text(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .toString(),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontFamily:
-                                                                      'Louisgeorge',
-                                                                  fontSize:
-                                                                      20.0,
-                                                                  color: Colors
-                                                                      .white,
+                                          color: Color(0xff2B2B28),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text('  Oh My CrickOh! ',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Louisgeorge',
+                                                    fontSize: 20.0,
+                                                    color: Colors.white,
+                                                  )),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                      icon: Image.asset(
+                                                        'logos/ball.png',
+                                                      ),
+                                                      onPressed: null),
+                                                  Flexible(
+                                                    child: Text(
+                                                        'No Scheduled matches as of now. Matches appear before 10-12hr of the match start time.',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Louisgeorge',
+                                                          fontSize: 17.0,
+                                                          color: Colors.white,
+                                                        )),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : Column(children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'CHOOSE YOUR LEAGUE:',
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              fontFamily: 'Louisgeorge',
+                                              fontSize: 20.0,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        ...snapshot.data
+                                            .map(
+                                              (matchstate) => Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Text(
+                                                        matchstatetitle[snapshot
+                                                            .data
+                                                            .indexOf(
+                                                                matchstate)],
+                                                        textAlign:
+                                                            TextAlign.left,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Louisgeorge',
+                                                          fontSize: 20.0,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    AnimationLimiter(
+                                                      child: Expanded(
+                                                        child: ListView.builder(
+                                                          itemCount:
+                                                              matchstate.length,
+                                                          itemBuilder:
+                                                              (context, index) {
+                                                            return AnimationConfiguration
+                                                                .staggeredList(
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          900),
+                                                              position: index,
+                                                              child:
+                                                                  ScaleAnimation(
+                                                                child:
+                                                                    FadeInAnimation(
+                                                                  curve: Curves
+                                                                      .easeInExpo,
+                                                                  child: Card(
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                20.0),
+                                                                        side: BorderSide(
+                                                                            color:
+                                                                                Colors.white.withOpacity(0.4))),
+                                                                    elevation:
+                                                                        10,
+                                                                    child:
+                                                                        new InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          globals.league_page =
+                                                                              matchstate[index];
+                                                                          print(
+                                                                              'Globals ${globals.league_page}');
+                                                                        });
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder: (context) => datascrap(),
+                                                                            ));
+                                                                      },
+                                                                      child: Container(
+                                                                          decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(20.0),
+                                                                              gradient: LinearGradient(
+                                                                                begin: Alignment.topLeft,
+                                                                                end: Alignment.bottomRight,
+                                                                                colors: [
+                                                                                  Color(0xff1A3263),
+                                                                                  Color(0xff1A3263).withOpacity(0.8),
+                                                                                ],
+                                                                              )),
+                                                                          child: Container(
+                                                                            height:
+                                                                                MediaQuery.of(context).size.height / (4 * matchstate.length),
+                                                                            padding:
+                                                                                EdgeInsets.only(left: 10.0, right: 10.0),
+                                                                            child:
+                                                                                Center(
+                                                                              child: Text(
+                                                                                matchstate[index].toString(),
+                                                                                textAlign: TextAlign.center,
+                                                                                style: TextStyle(
+                                                                                  fontFamily: 'Louisgeorge',
+                                                                                  fontSize: 20.0,
+                                                                                  color: Colors.white,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          )),
+                                                                    ),
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          )),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
                                               ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                              // TextButton(
+                                              //     onPressed: () {
+                                              //       Navigator.push(
+                                              //           context,
+                                              //           MaterialPageRoute(
+                                              //             builder: (BuildContext context) =>
+                                              //                 NotificationsBar(),
+                                              //           ));
+                                              //     },
+                                              //     child: Container(
+                                              //       color: Color(0xffFFB72B),
+                                              //     )),
+                                            )
+                                            .toList(),
+                                      ]),
                               ),
                             ),
                           ),

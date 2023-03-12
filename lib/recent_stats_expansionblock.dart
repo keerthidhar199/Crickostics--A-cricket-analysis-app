@@ -124,7 +124,24 @@ class _expansionTileState extends State<expansionTile> {
                                     // Colors.white38,
                                   ],
                                 )),
-                            child: Text(player.key, style: globals.Louisgeorge),
+                            child: Wrap(
+                              children: [
+                                Text(player.key, style: globals.Louisgeorge),
+                                tapon[countofplayer.keys
+                                            .toList()
+                                            .indexOf(player.key)] ==
+                                        true
+                                    ? Icon(
+                                        Icons.cancel_rounded,
+                                        color: Colors.white,
+                                        size: 15,
+                                      )
+                                    : Icon(
+                                        null,
+                                        size: 5,
+                                      )
+                              ],
+                            ),
                           ),
                           onTap: () {
                             int topplayer =
@@ -184,21 +201,24 @@ class _expansionTileState extends State<expansionTile> {
                           },
                         ))
                     .toList(),
-                GestureDetector(
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    child: Text('Clear', style: globals.Louisgeorgewhite),
-                    decoration: globals.recentStatePage_Decoration,
-                  ),
-                  onTap: () {
-                    setState(() {
-                      //Clear all the players, their colours and tapons
-                      onPlayerclicked = List.filled(20, Color(0xff005874));
-                      tapon = List.filled(20, false);
-                      filterplayer.clear();
-                    });
-                  },
-                )
+                filterplayer.isNotEmpty
+                    ? GestureDetector(
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          child: Text('Clear', style: globals.Louisgeorgewhite),
+                          decoration: globals.recentStatePage_Decoration,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            //Clear all the players, their colours and tapons
+                            onPlayerclicked =
+                                List.filled(20, Color(0xff005874));
+                            tapon = List.filled(20, false);
+                            filterplayer.clear();
+                          });
+                        },
+                      )
+                    : Container()
               ]),
         ),
         ExpansionTile(
@@ -272,7 +292,7 @@ class _expansionTileState extends State<expansionTile> {
                 value: isBack,
               ),
             ),
-            for (var i = 0; i < e['matches_details'].length; i++)
+            for (var i = 0; i < e['listofallrecentplayers'].length; i++)
               Visibility(
                 visible: expandTile,
                 child: AnimationLimiter(

@@ -23,6 +23,38 @@ class datascrap extends StatefulWidget {
 class _datascrapState extends State<datascrap> {
   var themecolor = Colors.white;
   var darkcolor = Colors.black;
+  UTCtoLocal(String s) {
+    var a = s.split(RegExp(r'[0-9]')).first;
+    s = s.replaceAll(a, '');
+
+    DateFormat inputFormat = DateFormat('HH:mm a');
+
+    s = s.contains('pm')
+        ? s.replaceAll('pm', 'PM')
+        : s.replaceAll('am', 'AM').trim();
+
+    var dateValue = DateFormat("hh:mm a").parseUTC(s).toLocal();
+    // String amPm = dateValue.hour < 12 ? 'AM' : 'PM';
+    // dateValue = DateFormat("HH:mm a")
+    //     .parse('${dateValue.hour}:${dateValue.minute} $amPm')
+    //     .toLocal();
+    // String formattedTime =
+    //     '${dateValue.hour.toString().padLeft(2, '0')}:${dateValue.minute.toString().padLeft(2, '0')}';
+
+    // print('formattedDate = ' + formattedTime.toString());
+
+    String formattedDate = DateFormat('hh:mm a').format(dateValue);
+    String nowTime = DateFormat('hh:mm a').format(DateTime.now());
+    DateTime dateTime1 = inputFormat.parse(formattedDate);
+    DateTime dateTime2 = inputFormat.parse(nowTime);
+    print('formattedDate = ' + formattedDate.toString() + nowTime);
+
+// Calculate the difference between the two DateTime objects
+    Duration difference = dateTime1.difference(dateTime2);
+    formattedDate =
+        "In ${difference.inHours} hrs, ${difference.inMinutes.remainder(60)} mins";
+    return formattedDate;
+  }
 
   Future<String> getlogos(String leaguename) async {
     var response = await http.Client()
@@ -351,6 +383,7 @@ class _datascrapState extends State<datascrap> {
 
   @override
   Widget build(BuildContext context) {
+    // UTCtoLocal('Today, 3:15 am');
     Future<void> _refresh() async {
       setState(() {
         variable = getlivematches(globals.league_page);
@@ -503,38 +536,6 @@ class _datascrapState extends State<datascrap> {
                                                   .isEmpty &&
                                               snapshot.data[i]['team2_score']
                                                   .isEmpty) {
-                                            setState(() {
-                                              globals.team1_name = snapshot
-                                                  .data[i]['Team1']
-                                                  .trim();
-                                              globals.team2_name = snapshot
-                                                  .data[i]['Team2']
-                                                  .trim();
-                                              globals.team1__short_name =
-                                                  snapshot.data[i]
-                                                          ['Team1_short']
-                                                      .trim();
-                                              globals.team2__short_name =
-                                                  snapshot.data[i]
-                                                          ['Team2_short']
-                                                      .trim();
-                                              globals.team1_stats_link =
-                                                  snapshot.data[i]
-                                                      ['team1_stats_link'];
-                                              globals.team2_stats_link =
-                                                  snapshot.data[i]
-                                                      ['team2_stats_link'];
-                                              globals.ground = snapshot.data[i]
-                                                      ['Ground']
-                                                  .toString()
-                                                  .trim();
-                                              globals.team1logo =
-                                                  snapshot.data[i]['team1logo'];
-                                              globals.team2logo =
-                                                  snapshot.data[i]['team2logo'];
-                                              globals.ontap = snapshot.data[i]
-                                                  ['linkaddress'];
-                                            });
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -544,15 +545,55 @@ class _datascrapState extends State<datascrap> {
                                                   ),
                                                 ));
                                           } else {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      typeofstats(
-                                                    disablerecentstats: true,
-                                                  ),
-                                                ));
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              backgroundColor: Colors.grey,
+                                              duration: Duration(seconds: 2),
+                                              content: Text(
+                                                'Stats are not available shown once the match has started/completed !!',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                    fontFamily: 'Cocosharp'),
+                                              ),
+                                            ));
+                                            // Navigator.push(
+                                            //     context,
+                                            //     MaterialPageRoute(
+                                            //       builder: (context) =>
+                                            //           typeofstats(
+                                            //         disablerecentstats: true,
+                                            //       ),
+                                            //     ));
                                           }
+                                          setState(() {
+                                            globals.team1_name = snapshot
+                                                .data[i]['Team1']
+                                                .trim();
+                                            globals.team2_name = snapshot
+                                                .data[i]['Team2']
+                                                .trim();
+                                            globals.team1__short_name = snapshot
+                                                .data[i]['Team1_short']
+                                                .trim();
+                                            globals.team2__short_name = snapshot
+                                                .data[i]['Team2_short']
+                                                .trim();
+                                            globals.team1_stats_link = snapshot
+                                                .data[i]['team1_stats_link'];
+                                            globals.team2_stats_link = snapshot
+                                                .data[i]['team2_stats_link'];
+                                            globals.ground = snapshot.data[i]
+                                                    ['Ground']
+                                                .toString()
+                                                .trim();
+                                            globals.team1logo =
+                                                snapshot.data[i]['team1logo'];
+                                            globals.team2logo =
+                                                snapshot.data[i]['team2logo'];
+                                            globals.ontap =
+                                                snapshot.data[i]['linkaddress'];
+                                          });
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -605,26 +646,22 @@ class _datascrapState extends State<datascrap> {
                                                           : Colors.red,
                                                 ),
                                                 child: Text(
-                                                    snapshot.data[i]['Time']
-                                                            .replaceAll(
+                                                    snapshot.data[i]['Time'].replaceAll(snapshot.data[i]['Details'], '').contains(RegExp(r'[0-9]'))
+                                                        ? UTCtoLocal(globals.capitalize(
+                                                            snapshot.data[i]['Time'].replaceAll(
                                                                 snapshot.data[i]
                                                                     ['Details'],
-                                                                '')[0]
-                                                            .toUpperCase() +
-                                                        snapshot.data[i]['Time']
-                                                            .replaceAll(
+                                                                '')))
+                                                        : globals.capitalize(
+                                                            snapshot.data[i]['Time'].replaceAll(
                                                                 snapshot.data[i]
                                                                     ['Details'],
-                                                                '')
-                                                            .substring(1)
-                                                            .toLowerCase(),
+                                                                '')),
                                                     style: TextStyle(
-                                                        fontFamily:
-                                                            'Louisgeorge',
+                                                        fontFamily: 'Louisgeorge',
                                                         fontSize: 15.0,
                                                         color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold)),
+                                                        fontWeight: FontWeight.bold)),
                                               ),
                                               Divider(
                                                 color: darkcolor,

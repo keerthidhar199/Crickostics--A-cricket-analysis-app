@@ -29,38 +29,6 @@ class Analysis extends StatefulWidget {
   _AnalysisState createState() => _AnalysisState();
 }
 
-capitalize(String s) {
-  return s[0].toUpperCase() + s.substring(1).toLowerCase();
-}
-
-getAbbreviation(String s) {
-  var l = s.split(' ');
-  String res = '';
-  for (var i in l) {
-    res += i[0].toUpperCase();
-  }
-  return res;
-}
-
-int checkpastmatches(
-  String team1,
-  String team2,
-) {
-  team2 = team2.replaceAll('v', '').trim();
-  int count = 0;
-
-  if (globals.team2_name.contains('Bangalore') ||
-      globals.team2_name.contains('Kolkata')) {
-    globals.team2_name = getAbbreviation(globals.team2_name).trim();
-  }
-  if (globals.team1_name.contains(team1) &&
-      globals.team2_name.contains(team2)) {
-    return count;
-  } else {
-    return 0;
-  }
-}
-
 class _AnalysisState extends State<Analysis> {
   bool _isButtonDisabled;
   bool addtofantasyteam;
@@ -156,20 +124,12 @@ class _AnalysisState extends State<Analysis> {
                 case ConnectionState.waiting:
                   return Center(
                       child: Container(
-                          color: Color(0xff2B2B28),
-                          child: Stack(
-                            children: [
-                              Image.asset(
-                                'logos/bars.png',
-                                width: 480,
-                                height: 230,
-                              ),
-                              Image.asset(
-                                'logos/comp1with.gif',
-                                filterQuality: FilterQuality.high,
-                              ),
-                            ],
-                          )));
+                    color: Color(0xff2B2B28),
+                    child: Image.asset(
+                      'logos/comp1.gif',
+                      filterQuality: FilterQuality.high,
+                    ),
+                  ));
                 default:
                   if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
@@ -238,7 +198,7 @@ class _AnalysisState extends State<Analysis> {
                                                             .center,
                                                     children: [
                                                       Text(
-                                                        '${capitalize(names[categories.indexOf(e)])}',
+                                                        '${globals.capitalize(names[categories.indexOf(e)])}',
                                                         style: TextStyle(
                                                           fontFamily:
                                                               'Cocosharp',
