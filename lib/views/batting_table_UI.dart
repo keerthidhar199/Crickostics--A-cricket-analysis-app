@@ -176,7 +176,9 @@ class _widgetbattingState extends State<widgetbatting> {
                   ],
                 ),
               ),
-              snapshot.data.item1.item2 == null
+              (snapshot.data == null ||
+                      snapshot.data.item1 == null ||
+                      snapshot.data.item1.item2 == null)
                   ? Text('Not batted yet')
                   : SfDataGrid(
                       verticalScrollPhysics: NeverScrollableScrollPhysics(),

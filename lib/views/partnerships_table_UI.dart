@@ -176,7 +176,9 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                   ],
                 ),
               ),
-              snapshot.data.item3.item2 == null
+              (snapshot.data == null ||
+                      snapshot.data.item3 == null ||
+                      snapshot.data.item3.item2 == null)
                   ? Text('No partnerships so far')
                   : SfDataGrid(
                       verticalScrollPhysics: NeverScrollableScrollPhysics(),

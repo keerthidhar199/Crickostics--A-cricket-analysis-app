@@ -63,45 +63,54 @@ class _pastmatchesState extends State<pastmatches> {
             ],
           ),
         ),
-        SfDataGrid(
-            verticalScrollPhysics: NeverScrollableScrollPhysics(),
-            rowHeight: 35.0,
-            shrinkWrapRows: true,
-            checkboxColumnSettings:
-                DataGridCheckboxColumnSettings(showCheckboxOnHeader: false),
-            showCheckboxColumn: true,
-            allowSorting: true,
-            source: BattingDataSource(
-                batData: snapshot.data.item1.item2.where((element) {
-              print('yeuegwie' + globals.team2__short_name);
+        (snapshot.data == null ||
+                snapshot.data.item1 == null ||
+                snapshot.data.item1.item2 == null)
+            ? Text('Not yet batted')
+            : SfDataGrid(
+                verticalScrollPhysics: NeverScrollableScrollPhysics(),
+                rowHeight: 35.0,
+                shrinkWrapRows: true,
+                checkboxColumnSettings:
+                    DataGridCheckboxColumnSettings(showCheckboxOnHeader: false),
+                showCheckboxColumn: true,
+                allowSorting: true,
+                source: BattingDataSource(
+                    batData: snapshot.data.item1.item2.where((element) {
+                  print('yeuegwie' + globals.team2__short_name);
 
-              //Just having a check with both the name and the abbreviation of the team.
-              // For example, both 'United States of America' and 'U.S.A'
-              return (((globals.team1_name.contains(element.team)) &&
-                      ((globals.team2_name).contains(
-                              element.opposition.replaceAll('v', '').trim()) ||
-                          globals.team2__short_name.contains(element.opposition
-                              .replaceAll('v', '')
-                              .trim()))) ||
-                  (globals.team2_name.contains(element.team) &&
-                      (globals.team1_name.contains(
-                              element.opposition.replaceAll('v', '').trim()) ||
-                          globals.team1__short_name.contains(
-                              element.opposition.replaceAll('v', '').trim()))));
-            }).toList()),
-            columnWidthMode: ColumnWidthMode.auto,
-            selectionMode: SelectionMode.multiple,
-            columns: snapshot.data.item1.item1.map((headings) {
-              return GridColumn(
-                  columnName: headings.toLowerCase(),
-                  label: Container(
-                      padding: EdgeInsets.all(16.0),
-                      alignment: Alignment.center,
-                      child: Text(
-                        headings.trim()[0].toUpperCase() +
-                            headings.trim().substring(1).toLowerCase(),
-                      )));
-            }).toList()),
+                  //Just having a check with both the name and the abbreviation of the team.
+                  // For example, both 'United States of America' and 'U.S.A'
+                  return (((globals.team1_name.contains(element.team)) &&
+                          ((globals.team2_name).contains(element.opposition
+                                  .replaceAll('v', '')
+                                  .trim()) ||
+                              globals.team2__short_name.contains(element
+                                  .opposition
+                                  .replaceAll('v', '')
+                                  .trim()))) ||
+                      (globals.team2_name.contains(element.team) &&
+                          (globals.team1_name.contains(element.opposition
+                                  .replaceAll('v', '')
+                                  .trim()) ||
+                              globals.team1__short_name.contains(element
+                                  .opposition
+                                  .replaceAll('v', '')
+                                  .trim()))));
+                }).toList()),
+                columnWidthMode: ColumnWidthMode.auto,
+                selectionMode: SelectionMode.multiple,
+                columns: snapshot.data.item1.item1.map((headings) {
+                  return GridColumn(
+                      columnName: headings.toLowerCase(),
+                      label: Container(
+                          padding: EdgeInsets.all(16.0),
+                          alignment: Alignment.center,
+                          child: Text(
+                            headings.trim()[0].toUpperCase() +
+                                headings.trim().substring(1).toLowerCase(),
+                          )));
+                }).toList()),
         Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -134,7 +143,9 @@ class _pastmatchesState extends State<pastmatches> {
             ],
           ),
         ),
-        snapshot.data.item2.item2 == null
+        (snapshot.data == null ||
+                snapshot.data.item2 == null ||
+                snapshot.data.item2.item2 == null)
             ? Text('Not yet bowled')
             : SfDataGrid(
                 verticalScrollPhysics: NeverScrollableScrollPhysics(),
@@ -208,7 +219,9 @@ class _pastmatchesState extends State<pastmatches> {
             ],
           ),
         ),
-        snapshot.data.item3.item2 == null
+        (snapshot.data == null ||
+                snapshot.data.item3 == null ||
+                snapshot.data.item3.item2 == null)
             ? Text('No partnerships so far')
             : SfDataGrid(
                 verticalScrollPhysics: NeverScrollableScrollPhysics(),

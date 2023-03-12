@@ -174,7 +174,9 @@ class _widgetbowlingState extends State<widgetbowling> {
                   ],
                 ),
               ),
-              snapshot.data.item2.item2 == null
+              (snapshot.data == null ||
+                      snapshot.data.item2 == null ||
+                      snapshot.data.item2.item2 == null)
                   ? Text('Not yet bowled')
                   : SfDataGrid(
                       verticalScrollPhysics: NeverScrollableScrollPhysics(),

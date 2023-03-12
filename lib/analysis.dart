@@ -291,6 +291,10 @@ class _AnalysisState extends State<Analysis> {
     var root = 'https://stats.espncricinfo.com';
     dom.Document document;
     String containing;
+    Tuple3<
+        Tuple2<List<String>, List<Batting_player>>,
+        Tuple2<List<String>, List<Player>>,
+        Tuple2<List<String>, List<Partnership>>> overall_data;
     //TEAM1
     var response_team1;
     if (globals.team1_stats_link.startsWith('https')) {
@@ -312,6 +316,12 @@ class _AnalysisState extends State<Analysis> {
         (element) =>
             element.attributes['href'].toString().contains(partnership));
 
+    if (team1_batting_table.isEmpty ||
+        team1_bowling_table.isEmpty ||
+        team1_partnership_table.isEmpty) {
+      overall_data = Tuple3(null, null, null);
+      return overall_data;
+    }
     //TEAM2
     dom.Document document1;
 
@@ -334,6 +344,12 @@ class _AnalysisState extends State<Analysis> {
     var team2_partnership_table = document1.querySelectorAll('a').where(
         (element) =>
             element.attributes['href'].toString().contains(partnership));
+    if (team2_batting_table.isEmpty == null ||
+        team2_bowling_table.isEmpty == null ||
+        team2_partnership_table.isEmpty == null) {
+      overall_data = Tuple3(null, null, null);
+      return overall_data;
+    }
 
     var team1_info_batting = await http.Client().get(Uri.parse(
         root + team1_batting_table.first.attributes['href'].toString()));
@@ -471,12 +487,8 @@ class _AnalysisState extends State<Analysis> {
     Tuple2<List<String>, List<Partnership>> partnershipsdataheadings = Tuple2(
         partnerships_headings, partnership_playersdata); // batting data overall
 
-    Tuple3<
-            Tuple2<List<String>, List<Batting_player>>,
-            Tuple2<List<String>, List<Player>>,
-            Tuple2<List<String>, List<Partnership>>> overall_data =
-        Tuple3(
-            battingdataheadings, bowlingdataheadings, partnershipsdataheadings);
+    overall_data = Tuple3(
+        battingdataheadings, bowlingdataheadings, partnershipsdataheadings);
     return overall_data; //((batting_headers_table,batting_players),(bowling_headers_table,bowling_players))
   }
 }
