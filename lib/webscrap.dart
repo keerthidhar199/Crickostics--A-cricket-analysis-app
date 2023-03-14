@@ -50,35 +50,10 @@ class _datascrapState extends State<datascrap> {
     print('formattedDate = ' + formattedDate.toString() + nowTime);
 
 // Calculate the difference between the two DateTime objects
-    Duration difference = dateTime1.difference(dateTime2);
+    Duration difference = dateTime1.difference(dateTime2).abs();
     formattedDate =
         "In ${difference.inHours} hrs, ${difference.inMinutes.remainder(60)} mins";
     return formattedDate;
-  }
-
-  Future<String> getlogos(String leaguename) async {
-    var response = await http.Client()
-        .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
-    dom.Document document = parser.parse(response.body);
-    List imglogosdata =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-            ['editionDetails']['trendingMatches']['matches'];
-    List imglogosdata1 =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-            ['appPageProps']['data']['content']['matches'];
-    List takethisimglogosdata = new List.from(imglogosdata)
-      ..addAll(imglogosdata1);
-    String seriesname = '';
-    for (var i in takethisimglogosdata) {
-      if (i['teams'][0]['team']['longName'].toString().trim() == leaguename) {
-        seriesname = i['teams'][0]['team']['image']['url'].toString();
-      } else if (i['teams'][1]['team']['longName'].toString().trim() ==
-          leaguename) {
-        seriesname = i['teams'][1]['team']['image']['url'].toString();
-      }
-    }
-    //print('imglogosdata12 $seriesname');
-    return seriesname;
   }
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicator =
@@ -131,30 +106,7 @@ class _datascrapState extends State<datascrap> {
               .querySelector('a'); //
 
           print('adfsfsgb  $link2');
-          // var recent_perform = link2doc
-          //     .getElementsByClassName('ds-p-0')[1]
-          //     .querySelector('table');
 
-          // // recent_perform.querySelectorAll('tbody')[1].clone(true);
-
-          // var team1_recent = recent_perform.querySelectorAll('tbody')[0];
-          // var team1_recentname = team1_recent.querySelector(
-          //     'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span');
-          // var team1_recentform = team1_recent.querySelectorAll(
-          //     'tr>td>div > div.ReactCollapse--collapse > div > div > a');
-          // var team1_winsloss = team1_recent.querySelector(
-          //     'tr>td>div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div');
-
-          // if (team1_recentname != null) {
-          //   print('asa11 ${team1_recentname.text}'); //teamname
-          //   print('asa11 ${team1_winsloss.text}'); //LWLLL
-          // }
-          // for (int i = 0; i < team1_recentform.length; i++) {
-          //   var justanothevar = team1_recentform[i].querySelector(
-          //       "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
-          //   print('asa11 ${justanothevar.text}');
-          //   print('asa11 ${team1_recentform[i].attributes['href']}');
-          // }
           print(
               'link2.attributes["href"].toString() ${link2.attributes["href"].toString()}');
 
@@ -174,17 +126,18 @@ class _datascrapState extends State<datascrap> {
                 y.getElementsByClassName('ds-flex ds-justify-between')[0];
             if (!match_det.text.toLowerCase().contains('covered')) {
               var match_det1 = y.getElementsByClassName(
-                  'ds-text-tight-xs ds-truncate ds-text-typo-mid3')[0];
+                      'ds-text-tight-xs ds-truncate ds-text-typo-mid3')[
+                  0]; // 11th Match (N), DY Patil, March 13, 2023, Women's Premier League
               var teams1 = y
                   .getElementsByClassName(
                       'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[0]
                   .querySelector('p')
-                  .text;
+                  .text; //team1 name Mumbai Indians Women
               var teams2 = y
                   .getElementsByClassName(
                       'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[1]
                   .querySelector('p')
-                  .text; //teams 1 and 2
+                  .text; //team2 name Gujarat Giants Women
               var teamscore = y.getElementsByClassName(
                   'ds-text-compact-s ds-text-typo ds-text-right ds-whitespace-nowrap');
               var stauts;
@@ -212,19 +165,15 @@ class _datascrapState extends State<datascrap> {
                 ..addAll(imglogosdata1);
 
               for (var i in takethisimglogosdata) {
-                if ((i['teams'][0]['team']['longName']
-                        .toString()
-                        .trim()
-                        .contains(teams1)) &&
-                    (i['teams'][1]['team']['longName']
-                        .toString()
-                        .trim()
-                        .contains(teams2))) {
+                if ((i['teams'][0]['team']['name'] == teams1) &&
+                    (i['teams'][1]['team']['name'] == teams2)) {
                   iplmatch['linkaddress'] = link2address;
+                  iplmatch['Team1'] = teams1;
+                  iplmatch['Team2'] = teams2;
                   iplmatch['Team1_short'] =
-                      i['teams'][0]['team']['name'].toString();
+                      i['teams'][0]['team']['longName'].toString();
                   iplmatch['Team2_short'] =
-                      i['teams'][1]['team']['name'].toString();
+                      i['teams'][1]['team']['longName'].toString();
                   if (i['teams'][0]['team']['image'] == null ||
                       i['teams'][1]['team']['image'] == null) {
                     iplmatch['team1logo'] = null;
@@ -237,33 +186,26 @@ class _datascrapState extends State<datascrap> {
                         i['teams'][1]['team']['image']['url'].toString();
                   }
                 } else {
-                  for (var i in takethisimglogosdata) {
-                    if ((i['teams'][0]['team']['longName']
-                            .toString()
-                            .trim()
-                            .contains(teams1)) &&
-                        (i['teams'][1]['team']['longName']
-                            .toString()
-                            .trim()
-                            .contains(teams2))) {
-                      iplmatch['linkaddress'] = link2address;
+                  if ((i['teams'][0]['team']['longName'] == teams1) &&
+                      (i['teams'][1]['team']['longName'] == teams2)) {
+                    iplmatch['linkaddress'] = link2address;
+                    iplmatch['Team1'] = teams1;
+                    iplmatch['Team2'] = teams2;
+                    iplmatch['Team1_short'] =
+                        i['teams'][0]['team']['name'].toString();
+                    iplmatch['Team2_short'] =
+                        i['teams'][1]['team']['name'].toString();
 
-                      iplmatch['Team1_short'] =
-                          i['teams'][0]['team']['name'].toString();
-                      iplmatch['Team2_short'] =
-                          i['teams'][1]['team']['name'].toString();
+                    if (i['teams'][0]['team']['image'] == null ||
+                        i['teams'][1]['team']['image'] == null) {
+                      iplmatch['team1logo'] = null;
 
-                      if (i['teams'][0]['team']['image'] == null ||
-                          i['teams'][1]['team']['image'] == null) {
-                        iplmatch['team1logo'] = null;
-
-                        iplmatch['team2logo'] = null;
-                      } else {
-                        iplmatch['team1logo'] =
-                            i['teams'][0]['team']['image']['url'].toString();
-                        iplmatch['team2logo'] =
-                            i['teams'][1]['team']['image']['url'].toString();
-                      }
+                      iplmatch['team2logo'] = null;
+                    } else {
+                      iplmatch['team1logo'] =
+                          i['teams'][0]['team']['image']['url'].toString();
+                      iplmatch['team2logo'] =
+                          i['teams'][1]['team']['image']['url'].toString();
                     }
                   }
                 }
@@ -278,8 +220,7 @@ class _datascrapState extends State<datascrap> {
 
               iplmatch['Time'] = match_det.text;
               iplmatch['Match_name'] = match_det1.text.split(',').last;
-              iplmatch['Team1'] = teams1;
-              iplmatch['Team2'] = teams2;
+
               iplmatch['MatchStarts'] = stauts;
               iplmatch['Details'] = match_det1.text;
 
@@ -334,14 +275,15 @@ class _datascrapState extends State<datascrap> {
             var rec2 = teamstatsdoc
                 .getElementsByClassName('RecBulAro')
                 .where((element) => element.text == 'Records by team');
-            print('rec1 ${rec1.length}');
             if (rec1.length != 0) {
               rec1 = rec1
                   .toList()[0]
                   .parentNode
                   .children[2]
                   .getElementsByClassName('RecordLinks')
-                  .where((element) => element.text == iplmatch["Team1"]);
+                  .where((element) => (element.text == iplmatch["Team1"] ||
+                      element.text == iplmatch["Team1_short"]));
+
               if (rec1.length != 0) {
                 iplmatch['team1_stats_link'] =
                     rec1.first.attributes["href"].toString();
@@ -360,7 +302,8 @@ class _datascrapState extends State<datascrap> {
                   .parentNode
                   .children[2]
                   .getElementsByClassName('RecordLinks')
-                  .where((element) => element.text == iplmatch["Team2"]);
+                  .where((element) => (element.text == iplmatch["Team2"] ||
+                      element.text == iplmatch["Team2_short"]));
 
               if (rec2.length != 0) {
                 iplmatch['team2_stats_link'] =
@@ -377,6 +320,7 @@ class _datascrapState extends State<datascrap> {
         }
       }
     }
+    print('3d ${globals.team1_name} ${globals.team2_name}');
     print('asa11 ${matches.toSet().toList()}');
     return matches.toSet().toList();
   }

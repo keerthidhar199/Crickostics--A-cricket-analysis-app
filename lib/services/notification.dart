@@ -53,7 +53,7 @@ class NotificationService extends ChangeNotifier {
   //Image notification
   Future imageNotification() async {
     var bigPicture = BigPictureStyleInformation(
-        DrawableResourceAndroidBitmap("background"),
+        DrawableResourceAndroidBitmap("my_fantasy"),
         largeIcon: DrawableResourceAndroidBitmap("appicon"),
         contentTitle: "Robot Alert!",
         summaryText: "This is some text",
@@ -93,7 +93,7 @@ class NotificationService extends ChangeNotifier {
   Future sheduledNotification() async {
     var interval = RepeatInterval.everyMinute;
     var bigPicture = BigPictureStyleInformation(
-        DrawableResourceAndroidBitmap("pole_testing"),
+        DrawableResourceAndroidBitmap("my_fantasy"),
         largeIcon: DrawableResourceAndroidBitmap("appicon"),
         contentTitle: "Periodic Check",
         summaryText: "Notification to get frequent updates",

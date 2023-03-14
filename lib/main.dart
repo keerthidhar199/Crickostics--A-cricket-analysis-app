@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:datascrap/notificationview.dart';
 import 'package:datascrap/recent_stats_testing.dart';
 import 'package:datascrap/skeleton.dart';
+import 'package:datascrap/splashscreen.dart';
 import 'package:datascrap/typeofstats.dart';
 import 'package:datascrap/views/fantasy_players_UI.dart';
 import 'package:datascrap/webscrap.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
@@ -25,43 +28,44 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: AnimatedSplashScreen(
-      duration: 2300,
-      backgroundColor: Color(0xff2B2B28),
-      splashIconSize: double.infinity,
-      splash: Image.asset(
-        'logos/intro.gif',
-        // filterQuality: FilterQuality.high,
-      ),
-      // Container(
-      //   color: Color(0xff2B2B28),
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //     children: [
-      //       Image.asset(
-      //         'logos/intro.gif',
-      //         filterQuality: FilterQuality.high,
-      //       ),
-      //       Flexible(
-      //         child: Padding(
-      //           padding: const EdgeInsets.all(8.0),
-      //           child: Text(
-      //             'CRICKOSTICS',
-      //             style: TextStyle(
-      //                 color: Colors.white,
-      //                 fontFamily: 'RestaurantMenu',
-      //                 fontSize: 50),
-      //           ),
-      //         ),
-      //       )
-      //     ],
-      //   ),
-      // ),
-      nextScreen: Homepage(),
-      splashTransition: SplashTransition.fadeTransition,
-      // backgroundColor: Colors.indigoAccent,
-    ));
+    return MaterialApp(home: SplashPage()
+
+        //     AnimatedSplashScreen(
+        // duration: 3000,
+        // backgroundColor: Color(0xff2B2B28),
+        // splashIconSize: double.infinity,
+        // splash: Image.asset(
+        //   'logos/intro.gif',
+        //   filterQuality: FilterQuality.high,
+        // ),
+        // Container(
+        //   color: Color(0xff2B2B28),
+        //   child: Column(
+        //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //     children: [
+        //       Image.asset(
+        //         'logos/intro.gif',
+        //         filterQuality: FilterQuality.high,
+        //       ),
+        //       Flexible(
+        //         child: Padding(
+        //           padding: const EdgeInsets.all(8.0),
+        //           child: Text(
+        //             'CRICKOSTICS',
+        //             style: TextStyle(
+        //                 color: Colors.white,
+        //                 fontFamily: 'RestaurantMenu',
+        //                 fontSize: 50),
+        //           ),
+        //         ),
+        //       )
+        //     ],
+        //   ),
+        // ),
+        //   nextScreen: Homepage(),
+        //   // backgroundColor: Colors.indigoAccent,
+        // )
+        );
   }
 }
 
@@ -77,9 +81,10 @@ class _HomepageState extends State<Homepage> {
   String route = 'https://www.espncricinfo.com';
   var linkdetails = [];
   List match_leagues = [];
-  List match_leagues_refresh = [];
-  final GlobalKey<RefreshIndicatorState> _refreshIndicator =
-      new GlobalKey<RefreshIndicatorState>();
+  List<List<dynamic>> match_leagues_refresh = [];
+
+  final CarouselController _controller = CarouselController();
+  int _currentSlide = 0;
 
   Future<List<List<dynamic>>> getValidMatches() async {
     List validMatches = [];
@@ -130,30 +135,38 @@ class _HomepageState extends State<Homepage> {
     print(ongoingmatches);
     return [
       validMatches.toSet().toList(),
-      // ongoingmatches.toSet().toList(),
-      // finishedmatches.toSet().toList(),
+      ongoingmatches.toSet().toList(),
+      finishedmatches.toSet().toList(),
     ];
   }
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => _refreshIndicator.currentState.show());
+    getValidMatches().then((value) {
+      setState(() {
+        match_leagues_refresh = value;
+      });
+    });
   }
 
   List<String> matchstatetitle = ['Upcoming', 'Ongoing', 'Completed'];
-
+  GlobalKey<RefreshIndicatorState> _refreshIndicator =
+      GlobalKey<RefreshIndicatorState>();
   @override
   Widget build(BuildContext context) {
-    Future<void> _refresh() {
+    List<BorderSide> borderside = List.filled(3, BorderSide.none);
+    List<List<dynamic>> match_leagues_refresh1 = [];
+
+    Future<void> _refresh() async {
+      await Future.delayed(Duration(seconds: 1));
       getValidMatches().then((value) {
         setState(() {
-          match_leagues_refresh = value;
+          _refreshIndicator = GlobalKey<RefreshIndicatorState>();
+          match_leagues_refresh1 = value;
+          match_leagues_refresh = match_leagues_refresh1;
         });
       });
-      return Future.delayed(Duration(microseconds: 1));
       // return
     }
 
@@ -184,234 +197,258 @@ class _HomepageState extends State<Homepage> {
           ],
         ),
         body: RefreshIndicator(
-          color: Color(0xffFFB72B),
-          backgroundColor: Color(0xff2B2B28),
-          key: _refreshIndicator,
-          onRefresh: _refresh,
-          child: FutureBuilder<List<List<dynamic>>>(
-              future: getValidMatches(), // async work
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<dynamic>> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return Container(
-                        color: Color(0xff2B2B28),
-                        // child: Text('Loading ${snapshot.data}'),
-                        child: SkeletonTheme(
-                            shimmerGradient: LinearGradient(colors: [
-                              Color(0xff1A3263).withOpacity(0.8),
-                              Color(0xff1A3263),
-                              Color(0xff1A3263),
-                              Color(0xff1A3263).withOpacity(0.8),
-                            ]),
-                            child: ListView.builder(
-                              itemCount: 10,
-                              itemBuilder: (context, index) =>
-                                  PlayingLeaguesSkelton(),
-                            )));
-                  default:
-                    if (snapshot.hasError)
-                      return Text('Error: ${snapshot.error}');
-                    else
-                      // print(snapshot.data[1]);
-                      return Container(
-                        color: Color(0xff2B2B28),
-                        child: AnimationLimiter(
-                          child: AnimationConfiguration.staggeredList(
-                            duration: const Duration(milliseconds: 500),
-                            position: 1,
-                            child: ScaleAnimation(
-                              child: SlideAnimation(
-                                child: snapshot.data[0].isEmpty
-                                    ? Center(
-                                        child: Container(
-                                          color: Color(0xff2B2B28),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+            key: _refreshIndicator,
+            color: Color(0xffFFB72B),
+            backgroundColor: Color(0xff2B2B28),
+            onRefresh: _refresh,
+            child: match_leagues_refresh.isEmpty
+                ? Container(
+                    color: Color(0xff2B2B28),
+                    // child: Text('Loading ${snapshot.data}'),
+                    child: SkeletonTheme(
+                        shimmerGradient: LinearGradient(colors: [
+                          Color(0xff1A3263).withOpacity(0.8),
+                          Color(0xff1A3263),
+                          Color(0xff1A3263),
+                          Color(0xff1A3263).withOpacity(0.8),
+                        ]),
+                        child: ListView.builder(
+                          itemCount: 10,
+                          itemBuilder: (context, index) =>
+                              PlayingLeaguesSkelton(),
+                        )))
+                : Container(
+                    height: MediaQuery.of(context).size.height,
+                    color: Color(0xff2B2B28),
+                    child: AnimationLimiter(
+                      child: AnimationConfiguration.staggeredList(
+                        duration: const Duration(milliseconds: 900),
+                        position: 1,
+                        child: ScaleAnimation(
+                          child: SlideAnimation(
+                            child: match_leagues_refresh[0].isEmpty
+                                ? Center(
+                                    child: Container(
+                                      color: Color(0xff2B2B28),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text('  Oh My CrickOh! ',
+                                              style: TextStyle(
+                                                fontFamily: 'Louisgeorge',
+                                                fontSize: 20.0,
+                                                color: Colors.white,
+                                              )),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Row(
                                             children: [
-                                              Text('  Oh My CrickOh! ',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Louisgeorge',
-                                                    fontSize: 20.0,
-                                                    color: Colors.white,
-                                                  )),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  IconButton(
-                                                      icon: Image.asset(
-                                                        'logos/ball.png',
-                                                      ),
-                                                      onPressed: null),
-                                                  Flexible(
-                                                    child: Text(
-                                                        'No Scheduled matches as of now. Matches appear before 10-12hr of the match start time.',
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Louisgeorge',
-                                                          fontSize: 17.0,
-                                                          color: Colors.white,
-                                                        )),
+                                              IconButton(
+                                                  icon: Image.asset(
+                                                    'logos/ball.png',
                                                   ),
-                                                ],
+                                                  onPressed: null),
+                                              Flexible(
+                                                child: Text(
+                                                    'No Scheduled matches as of now. Matches appear before 10-12hr of the match start time.',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Louisgeorge',
+                                                      fontSize: 17.0,
+                                                      color: Colors.white,
+                                                    )),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                      )
-                                    : Column(
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : SingleChildScrollView(
+                                    child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                'Choose your league',
-                                                textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  fontFamily: 'Louisgeorge',
-                                                  fontSize: 20.0,
-                                                  color: Colors.white,
-                                                ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Choose your league',
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                fontFamily: 'Louisgeorge',
+                                                fontSize: 20.0,
+                                                color: Colors.white,
                                               ),
                                             ),
-                                            ...snapshot.data
-                                                .map(
-                                                  (matchstate) => Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Text(
-                                                            matchstatetitle[snapshot
-                                                                .data
-                                                                .indexOf(
-                                                                    matchstate)],
-                                                            textAlign:
-                                                                TextAlign.left,
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Louisgeorge',
-                                                              fontSize: 15.0,
-                                                              color: Colors.grey
-                                                                  .shade700,
-                                                            ),
+                                          ),
+                                          // TextButton(
+                                          //     onPressed: () {
+                                          //       Navigator.push(
+                                          //           context,
+                                          //           MaterialPageRoute(
+                                          //             builder: (BuildContext
+                                          //                     context) =>
+                                          //                 NotificationsBar(),
+                                          //           ));
+                                          //     },
+                                          //     child: Container(
+                                          //       color: Color(0xffFFB72B),
+                                          //     )),
+                                          Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: matchstatetitle
+                                                  .map(
+                                                    (e) => Container(
+                                                      decoration: BoxDecoration(
+                                                          border: Border(
+                                                        bottom: _currentSlide ==
+                                                                matchstatetitle
+                                                                    .indexOf(e)
+                                                            ? BorderSide(
+                                                                //                   <--- right side
+                                                                color: Colors
+                                                                    .white,
+                                                                width: 3.0,
+                                                              )
+                                                            : BorderSide.none,
+                                                      )),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: TextButton(
+                                                        onPressed: () {
+                                                          _controller.jumpToPage(
+                                                              matchstatetitle
+                                                                  .indexOf(e));
+                                                          setState(() {
+                                                            _currentSlide =
+                                                                matchstatetitle
+                                                                    .indexOf(e);
+                                                          });
+                                                        },
+                                                        child: Text(
+                                                          e.toString(),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          style: TextStyle(
+                                                            fontFamily:
+                                                                'Louisgeorge',
+                                                            fontSize: 15.0,
+                                                            color: Colors
+                                                                .grey.shade700,
                                                           ),
                                                         ),
-                                                        AnimationLimiter(
-                                                          child: Expanded(
-                                                            child: ListView
-                                                                .builder(
-                                                              itemCount:
-                                                                  matchstate
-                                                                      .length,
-                                                              itemBuilder:
-                                                                  (context,
-                                                                      index) {
-                                                                return AnimationConfiguration
-                                                                    .staggeredList(
-                                                                  duration: const Duration(
-                                                                      milliseconds:
-                                                                          900),
-                                                                  position:
-                                                                      index,
-                                                                  child:
-                                                                      ScaleAnimation(
-                                                                    child:
-                                                                        FadeInAnimation(
-                                                                      curve: Curves
-                                                                          .easeInExpo,
-                                                                      child:
-                                                                          Card(
-                                                                        shape: RoundedRectangleBorder(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(20.0),
-                                                                            side: BorderSide(color: Colors.white.withOpacity(0.4))),
-                                                                        elevation:
-                                                                            10,
-                                                                        child:
-                                                                            new InkWell(
-                                                                          onTap:
-                                                                              () {
-                                                                            setState(() {
-                                                                              globals.league_page = matchstate[index];
-                                                                              print('Globals ${globals.league_page}');
-                                                                            });
-                                                                            Navigator.push(
-                                                                                context,
-                                                                                MaterialPageRoute(
-                                                                                  builder: (context) => datascrap(),
-                                                                                ));
-                                                                          },
-                                                                          child: Container(
-                                                                              decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(20.0),
-                                                                                  gradient: LinearGradient(
-                                                                                    begin: Alignment.topLeft,
-                                                                                    end: Alignment.bottomRight,
-                                                                                    colors: [
-                                                                                      Color(0xff1A3263),
-                                                                                      Color(0xff1A3263).withOpacity(0.8),
-                                                                                    ],
-                                                                                  )),
-                                                                              child: Container(
-                                                                                height: MediaQuery.of(context).size.height / (snapshot.data.length * matchstate.length),
-                                                                                padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                                                                                child: Center(
-                                                                                  child: Text(
-                                                                                    matchstate[index].toString(),
-                                                                                    textAlign: TextAlign.center,
-                                                                                    style: TextStyle(
-                                                                                      fontFamily: 'Louisgeorge',
-                                                                                      fontSize: 20.0,
-                                                                                      color: Colors.white,
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  // TextButton(
-                                                  //     onPressed: () {
-                                                  //       Navigator.push(
-                                                  //           context,
-                                                  //           MaterialPageRoute(
-                                                  //             builder: (BuildContext context) =>
-                                                  //                 NotificationsBar(),
-                                                  //           ));
-                                                  //     },
-                                                  //     child: Container(
-                                                  //       color: Color(0xffFFB72B),
-                                                  //     )),
-                                                )
-                                                .toList(),
-                                          ]),
-                              ),
-                            ),
+                                                  )
+                                                  .toList()),
+                                          CarouselSlider(
+                                              carouselController: _controller,
+                                              options: CarouselOptions(
+                                                enlargeCenterPage: true,
+                                                viewportFraction: 1,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.80,
+
+                                                // autoPlay: false,
+                                              ),
+                                              items: [
+                                                ...match_leagues_refresh
+                                                    .map(
+                                                      (matchstate) =>
+                                                          AnimationLimiter(
+                                                        child: Column(
+                                                            children: matchstate
+                                                                .map((e) {
+                                                          return AnimationConfiguration
+                                                              .staggeredList(
+                                                            duration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        650),
+                                                            position: matchstate
+                                                                .indexOf(e),
+                                                            child:
+                                                                ScaleAnimation(
+                                                              child:
+                                                                  FadeInAnimation(
+                                                                curve: Curves
+                                                                    .easeInExpo,
+                                                                child: Card(
+                                                                  shape: RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              20.0),
+                                                                      side: BorderSide(
+                                                                          color: Colors
+                                                                              .white
+                                                                              .withOpacity(0.4))),
+                                                                  elevation: 10,
+                                                                  child:
+                                                                      new InkWell(
+                                                                    onTap: () {
+                                                                      setState(
+                                                                          () {
+                                                                        globals.league_page =
+                                                                            e;
+                                                                        print(
+                                                                            'Globals ${globals.league_page}');
+                                                                      });
+                                                                      Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                            builder: (context) =>
+                                                                                datascrap(),
+                                                                          ));
+                                                                    },
+                                                                    child: Container(
+                                                                        padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                                                                        height: 100,
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius: BorderRadius.circular(20.0),
+                                                                            gradient: LinearGradient(
+                                                                              begin: Alignment.topLeft,
+                                                                              end: Alignment.bottomRight,
+                                                                              colors: [
+                                                                                Color(0xff1A3263),
+                                                                                Color(0xff1A3263).withOpacity(0.8),
+                                                                              ],
+                                                                            )),
+                                                                        child: Center(
+                                                                          child:
+                                                                              Text(
+                                                                            e.toString(),
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontFamily: 'Louisgeorge',
+                                                                              fontSize: 20.0,
+                                                                              color: Colors.white,
+                                                                            ),
+                                                                          ),
+                                                                        )),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList()),
+                                                      ),
+                                                    )
+                                                    .toList(),
+                                              ]),
+                                        ]),
+                                  ),
                           ),
                         ),
-                      );
-                }
-              }),
-        ));
+                      ),
+                    ),
+                  )));
   }
 }

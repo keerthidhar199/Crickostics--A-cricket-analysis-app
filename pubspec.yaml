@@ -32,11 +32,8 @@ dependencies:
   tuple: ^2.0.0
   carousel_slider: ^4.0.0
   animated_splash_screen: ^1.2.0
-  easy_dynamic_theme: ^2.2.0
-  web_scraper: ^0.1.4
-  video_player: ^2.2.3
+  video_player:
   skeletons: ^0.0.3
-  pull_to_refresh: ^2.0.0
   cached_network_image: ^3.2.0
   flutter_staggered_animations: ^1.0.0
   csv: ^5.0.1
@@ -45,7 +42,7 @@ dependencies:
   flip_card: ^0.7.0
   flutter_local_notifications: ^5.0.0+4
   provider: ^6.0.5
-  
+  lottie: ^1.2.2
 
 dev_dependencies:
   flutter_test:

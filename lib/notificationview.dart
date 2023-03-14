@@ -1,6 +1,7 @@
 import 'package:datascrap/main.dart';
 import 'package:datascrap/views/fantasy_players_UI.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:datascrap/services/notification.dart';
 
