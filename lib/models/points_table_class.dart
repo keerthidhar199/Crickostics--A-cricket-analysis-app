@@ -48,20 +48,25 @@ class PointsTableSource extends DataGridSource {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
       return Container(
+        color: Colors.grey.shade600,
         alignment: Alignment.center,
         padding: EdgeInsets.all(8.0),
         child: Text(
-          e.value.toString(),
-          style: TextStyle(color: Colors.black87),
+          e.value.toString().trim(),
+          style: TextStyle(color: Colors.white, fontFamily: 'NewAthletic'),
         ),
       );
     }).toList());
   }
 }
 
-point_teams_info(String league_address) async {
+Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
+    String league_address) async {
   List<List<String>> allplayers = [];
   List<String> headings = [];
+
+  List<PointsTable> pointstableinfo = [];
+  List<String> pointstablehead = [];
   league_address = league_address.replaceAll(
       league_address.split('/').last, 'points-table-standings');
   var forlink2 = await http.Client().get(Uri.parse(league_address));
@@ -83,23 +88,32 @@ point_teams_info(String league_address) async {
   var element = document1.querySelectorAll('table>tbody')[0];
   var data = element.querySelectorAll('tr');
   data.removeWhere((element) => element.text.isEmpty);
-  for (int i = 0; i < data.length; i++) {
+  for (int i = 0; i < data.length; i = i + 2) {
     List<String> playerwise = [];
-    print('----  ${data[i].children[0]}');
-    // for (int j = 0; j < data[i].children.length; j++) {
-    //   if (data[i].children[j].text.isNotEmpty) {
-    //     playerwise.add(data[i].children[j].text.toString().trim());
-    //   }
-    // }
-    // allplayers.add(playerwise);
+    // print('----  ${data[i].children[0].text}');
+    for (int j = 0; j < data[i].children.length; j++) {
+      if (data[i].children[j].text.isNotEmpty) {
+        if (j == 0) {
+          playerwise.add(data[i]
+              .children[j]
+              .text
+              .split(RegExp(r'[0-9]'))
+              .last
+              .toString()
+              .trim());
+        } else if ([6, 7, 8].contains(j)) {
+          playerwise.add(data[i].children[j].text.toString().trim());
+        }
+      }
+    }
+    allplayers.add(playerwise);
   }
 
-  // print(headings);
-  // print(allplayers);
-  // print(allplayers[0].length);
-  // print(headings.length);
-  // ground_based = allplayers
-  //     .where((stats) => stats.elementAt(7) == globals.ground)
-  //     .toList();
-  return Tuple2(headings, allplayers);
+  for (var i in allplayers) {
+    pointstableinfo
+        .add(PointsTable(i[0], int.parse(i[1]), double.parse(i[2]), i[3]));
+  }
+  pointstablehead = headings;
+
+  return Tuple2(pointstablehead, pointstableinfo);
 }
