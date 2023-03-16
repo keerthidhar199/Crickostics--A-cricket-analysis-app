@@ -4,6 +4,7 @@ import 'package:datascrap/models/bowling_class.dart';
 import 'package:datascrap/models/partnership_class.dart';
 import 'package:datascrap/services/exportcsv.dart';
 import 'package:datascrap/views/previous_clashes_UI.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -63,25 +64,26 @@ class _AnalysisState extends State<Analysis> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: Color(0xffFFB72B),
+          backgroundColor: const Color(0xffFFB72B),
           title: const Text(
             'Stack',
             style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
           ),
           leading: IconButton(
               color: Colors.black,
-              icon: Icon(Icons.keyboard_arrow_left),
+              icon: const Icon(Icons.keyboard_arrow_left),
               onPressed: () {
                 Navigator.pop(context);
               }),
           actions: [
             IconButton(
                 color: Colors.black,
-                icon: Icon(Icons.done_all),
+                icon: const Icon(Icons.done_all),
                 onPressed: () {
                   exportcsv.getcsv().then((value) => null);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
+                        duration: Duration(seconds: 3),
                         behavior: SnackBarBehavior.floating,
                         content: Row(children: [
                           Image.asset(
@@ -96,7 +98,7 @@ class _AnalysisState extends State<Analysis> {
                               style: globals.nobleblack),
                         ]),
                         backgroundColor: Colors.amberAccent,
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         margin: EdgeInsetsDirectional.only(
                           bottom: MediaQuery.of(context).size.height / 2,
                         )),
@@ -105,7 +107,7 @@ class _AnalysisState extends State<Analysis> {
           ],
         ),
         body: Container(
-          color: Color(0xff2B2B28),
+          color: const Color(0xff2B2B28),
           height: MediaQuery.of(context).size.height,
           child: FutureBuilder<
               Tuple3<
@@ -124,9 +126,9 @@ class _AnalysisState extends State<Analysis> {
                 case ConnectionState.waiting:
                   return Center(
                       child: Container(
-                    color: Color(0xff2B2B28),
-                    child: Image.asset(
-                      'logos/comp1.gif',
+                    color: const Color(0xff2B2B28),
+                    child: Lottie.asset(
+                      'logos/loading_anim.json',
                       filterQuality: FilterQuality.high,
                     ),
                   ));
@@ -166,7 +168,7 @@ class _AnalysisState extends State<Analysis> {
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(20.0),
-                                        side: BorderSide(
+                                        side: const BorderSide(
                                           color: Colors.black,
                                           width: 2.0,
                                         )),
@@ -182,7 +184,8 @@ class _AnalysisState extends State<Analysis> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           20.0),
-                                                  gradient: LinearGradient(
+                                                  gradient:
+                                                      const LinearGradient(
                                                     begin: Alignment.topLeft,
                                                     end: Alignment.bottomRight,
                                                     colors: [
@@ -199,7 +202,7 @@ class _AnalysisState extends State<Analysis> {
                                                     children: [
                                                       Text(
                                                         '${globals.capitalize(names[categories.indexOf(e)])}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontFamily:
                                                               'Cocosharp',
                                                           fontSize: 15.0,
@@ -218,7 +221,7 @@ class _AnalysisState extends State<Analysis> {
                                                       ),
                                                       Text(
                                                         'In ${globals.ground}',
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontFamily:
                                                               'Cocosharp',
                                                           fontSize: 15.0,
@@ -319,7 +322,7 @@ class _AnalysisState extends State<Analysis> {
     if (team1_batting_table.isEmpty ||
         team1_bowling_table.isEmpty ||
         team1_partnership_table.isEmpty) {
-      overall_data = Tuple3(null, null, null);
+      overall_data = const Tuple3(null, null, null);
       return overall_data;
     }
     //TEAM2
@@ -347,7 +350,7 @@ class _AnalysisState extends State<Analysis> {
     if (team2_batting_table.isEmpty == null ||
         team2_bowling_table.isEmpty == null ||
         team2_partnership_table.isEmpty == null) {
-      overall_data = Tuple3(null, null, null);
+      overall_data = const Tuple3(null, null, null);
       return overall_data;
     }
 

@@ -14,6 +14,8 @@ import 'package:skeletons/skeletons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
+import 'models/points_table_class.dart';
+
 class datascrap extends StatefulWidget {
   const datascrap({Key key}) : super(key: key);
   @override
@@ -57,7 +59,7 @@ class _datascrapState extends State<datascrap> {
   }
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicator =
-      new GlobalKey<RefreshIndicatorState>();
+      GlobalKey<RefreshIndicatorState>();
   @override
   void initState() {
     WidgetsBinding.instance
@@ -91,7 +93,9 @@ class _datascrapState extends State<datascrap> {
         print('link1 ${link1.attributes["href"]}');
         var link2address = 'https://www.espncricinfo.com' +
             link1.attributes["href"].toString();
-
+        setState(() {
+          globals.league_page_address = link2address;
+        });
         var forlink2 = await http.Client().get(Uri.parse(link2address));
         dom.Document link2doc = parser.parse(forlink2.body);
         print('link2address $link2address');
@@ -161,7 +165,7 @@ class _datascrapState extends State<datascrap> {
               List imglogosdata1 = json.decode(
                       document1.getElementById('__NEXT_DATA__').text)['props']
                   ['appPageProps']['data']['content']['matches'];
-              List takethisimglogosdata = new List.from(imglogosdata)
+              List takethisimglogosdata = List.from(imglogosdata)
                 ..addAll(imglogosdata1);
 
               for (var i in takethisimglogosdata) {
@@ -260,7 +264,6 @@ class _datascrapState extends State<datascrap> {
 //                     hero teamscore: 177/6
 //                    hero teamscore: (17.6/20 ov, T:178) 113/7
 //                     hero stauts: Sunrisers need 65 runs in 12 balls.
-
             }
           }
           if (link3.toList().isNotEmpty) {
@@ -336,24 +339,25 @@ class _datascrapState extends State<datascrap> {
       });
     }
 
+    point_teams_info(globals.league_page_address);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Color(0xffFFB72B),
-        title: Text(
+        backgroundColor: const Color(0xffFFB72B),
+        title: const Text(
           'Current/Upcoming Matches',
           style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
         ),
         leading: IconButton(
             color: Colors.black,
-            icon: Icon(Icons.keyboard_arrow_left),
+            icon: const Icon(Icons.keyboard_arrow_left),
             onPressed: () {
               Navigator.pop(context);
             }),
       ),
       body: RefreshIndicator(
-        color: Color(0xffFFB72B),
-        backgroundColor: Color(0xff2B2B28),
+        color: const Color(0xffFFB72B),
+        backgroundColor: const Color(0xff2B2B28),
         key: _refreshIndicator,
         onRefresh: _refresh,
         child: FutureBuilder<List<Map<String, String>>>(
@@ -363,13 +367,13 @@ class _datascrapState extends State<datascrap> {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
                 return Container(
-                    color: Color(0xff2B2B28),
+                    color: const Color(0xff2B2B28),
                     child: SkeletonTheme(
                         shimmerGradient: LinearGradient(colors: [
-                          Color(0xff1A3263).withOpacity(0.8),
-                          Color(0xff1A3263),
-                          Color(0xff1A3263),
-                          Color(0xff1A3263).withOpacity(0.8),
+                          const Color(0xff1A3263).withOpacity(0.8),
+                          const Color(0xff1A3263),
+                          const Color(0xff1A3263),
+                          const Color(0xff1A3263).withOpacity(0.8),
                         ]),
                         child: ListView.builder(
                           scrollDirection: Axis.vertical,
@@ -382,13 +386,13 @@ class _datascrapState extends State<datascrap> {
                   return Text('Error: ${snapshot.error}');
                 else if (snapshot.data == null) {
                   return Container(
-                      color: Color(0xff2B2B28),
+                      color: const Color(0xff2B2B28),
                       child: SkeletonTheme(
                           shimmerGradient: LinearGradient(colors: [
-                            Color(0xff1A3263).withOpacity(0.8),
-                            Color(0xff1A3263),
-                            Color(0xff1A3263),
-                            Color(0xff1A3263).withOpacity(0.8),
+                            const Color(0xff1A3263).withOpacity(0.8),
+                            const Color(0xff1A3263),
+                            const Color(0xff1A3263),
+                            const Color(0xff1A3263).withOpacity(0.8),
                           ]),
                           child: ListView.builder(
                             scrollDirection: Axis.vertical,
@@ -399,26 +403,26 @@ class _datascrapState extends State<datascrap> {
                 } else {
                   if (snapshot.data.isEmpty) {
                     return Container(
-                      color: Color(0xff2B2B28),
+                      color: const Color(0xff2B2B28),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('  Oh My CrickOh! ',
+                          const Text('  Oh My CrickOh! ',
                               style: TextStyle(
                                 fontFamily: 'Louisgeorge',
                                 fontSize: 20.0,
                                 color: Colors.white,
                               )),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
-                          Text('Stats not available.',
+                          const Text('Stats not available.',
                               style: TextStyle(
                                 fontFamily: 'Louisgeorge',
                                 fontSize: 20.0,
                                 color: Colors.white,
                               )),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Row(
@@ -428,7 +432,7 @@ class _datascrapState extends State<datascrap> {
                                     'logos/ball.png',
                                   ),
                                   onPressed: null),
-                              Flexible(
+                              const Flexible(
                                 child: Text(
                                     'The league might have started recently due to which enough data is not found.',
                                     style: TextStyle(
@@ -447,7 +451,7 @@ class _datascrapState extends State<datascrap> {
                         'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
                     return AnimationLimiter(
                       child: Container(
-                        color: Color(0xff2B2B28),
+                        color: const Color(0xff2B2B28),
                         height: MediaQuery.of(context).size.height,
                         child: ListView.builder(
                           shrinkWrap: true,
@@ -463,7 +467,7 @@ class _datascrapState extends State<datascrap> {
                                 verticalOffset: -900,
                                 child: Column(
                                   children: [
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 15,
                                     ),
                                     Card(
@@ -476,42 +480,50 @@ class _datascrapState extends State<datascrap> {
                                       color: themecolor,
                                       elevation: 10,
                                       shadowColor: Colors.white,
-                                      child: new InkWell(
+                                      child: InkWell(
                                         onTap: () {
-                                          if (snapshot.data[i]['team1_score']
-                                                  .isEmpty &&
-                                              snapshot.data[i]['team2_score']
-                                                  .isEmpty) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      typeofstats(
-                                                    disablerecentstats: false,
-                                                  ),
-                                                ));
-                                          } else {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                              backgroundColor: Colors.grey,
-                                              duration: Duration(seconds: 2),
-                                              content: Text(
-                                                'Stats are not available shown once the match has started/completed !!',
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black,
-                                                    fontFamily: 'Cocosharp'),
-                                              ),
-                                            ));
-                                            // Navigator.push(
-                                            //     context,
-                                            //     MaterialPageRoute(
-                                            //       builder: (context) =>
-                                            //           typeofstats(
-                                            //         disablerecentstats: true,
-                                            //       ),
-                                            //     ));
-                                          }
+                                          // if (snapshot.data[i]['team1_score']
+                                          //         .isEmpty &&
+                                          //     snapshot.data[i]['team2_score']
+                                          //         .isEmpty) {
+                                          //   Navigator.push(
+                                          //       context,
+                                          //       MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             const typeofstats(
+                                          //           disablerecentstats: false,
+                                          //         ),
+                                          //       ));
+                                          // } else {
+                                          //   ScaffoldMessenger.of(context)
+                                          //       .showSnackBar(const SnackBar(
+                                          //     backgroundColor: Colors.grey,
+                                          //     duration: Duration(seconds: 2),
+                                          //     content: Text(
+                                          //       'Stats are not shown once the match has started/completed !!',
+                                          //       style: TextStyle(
+                                          //           fontSize: 14,
+                                          //           color: Colors.black,
+                                          //           fontFamily: 'Cocosharp'),
+                                          //     ),
+                                          //   ));
+                                          //   // Navigator.push(
+                                          //   //     context,
+                                          //   //     MaterialPageRoute(
+                                          //   //       builder: (context) =>
+                                          //   //           typeofstats(
+                                          //   //         disablerecentstats: true,
+                                          //   //       ),
+                                          //   //     ));
+                                          // }
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const typeofstats(
+                                                  disablerecentstats: false,
+                                                ),
+                                              ));
                                           setState(() {
                                             globals.team1_name = snapshot
                                                 .data[i]['Team1']
@@ -549,8 +561,8 @@ class _datascrapState extends State<datascrap> {
                                                 begin: Alignment.topLeft,
                                                 end: Alignment.bottomRight,
                                                 colors: [
-                                                  Color(0xff1A3263),
-                                                  Color(0xff1A3263)
+                                                  const Color(0xff1A3263),
+                                                  const Color(0xff1A3263)
                                                       .withOpacity(0.8),
                                                 ],
                                               )),
@@ -573,9 +585,10 @@ class _datascrapState extends State<datascrap> {
                                                       color: themecolor,
                                                     )),
                                               ),
-                                              SizedBox(height: 5),
+                                              const SizedBox(height: 5),
                                               Container(
-                                                padding: EdgeInsets.all(3),
+                                                padding:
+                                                    const EdgeInsets.all(3),
                                                 decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -603,7 +616,7 @@ class _datascrapState extends State<datascrap> {
                                                                 snapshot.data[i]
                                                                     ['Details'],
                                                                 '')),
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontFamily: 'Louisgeorge',
                                                         fontSize: 15.0,
                                                         color: Colors.white,
@@ -613,7 +626,7 @@ class _datascrapState extends State<datascrap> {
                                                 color: darkcolor,
                                                 thickness: 2,
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               Column(
@@ -717,7 +730,7 @@ class _datascrapState extends State<datascrap> {
                                                   )
                                                 ],
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 20,
                                               ),
                                               Padding(
@@ -730,7 +743,7 @@ class _datascrapState extends State<datascrap> {
                                                     ? Text(snapshot.data[i]['MatchStarts'],
                                                         textAlign:
                                                             TextAlign.center,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontFamily:
                                                                 'Louisgeorge',
                                                             fontSize: 20.0,
@@ -743,7 +756,7 @@ class _datascrapState extends State<datascrap> {
                                                             ['MatchStarts'],
                                                         textAlign:
                                                             TextAlign.center,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontFamily:
                                                                 'Louisgeorge',
                                                             fontSize: 20.0,

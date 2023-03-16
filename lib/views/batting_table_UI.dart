@@ -65,7 +65,7 @@ class _widgetbattingState extends State<widgetbatting> {
                               '_' +
                               globals.team1_name +
                               '_batting'] = team1_batfantasy;
-                          ;
+
                           print('assa11end12 ${Analysis.battersmap}');
                         });
                       },
@@ -124,7 +124,7 @@ class _widgetbattingState extends State<widgetbatting> {
                           )),
                     ),
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -163,7 +163,7 @@ class _widgetbattingState extends State<widgetbatting> {
                           child: Text(
                             '${i}',
                             textAlign: TextAlign.left,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: 'Cocosharp',
                               fontSize: 20.0,
                               color: Colors.white,
@@ -179,9 +179,10 @@ class _widgetbattingState extends State<widgetbatting> {
               (snapshot.data == null ||
                       snapshot.data.item1 == null ||
                       snapshot.data.item1.item2 == null)
-                  ? Text('Not batted yet')
+                  ? const Text('Not batted yet')
                   : SfDataGrid(
-                      verticalScrollPhysics: NeverScrollableScrollPhysics(),
+                      verticalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
                       isScrollbarAlwaysShown: true,
                       showCheckboxColumn: true,
                       rowHeight: 35.0,
@@ -191,8 +192,9 @@ class _widgetbattingState extends State<widgetbatting> {
                           : dataGridController1,
                       sortingGestureType: SortingGestureType.tap,
                       allowSorting: true,
-                      checkboxColumnSettings: DataGridCheckboxColumnSettings(
-                          showCheckboxOnHeader: false),
+                      checkboxColumnSettings:
+                          const DataGridCheckboxColumnSettings(
+                              showCheckboxOnHeader: false),
                       source: BattingDataSource(
                           batData: snapshot.data.item1.item2
                               .where((element) =>
@@ -206,7 +208,7 @@ class _widgetbattingState extends State<widgetbatting> {
                           return GridColumn(
                               columnName: headings.toLowerCase(),
                               label: Container(
-                                  padding: EdgeInsets.all(16.0),
+                                  padding: const EdgeInsets.all(16.0),
                                   alignment: Alignment.center,
                                   child: Text(
                                     headings.trim()[0].toUpperCase() +
@@ -218,7 +220,7 @@ class _widgetbattingState extends State<widgetbatting> {
                         },
                       ).toList(),
                     ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
             ],

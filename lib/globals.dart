@@ -16,9 +16,11 @@ String team2_stats_link;
 String league_page;
 String team1logo;
 String team2logo;
+var league_page_address;
 TextStyle noble = TextStyle(fontFamily: 'Cocosharp', color: Colors.white);
 TextStyle nobleblack = TextStyle(fontFamily: 'Cocosharp', color: Colors.black);
-TextStyle Louisgeorgewhite = TextStyle(fontFamily: 'Louisgeorge', color: Colors.white);
+TextStyle Louisgeorgewhite =
+    TextStyle(fontFamily: 'Louisgeorge', color: Colors.white);
 TextStyle LouisgeorgeBOLD = TextStyle(
     fontFamily: 'Louisgeorge',
     color: Colors.black,

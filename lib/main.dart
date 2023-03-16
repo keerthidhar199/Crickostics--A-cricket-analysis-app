@@ -9,11 +9,11 @@ import 'package:datascrap/typeofstats.dart';
 import 'package:datascrap/views/fantasy_players_UI.dart';
 import 'package:datascrap/webscrap.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
+import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'globals.dart' as globals;
 import 'package:animated_splash_screen/animated_splash_screen.dart';
@@ -28,44 +28,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SplashPage()
-
-        //     AnimatedSplashScreen(
-        // duration: 3000,
-        // backgroundColor: Color(0xff2B2B28),
-        // splashIconSize: double.infinity,
-        // splash: Image.asset(
-        //   'logos/intro.gif',
-        //   filterQuality: FilterQuality.high,
-        // ),
-        // Container(
-        //   color: Color(0xff2B2B28),
-        //   child: Column(
-        //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        //     children: [
-        //       Image.asset(
-        //         'logos/intro.gif',
-        //         filterQuality: FilterQuality.high,
-        //       ),
-        //       Flexible(
-        //         child: Padding(
-        //           padding: const EdgeInsets.all(8.0),
-        //           child: Text(
-        //             'CRICKOSTICS',
-        //             style: TextStyle(
-        //                 color: Colors.white,
-        //                 fontFamily: 'RestaurantMenu',
-        //                 fontSize: 50),
-        //           ),
-        //         ),
-        //       )
-        //     ],
-        //   ),
-        // ),
-        //   nextScreen: Homepage(),
-        //   // backgroundColor: Colors.indigoAccent,
-        // )
-        );
+    return const MaterialApp(home: SplashPage());
   }
 }
 
@@ -100,8 +63,7 @@ class _HomepageState extends State<Homepage> {
     List imglogosdata1 =
         json.decode(document.getElementById('__NEXT_DATA__').text)['props']
             ['appPageProps']['data']['content']['matches'];
-    List takethisimglogosdata = new List.from(imglogosdata)
-      ..addAll(imglogosdata1);
+    List takethisimglogosdata = List.from(imglogosdata)..addAll(imglogosdata1);
 
     for (var i in takethisimglogosdata) {
       if (!i['status'].toString().startsWith('Not covered') &&
@@ -159,7 +121,7 @@ class _HomepageState extends State<Homepage> {
     List<List<dynamic>> match_leagues_refresh1 = [];
 
     Future<void> _refresh() async {
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
       getValidMatches().then((value) {
         setState(() {
           _refreshIndicator = GlobalKey<RefreshIndicatorState>();
@@ -172,8 +134,8 @@ class _HomepageState extends State<Homepage> {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xffFFB72B),
-          title: Text(
+          backgroundColor: const Color(0xffFFB72B),
+          title: const Text(
             'Playing Leagues',
             style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
           ),
@@ -183,34 +145,50 @@ class _HomepageState extends State<Homepage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => fantasyteam(),
+                      builder: (context) => const fantasyteam(),
                     ));
               },
               child: Container(
-                  child: Text(
-                    'Your fantasy',
-                    style: TextStyle(
-                        fontFamily: 'Cocosharp', color: Colors.black87),
-                  ),
-                  color: Colors.orange),
+                padding: const EdgeInsets.all(5.0),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: const Color(0xff2B2B28)),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Your Fantasy',
+                      style: TextStyle(
+                          fontFamily: 'Cocosharp', color: Colors.white),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Image.asset(
+                      'logos/my_fantasy.png',
+                      width: 15,
+                      color: Colors.teal,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
         body: RefreshIndicator(
             key: _refreshIndicator,
-            color: Color(0xffFFB72B),
-            backgroundColor: Color(0xff2B2B28),
+            color: const Color(0xffFFB72B),
+            backgroundColor: const Color(0xff2B2B28),
             onRefresh: _refresh,
             child: match_leagues_refresh.isEmpty
                 ? Container(
-                    color: Color(0xff2B2B28),
+                    color: const Color(0xff2B2B28),
                     // child: Text('Loading ${snapshot.data}'),
                     child: SkeletonTheme(
                         shimmerGradient: LinearGradient(colors: [
-                          Color(0xff1A3263).withOpacity(0.8),
-                          Color(0xff1A3263),
-                          Color(0xff1A3263),
-                          Color(0xff1A3263).withOpacity(0.8),
+                          const Color(0xff1A3263).withOpacity(0.8),
+                          const Color(0xff1A3263),
+                          const Color(0xff1A3263),
+                          const Color(0xff1A3263).withOpacity(0.8),
                         ]),
                         child: ListView.builder(
                           itemCount: 10,
@@ -219,28 +197,28 @@ class _HomepageState extends State<Homepage> {
                         )))
                 : Container(
                     height: MediaQuery.of(context).size.height,
-                    color: Color(0xff2B2B28),
+                    color: const Color(0xff2B2B28),
                     child: AnimationLimiter(
                       child: AnimationConfiguration.staggeredList(
-                        duration: const Duration(milliseconds: 900),
+                        duration: const Duration(milliseconds: 700),
                         position: 1,
                         child: ScaleAnimation(
                           child: SlideAnimation(
                             child: match_leagues_refresh[0].isEmpty
                                 ? Center(
                                     child: Container(
-                                      color: Color(0xff2B2B28),
+                                      color: const Color(0xff2B2B28),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Text('  Oh My CrickOh! ',
+                                          const Text('  Oh My CrickOh! ',
                                               style: TextStyle(
                                                 fontFamily: 'Louisgeorge',
                                                 fontSize: 20.0,
                                                 color: Colors.white,
                                               )),
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 5,
                                           ),
                                           Row(
@@ -250,7 +228,7 @@ class _HomepageState extends State<Homepage> {
                                                     'logos/ball.png',
                                                   ),
                                                   onPressed: null),
-                                              Flexible(
+                                              const Flexible(
                                                 child: Text(
                                                     'No Scheduled matches as of now. Matches appear before 10-12hr of the match start time.',
                                                     style: TextStyle(
@@ -270,8 +248,8 @@ class _HomepageState extends State<Homepage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                          const Padding(
+                                            padding: EdgeInsets.all(8.0),
                                             child: Text(
                                               'Choose your league',
                                               textAlign: TextAlign.left,
@@ -307,7 +285,7 @@ class _HomepageState extends State<Homepage> {
                                                         bottom: _currentSlide ==
                                                                 matchstatetitle
                                                                     .indexOf(e)
-                                                            ? BorderSide(
+                                                            ? const BorderSide(
                                                                 //                   <--- right side
                                                                 color: Colors
                                                                     .white,
@@ -354,6 +332,11 @@ class _HomepageState extends State<Homepage> {
                                                         .size
                                                         .height *
                                                     0.80,
+                                                onPageChanged: (index, reason) {
+                                                  setState(() {
+                                                    _currentSlide = index;
+                                                  });
+                                                },
 
                                                 // autoPlay: false,
                                               ),
@@ -361,84 +344,88 @@ class _HomepageState extends State<Homepage> {
                                                 ...match_leagues_refresh
                                                     .map(
                                                       (matchstate) =>
-                                                          AnimationLimiter(
-                                                        child: Column(
-                                                            children: matchstate
-                                                                .map((e) {
-                                                          return AnimationConfiguration
-                                                              .staggeredList(
-                                                            duration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        650),
-                                                            position: matchstate
-                                                                .indexOf(e),
-                                                            child:
-                                                                ScaleAnimation(
+                                                          SingleChildScrollView(
+                                                        child: AnimationLimiter(
+                                                          child: Column(
+                                                              children:
+                                                                  matchstate
+                                                                      .map((e) {
+                                                            return AnimationConfiguration
+                                                                .staggeredList(
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          400),
+                                                              position:
+                                                                  matchstate
+                                                                      .indexOf(
+                                                                          e),
                                                               child:
-                                                                  FadeInAnimation(
-                                                                curve: Curves
-                                                                    .easeInExpo,
-                                                                child: Card(
-                                                                  shape: RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              20.0),
-                                                                      side: BorderSide(
-                                                                          color: Colors
-                                                                              .white
-                                                                              .withOpacity(0.4))),
-                                                                  elevation: 10,
-                                                                  child:
-                                                                      new InkWell(
-                                                                    onTap: () {
-                                                                      setState(
+                                                                  ScaleAnimation(
+                                                                child:
+                                                                    FadeInAnimation(
+                                                                  curve: Curves
+                                                                      .easeInExpo,
+                                                                  child: Card(
+                                                                    shape: RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                                20.0),
+                                                                        side: BorderSide(
+                                                                            color:
+                                                                                Colors.white.withOpacity(0.4))),
+                                                                    elevation:
+                                                                        10,
+                                                                    child:
+                                                                        // ignore: unnecessary_new
+                                                                        new InkWell(
+                                                                      onTap:
                                                                           () {
-                                                                        globals.league_page =
-                                                                            e;
-                                                                        print(
-                                                                            'Globals ${globals.league_page}');
-                                                                      });
-                                                                      Navigator.push(
-                                                                          context,
-                                                                          MaterialPageRoute(
-                                                                            builder: (context) =>
-                                                                                datascrap(),
-                                                                          ));
-                                                                    },
-                                                                    child: Container(
-                                                                        padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                                                                        height: 100,
-                                                                        decoration: BoxDecoration(
-                                                                            borderRadius: BorderRadius.circular(20.0),
-                                                                            gradient: LinearGradient(
-                                                                              begin: Alignment.topLeft,
-                                                                              end: Alignment.bottomRight,
-                                                                              colors: [
-                                                                                Color(0xff1A3263),
-                                                                                Color(0xff1A3263).withOpacity(0.8),
-                                                                              ],
-                                                                            )),
-                                                                        child: Center(
-                                                                          child:
-                                                                              Text(
-                                                                            e.toString(),
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontFamily: 'Louisgeorge',
-                                                                              fontSize: 20.0,
-                                                                              color: Colors.white,
+                                                                        setState(
+                                                                            () {
+                                                                          globals.league_page =
+                                                                              e;
+                                                                          print(
+                                                                              'Globals ${globals.league_page}');
+                                                                        });
+                                                                        Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder: (context) => const datascrap(),
+                                                                            ));
+                                                                      },
+                                                                      child: Container(
+                                                                          padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                                                                          height: 100,
+                                                                          decoration: BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(20.0),
+                                                                              gradient: LinearGradient(
+                                                                                begin: Alignment.topLeft,
+                                                                                end: Alignment.bottomRight,
+                                                                                colors: [
+                                                                                  const Color(0xff1A3263),
+                                                                                  const Color(0xff1A3263).withOpacity(0.8),
+                                                                                ],
+                                                                              )),
+                                                                          child: Center(
+                                                                            child:
+                                                                                Text(
+                                                                              e.toString(),
+                                                                              textAlign: TextAlign.center,
+                                                                              style: const TextStyle(
+                                                                                fontFamily: 'Louisgeorge',
+                                                                                fontSize: 20.0,
+                                                                                color: Colors.white,
+                                                                              ),
                                                                             ),
-                                                                          ),
-                                                                        )),
+                                                                          )),
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          );
-                                                        }).toList()),
+                                                            );
+                                                          }).toList()),
+                                                        ),
                                                       ),
                                                     )
                                                     .toList(),

@@ -62,7 +62,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                               '_' +
                               globals.team1_name +
                               '_bowling'] = team1_bowlfantasy.toSet().toList();
-                          ;
+
                           print('assa11end12 ${Analysis.bowlersmap}');
                         });
                       },

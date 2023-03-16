@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:datascrap/analysis.dart';
-import 'package:ext_storage/ext_storage.dart';
+import 'package:external_path/external_path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:csv/csv.dart';
 import 'package:datascrap/globals.dart' as globals;
 
@@ -20,18 +23,14 @@ class exportcsv {
     print('ik1 $finalMap');
 
     List<List<dynamic>> rows = [];
-    List<List<dynamic>> existing_table_rows = [];
     Set distinct_teams = {};
     Map<String, List<dynamic>> mapteamwise = {};
     List<dynamic> row = [];
     List<String> teamlogos = [globals.team1logo, globals.team2logo];
     row.add("Team");
-
     row.add('Player Stats');
     row.add('Teamlogo');
     rows.add(row);
-
-    existing_table_rows.add([]);
     for (var j in finalMap.keys) {
       var league, team, vs;
       print(j);
@@ -50,35 +49,36 @@ class exportcsv {
           teamwise.add(finalMap[j] + [category]);
         }
       }
-      // print('ik1 ${distinct_teams.toList().indexOf(k)}');
       mapteamwise[k] = teamwise;
-
       row.add(k);
       row.add(teamwise);
       row.add(teamlogos[distinct_teams.toList().indexOf(k)]);
-      existing_table_rows.add(row);
       rows.add(row);
     }
-    print('rows $rows');
+    print('export_datayu $rows');
 
-    String dir = await ExtStorage.getExternalStoragePublicDirectory(
-        ExtStorage.DIRECTORY_DOWNLOADS);
-    print("dir $dir");
-    String file = "$dir";
-
-    File f = File(file + "/yourfantasy.csv");
-    var isempty = await f.length == 0;
-    if (!(f.existsSync())) {
-      String csv = const ListToCsvConverter().convert(rows);
-      f.writeAsString(csv, mode: FileMode.write);
-    } else {
-      if (!isempty) {
-        String csv1 = const ListToCsvConverter().convert(existing_table_rows);
-        print('$csv1');
-        f.writeAsString(csv1, mode: FileMode.append);
-      } else {
-        print("Nooooooooooooooooooooooooooooooooooooooooooooooooooooo");
+    final prefs = await SharedPreferences.getInstance();
+    bool ifavail = prefs.containsKey('FantasyData');
+    if (ifavail) {
+      Map<String, dynamic> sp = {};
+      var fields1 = jsonDecode(prefs.getString('FantasyData'));
+      print('SP $fields1');
+      for (int i = 0; i < fields1.keys.length; i++) {
+        print('SP ${fields1.keys.toList()}');
+        sp[fields1.keys.toList()[i]] = fields1[fields1.keys.toList()[i]];
       }
+      String counter = (fields1.keys.length + 1).toString();
+      sp['Result' + counter] = rows;
+      String encodedata;
+      print('SP $sp');
+      encodedata = jsonEncode(sp);
+      await prefs.setString('FantasyData', encodedata);
+    } else {
+      Map<String, List<List<dynamic>>> sp = {};
+      sp['Result'] = rows;
+      String encodedata;
+      encodedata = jsonEncode(sp);
+      await prefs.setString('FantasyData', encodedata);
     }
   }
 }
