@@ -9,6 +9,7 @@ import 'package:datascrap/typeofstats.dart';
 import 'package:datascrap/views/fantasy_players_UI.dart';
 import 'package:datascrap/webscrap.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
@@ -196,7 +197,6 @@ class _HomepageState extends State<Homepage> {
                               PlayingLeaguesSkelton(),
                         )))
                 : Container(
-                    height: MediaQuery.of(context).size.height,
                     color: const Color(0xff2B2B28),
                     child: AnimationLimiter(
                       child: AnimationConfiguration.staggeredList(
@@ -323,113 +323,121 @@ class _HomepageState extends State<Homepage> {
                                                     ),
                                                   )
                                                   .toList()),
-                                          CarouselSlider(
-                                              carouselController: _controller,
-                                              options: CarouselOptions(
-                                                enlargeCenterPage: true,
-                                                viewportFraction: 1,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.80,
-                                                onPageChanged: (index, reason) {
-                                                  setState(() {
-                                                    _currentSlide = index;
-                                                  });
-                                                },
 
-                                                // autoPlay: false,
-                                              ),
-                                              items: [
-                                                ...match_leagues_refresh
-                                                    .map(
-                                                      (matchstate) =>
-                                                          SingleChildScrollView(
-                                                        child: AnimationLimiter(
-                                                          child: Column(
-                                                              children:
+                                          CarouselSlider(
+                                            carouselController: _controller,
+                                            options: CarouselOptions(
+                                              enableInfiniteScroll: false,
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .height,
+                                              viewportFraction: 1,
+                                              enlargeCenterPage: false,
+                                              onPageChanged: (index, reason) {
+                                                setState(() {
+                                                  _currentSlide = index;
+                                                });
+                                              },
+
+                                              // autoPlay: false,
+                                            ),
+                                            items: match_leagues_refresh
+                                                .map(
+                                                  (matchstate) => Container(
+                                                    child: Column(
+                                                        children:
+                                                            matchstate.map((e) {
+                                                      return AnimationConfiguration
+                                                          .staggeredList(
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    400),
+                                                        position: matchstate
+                                                            .indexOf(e),
+                                                        child: ScaleAnimation(
+                                                          child:
+                                                              FadeInAnimation(
+                                                            curve: Curves
+                                                                .easeInExpo,
+                                                            child: Container(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height /
                                                                   matchstate
-                                                                      .map((e) {
-                                                            return AnimationConfiguration
-                                                                .staggeredList(
-                                                              duration:
-                                                                  const Duration(
-                                                                      milliseconds:
-                                                                          400),
-                                                              position:
-                                                                  matchstate
-                                                                      .indexOf(
-                                                                          e),
-                                                              child:
-                                                                  ScaleAnimation(
-                                                                child:
-                                                                    FadeInAnimation(
-                                                                  curve: Curves
-                                                                      .easeInExpo,
-                                                                  child: Card(
-                                                                    shape: RoundedRectangleBorder(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(
-                                                                                20.0),
-                                                                        side: BorderSide(
-                                                                            color:
-                                                                                Colors.white.withOpacity(0.4))),
-                                                                    elevation:
-                                                                        10,
-                                                                    child:
-                                                                        // ignore: unnecessary_new
-                                                                        new InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        setState(
-                                                                            () {
-                                                                          globals.league_page =
-                                                                              e;
-                                                                          print(
-                                                                              'Globals ${globals.league_page}');
-                                                                        });
-                                                                        Navigator.push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                              builder: (context) => const datascrap(),
-                                                                            ));
-                                                                      },
-                                                                      child: Container(
-                                                                          padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-                                                                          height: 100,
-                                                                          decoration: BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(20.0),
-                                                                              gradient: LinearGradient(
-                                                                                begin: Alignment.topLeft,
-                                                                                end: Alignment.bottomRight,
-                                                                                colors: [
-                                                                                  const Color(0xff1A3263),
-                                                                                  const Color(0xff1A3263).withOpacity(0.8),
-                                                                                ],
-                                                                              )),
-                                                                          child: Center(
-                                                                            child:
-                                                                                Text(
-                                                                              e.toString(),
-                                                                              textAlign: TextAlign.center,
-                                                                              style: const TextStyle(
-                                                                                fontFamily: 'Louisgeorge',
-                                                                                fontSize: 20.0,
-                                                                                color: Colors.white,
-                                                                              ),
-                                                                            ),
+                                                                      .length,
+                                                              child: Card(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20.0),
+                                                                    side: BorderSide(
+                                                                        color: Colors
+                                                                            .white
+                                                                            .withOpacity(0.4))),
+                                                                elevation: 10,
+                                                                child: InkWell(
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      globals.league_page =
+                                                                          e;
+
+                                                                      print(
+                                                                          'Globals ${globals.league_page}');
+                                                                    });
+
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              const datascrap(),
+                                                                        ));
+                                                                  },
+                                                                  child: Container(
+                                                                      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                                                                      height: 100,
+                                                                      decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(20.0),
+                                                                          gradient: LinearGradient(
+                                                                            begin:
+                                                                                Alignment.topLeft,
+                                                                            end:
+                                                                                Alignment.bottomRight,
+                                                                            colors: [
+                                                                              const Color(0xff1A3263),
+                                                                              const Color(0xff1A3263).withOpacity(0.8),
+                                                                            ],
                                                                           )),
-                                                                    ),
-                                                                  ),
+                                                                      child: Center(
+                                                                        child:
+                                                                            Text(
+                                                                          e.toString(),
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontFamily:
+                                                                                'Louisgeorge',
+                                                                            fontSize:
+                                                                                20.0,
+                                                                            color:
+                                                                                Colors.white,
+                                                                          ),
+                                                                        ),
+                                                                      )),
                                                                 ),
                                                               ),
-                                                            );
-                                                          }).toList()),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
-                                                    )
-                                                    .toList(),
-                                              ]),
+                                                      );
+                                                    }).toList()),
+                                                  ),
+                                                )
+                                                .toList(),
+                                          ),
                                         ]),
                                   ),
                           ),
