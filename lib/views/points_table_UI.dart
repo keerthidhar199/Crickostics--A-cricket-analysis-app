@@ -31,6 +31,7 @@ class pointsTableUI extends StatelessWidget {
               return Text('Error: ${snapshot.error}');
             else {
               return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     width: double.infinity,
@@ -52,35 +53,40 @@ class pointsTableUI extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SfDataGrid(
-                    verticalScrollPhysics: const NeverScrollableScrollPhysics(),
-                    horizontalScrollPhysics:
-                        const NeverScrollableScrollPhysics(),
-                    rowHeight: 35.0,
-                    shrinkWrapRows: true,
-                    allowSorting: true,
-                    source: PointsTableSource(pointsData: snapshot.data.item2),
-                    columnWidthMode: ColumnWidthMode.auto,
-                    selectionMode: SelectionMode.multiple,
-                    columns: snapshot.data.item1.map(
-                      (headings) {
-                        return GridColumn(
-                            columnName: headings.toLowerCase(),
-                            label: Container(
-                                padding: const EdgeInsets.all(16.0),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  headings.trim()[0].toUpperCase() +
-                                      headings
-                                          .trim()
-                                          .substring(1)
-                                          .toLowerCase(),
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'NewAthletic'),
-                                )));
-                      },
-                    ).toList(),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 2,
+                    child: SfDataGrid(
+                      verticalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
+                      horizontalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
+                      rowHeight: 35.0,
+                      shrinkWrapRows: true,
+                      allowSorting: true,
+                      source:
+                          PointsTableSource(pointsData: snapshot.data.item2),
+                      columnWidthMode: ColumnWidthMode.auto,
+                      selectionMode: SelectionMode.multiple,
+                      columns: snapshot.data.item1.map(
+                        (headings) {
+                          return GridColumn(
+                              columnName: headings.toLowerCase(),
+                              label: Container(
+                                  padding: const EdgeInsets.all(16.0),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    headings.trim()[0].toUpperCase() +
+                                        headings
+                                            .trim()
+                                            .substring(1)
+                                            .toLowerCase(),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'NewAthletic'),
+                                  )));
+                        },
+                      ).toList(),
+                    ),
                   ),
                 ],
               );
