@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:datascrap/analysis.dart';
 import 'package:datascrap/models/bowling_class.dart';
 import 'package:datascrap/models/partnership_class.dart';
@@ -9,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:tuple/tuple.dart';
 import 'package:datascrap/globals.dart' as globals;
-
+import 'package:http/http.dart' as http;
+import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart' as parser;
 import '../models/points_table_class.dart';
 
 class pointsTableUI extends StatelessWidget {
@@ -41,7 +45,7 @@ class pointsTableUI extends StatelessWidget {
             } else {
               return Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Container(
@@ -64,27 +68,36 @@ class pointsTableUI extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SfDataGrid(
-                    verticalScrollPhysics: const NeverScrollableScrollPhysics(),
-                    horizontalScrollPhysics:
-                        const NeverScrollableScrollPhysics(),
-                    source: PointsTableSource(pointsData: snapshot.data.item2),
-                    columnWidthMode: ColumnWidthMode.fill,
-                    selectionMode: SelectionMode.multiple,
-                    columns: snapshot.data.item1.map(
-                      (headings) {
-                        return GridColumn(
-                            columnName: headings.toLowerCase(),
-                            label: Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  globals.capitalize(headings),
-                                  style: const TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'NewAthletic'),
-                                )));
-                      },
-                    ).toList(),
+                  Expanded(
+                    child: SfDataGrid(
+                      shrinkWrapRows: true,
+                      verticalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
+                      source:
+                          PointsTableSource(pointsData: snapshot.data.item2),
+                      defaultColumnWidth: 150,
+                      rowHeight: 100,
+                      // columnWidthMode: ColumnWidthMode.fill,
+                      selectionMode: SelectionMode.multiple,
+                      columns: snapshot.data.item1.map(
+                        (headings) {
+                          return GridColumn(
+                              columnName: headings.toLowerCase(),
+                              columnWidthMode:
+                                  snapshot.data.item1.indexOf(headings) != 0
+                                      ? ColumnWidthMode.lastColumnFill
+                                      : ColumnWidthMode.none,
+                              label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    globals.capitalize(headings),
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'NewAthletic'),
+                                  )));
+                        },
+                      ).toList(),
+                    ),
                   ),
                 ],
               );

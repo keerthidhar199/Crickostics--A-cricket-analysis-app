@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:datascrap/models/Coloredrow.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -36,9 +39,33 @@ class PointsTableSource extends DataGridSource {
             ]))
         .toList();
   }
-  String root_logo =
-      'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
+
   List<DataGridRow> _pointsData = [];
+  Future<String> getlogos(String leaguename) async {
+    String root_logo =
+        'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
+    var response = await http.Client()
+        .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
+    dom.Document document = parser.parse(response.body);
+    List imglogosdata =
+        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+            ['editionDetails']['trendingMatches']['matches'];
+    List imglogosdata1 =
+        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+            ['appPageProps']['data']['content']['matches'];
+    List takethisimglogosdata = List.from(imglogosdata)..addAll(imglogosdata1);
+    String seriesname = '';
+    for (var i in takethisimglogosdata) {
+      if (i['teams'][0]['team']['longName'].toString().trim() == leaguename) {
+        seriesname = i['teams'][0]['team']['image']['url'].toString();
+      } else if (i['teams'][1]['team']['longName'].toString().trim() ==
+          leaguename) {
+        seriesname = i['teams'][1]['team']['image']['url'].toString();
+      }
+    }
+    //print('imglogosdata12 $seriesname');
+    return root_logo + seriesname;
+  }
 
   @override
   List<DataGridRow> get rows => _pointsData;
@@ -51,11 +78,21 @@ class PointsTableSource extends DataGridSource {
         color: Colors.grey.shade600,
         alignment: Alignment.center,
         padding: const EdgeInsets.all(8.0),
-        child: Text(
-          e.value.toString().trim(),
-          style:
-              const TextStyle(color: Colors.white, fontFamily: 'NewAthletic'),
-        ),
+        child: e.columnName == 'Series Form'
+            ? ColoredRow(
+                string: e.value,
+              )
+            : Container(
+                width: double.infinity * 0.1,
+                child: Text(
+                  e.value.toString(),
+                  softWrap: true,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'NewAthletic',
+                      fontSize: 15),
+                ),
+              ),
       );
     }).toList());
   }
@@ -83,8 +120,9 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
   titles1.removeWhere((element) => element.text.isEmpty);
   int index = titles1.indexWhere((element) => element.text == 'Series Form');
   headings.add(titles1[0].text.toString().trim());
-  headings.add(titles1[index - 1].text.toString().trim());
   headings.add(titles1[index - 2].text.toString().trim());
+
+  headings.add(titles1[index - 1].text.toString().trim());
   headings.add(titles1[index].text.toString().trim());
 
   var element = document1.querySelectorAll('table>tbody')[0];
@@ -96,8 +134,6 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
     for (int j = 0; j < data[i].children.length; j++) {
       if (data[i].children[j].text.isNotEmpty) {
         if (j == 0) {
-          print(
-              '${data[i].children[j].text.split(RegExp(r'[0-9]')).last.toString().trim()}');
           playerwise.add(data[i]
               .children[j]
               .text
@@ -121,3 +157,36 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
 
   return Tuple2(pointstablehead, pointstableinfo);
 }
+// Widget showlogos(teamname){
+//   return FutureBuilder<String>(
+//                 future: getlogos(teamname.toString()), // async work
+//                 builder:
+//                     (BuildContext context, AsyncSnapshot<String> snapshot) {
+//                   switch (snapshot.connectionState) {
+//                     case ConnectionState.waiting:
+//                       return CircularProgressIndicator();
+//                     default:
+//                       return Row(
+//                         children: [
+//                           IconButton(
+//                               icon: CachedNetworkImage(
+//                                 imageUrl: snapshot.data,
+//                               ),
+//                               onPressed: null),
+//                           Container(
+//                             width: MediaQuery.of(context).size.width * 0.2,
+//                             child: Text(
+//                               teamname.toString(),
+//                               softWrap: true,
+//                               style: const TextStyle(
+//                                   color: Colors.white,
+//                                   fontFamily: 'NewAthletic'),
+//                             ),
+//                           )
+//                         ],
+//                       );
+//                   }
+//                 },
+//               );
+            
+// } 

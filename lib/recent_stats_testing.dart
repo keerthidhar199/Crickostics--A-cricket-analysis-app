@@ -18,31 +18,6 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
   var themecolor = Colors.white;
   var darkcolor = Colors.black;
 
-  Future<String> getlogos(String leaguename) async {
-    var response = await http.Client()
-        .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
-    dom.Document document = parser.parse(response.body);
-    List imglogosdata =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-            ['editionDetails']['trendingMatches']['matches'];
-    List imglogosdata1 =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-            ['appPageProps']['data']['content']['matches'];
-    List takethisimglogosdata = new List.from(imglogosdata)
-      ..addAll(imglogosdata1);
-    String seriesname = '';
-    for (var i in takethisimglogosdata) {
-      if (i['teams'][0]['team']['longName'].toString().trim() == leaguename) {
-        seriesname = i['teams'][0]['team']['image']['url'].toString();
-      } else if (i['teams'][1]['team']['longName'].toString().trim() ==
-          leaguename) {
-        seriesname = i['teams'][1]['team']['image']['url'].toString();
-      }
-    }
-    //print('imglogosdata12 $seriesname');
-    return seriesname;
-  }
-
   Future<List<Map<String, List<String>>>> getrecentstats() async {
     List<Map<String, List<String>>> bothteams = [];
     Map<String, List<String>> team1 = {};

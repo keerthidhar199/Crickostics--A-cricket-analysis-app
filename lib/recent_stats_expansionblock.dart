@@ -161,7 +161,6 @@ class _expansionTileState extends State<expansionTile> {
                                         .currentState
                                         .toggleCard(); //toggle all the cards to back
                                   }); //and turn the switch as well and show the player details
-
                                 } else {
                                   //if tile is open and the player is clicked again close the expansion tile
                                   if (tapon[topplayer] == true) {
