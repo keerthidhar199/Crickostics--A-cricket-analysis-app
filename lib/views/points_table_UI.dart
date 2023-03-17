@@ -27,12 +27,23 @@ class pointsTableUI extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           default:
-            if (snapshot.hasError)
-              return Text('Error: ${snapshot.error}');
-            else {
+            if (snapshot.data == null) {
+              return Center(
+                  child: Container(
+                      color: Colors.blueGrey,
+                      child: const Text(
+                        'Table Data not available',
+                        style: TextStyle(
+                            fontFamily: 'NewAthletic',
+                            fontSize: 25,
+                            color: Colors.white),
+                      )));
+            } else {
               return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(
+                    height: 20,
+                  ),
                   Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
@@ -53,40 +64,27 @@ class pointsTableUI extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Container(
-                    height: MediaQuery.of(context).size.height / 2,
-                    child: SfDataGrid(
-                      verticalScrollPhysics:
-                          const NeverScrollableScrollPhysics(),
-                      horizontalScrollPhysics:
-                          const NeverScrollableScrollPhysics(),
-                      rowHeight: 35.0,
-                      shrinkWrapRows: true,
-                      allowSorting: true,
-                      source:
-                          PointsTableSource(pointsData: snapshot.data.item2),
-                      columnWidthMode: ColumnWidthMode.auto,
-                      selectionMode: SelectionMode.multiple,
-                      columns: snapshot.data.item1.map(
-                        (headings) {
-                          return GridColumn(
-                              columnName: headings.toLowerCase(),
-                              label: Container(
-                                  padding: const EdgeInsets.all(16.0),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    headings.trim()[0].toUpperCase() +
-                                        headings
-                                            .trim()
-                                            .substring(1)
-                                            .toLowerCase(),
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'NewAthletic'),
-                                  )));
-                        },
-                      ).toList(),
-                    ),
+                  SfDataGrid(
+                    verticalScrollPhysics: const NeverScrollableScrollPhysics(),
+                    horizontalScrollPhysics:
+                        const NeverScrollableScrollPhysics(),
+                    source: PointsTableSource(pointsData: snapshot.data.item2),
+                    columnWidthMode: ColumnWidthMode.fill,
+                    selectionMode: SelectionMode.multiple,
+                    columns: snapshot.data.item1.map(
+                      (headings) {
+                        return GridColumn(
+                            columnName: headings.toLowerCase(),
+                            label: Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  globals.capitalize(headings),
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'NewAthletic'),
+                                )));
+                      },
+                    ).toList(),
                   ),
                 ],
               );

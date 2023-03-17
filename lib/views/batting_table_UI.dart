@@ -203,20 +203,24 @@ class _widgetbattingState extends State<widgetbatting> {
                               .toList()),
                       columnWidthMode: ColumnWidthMode.auto,
                       selectionMode: SelectionMode.multiple,
-                      columns: snapshot.data.item1.item1.map(
+                      columns: (snapshot.data.item1.item1.sublist(0, 3) +
+                              [
+                                snapshot.data.item1.item1[5]
+                              ]) //headings only useful columns
+                          .map(
                         (headings) {
-                          return GridColumn(
-                              columnName: headings.toLowerCase(),
-                              label: Container(
-                                  padding: const EdgeInsets.all(16.0),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    headings.trim()[0].toUpperCase() +
-                                        headings
-                                            .trim()
-                                            .substring(1)
-                                            .toLowerCase(),
-                                  )));
+                          {
+                            return GridColumn(
+                                columnName: headings,
+                                label: Container(
+                                    padding: const EdgeInsets.all(16.0),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      globals.capitalize(headings),
+                                      style: const TextStyle(
+                                          fontFamily: 'NewAthletic'),
+                                    )));
+                          }
                         },
                       ).toList(),
                     ),

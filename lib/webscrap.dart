@@ -63,23 +63,26 @@ class _datascrapState extends State<datascrap> {
     return formattedDate;
   }
 
-  final GlobalKey<RefreshIndicatorState> _refreshIndicator =
+  GlobalKey<RefreshIndicatorState> _refreshIndicator =
       GlobalKey<RefreshIndicatorState>();
+
   @override
   void initState() {
     WidgetsBinding.instance
         .addPostFrameCallback((_) => _refreshIndicator.currentState.show());
 
     super.initState();
+    getlivematches(globals.league_page).then((value) {
+      setState(() {
+        snapshot = value;
+      });
+    });
   }
 
   var link2doc1;
   final CarouselController _controller = CarouselController();
   int _currentSlide = 0;
-  List<String> matchstatetitle = [
-    'Current/ \n Upcoming Matches',
-    'Points Table'
-  ];
+  List<String> matchstatetitle = ['Matches', 'Points Table'];
 
   Future<List<Map<String, String>>> getlivematches(String league) async {
     var response = await http.Client()
@@ -96,8 +99,7 @@ class _datascrapState extends State<datascrap> {
         k++) {
       Map<String, String> iplmatch = {};
 
-      var matchdetails =
-          await document.getElementsByClassName('ds-px-4 ds-py-3')[k];
+      var matchdetails = document.getElementsByClassName('ds-px-4 ds-py-3')[k];
       // print('matchdetais ${matchdetails.text}');
       // if (matchdetails.querySelectorAll('a').isNotEmpty) {
       if (matchdetails.text.contains(league)) {
@@ -138,10 +140,10 @@ class _datascrapState extends State<datascrap> {
 
           for (var y
               in matchdetails.getElementsByClassName('ds-text-compact-xxs')) {
-            var match_det =
+            var matchDet =
                 y.getElementsByClassName('ds-flex ds-justify-between')[0];
-            if (!match_det.text.toLowerCase().contains('covered')) {
-              var match_det1 = y.getElementsByClassName(
+            if (!matchDet.text.toLowerCase().contains('covered')) {
+              var matchDet1 = y.getElementsByClassName(
                       'ds-text-tight-xs ds-truncate ds-text-typo-mid3')[
                   0]; // 11th Match (N), DY Patil, March 13, 2023, Women's Premier League
               var teams1 = y
@@ -156,7 +158,7 @@ class _datascrapState extends State<datascrap> {
                   .text; //team2 name Gujarat Giants Women
               var teamscore = y.getElementsByClassName(
                   'ds-text-compact-s ds-text-typo ds-text-right ds-whitespace-nowrap');
-              var stauts;
+              String stauts;
               if (y
                   .getElementsByClassName(
                       'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo')
@@ -234,18 +236,18 @@ class _datascrapState extends State<datascrap> {
               // //print('hero teamscore: ${teamscore[1].text}');
               //print('hero stauts: ${stauts.text}');
 
-              iplmatch['Time'] = match_det.text;
-              iplmatch['Match_name'] = match_det1.text.split(',').last;
+              iplmatch['Time'] = matchDet.text;
+              iplmatch['Match_name'] = matchDet1.text.split(',').last;
 
               iplmatch['MatchStarts'] = stauts;
-              iplmatch['Details'] = match_det1.text;
+              iplmatch['Details'] = matchDet1.text;
 
               final DateTime today = DateTime.now();
               final DateFormat format2 = DateFormat('MMMM');
               //print(format2.format(
               // today));
               //getting current month name like January, February...
-              var detailslist = match_det1.text.split(',');
+              var detailslist = matchDet1.text.split(',');
 
               print('bass' + detailslist.toString());
               for (var k in detailslist) {
@@ -290,7 +292,7 @@ class _datascrapState extends State<datascrap> {
             var rec2 = teamstatsdoc
                 .getElementsByClassName('RecBulAro')
                 .where((element) => element.text == 'Records by team');
-            if (rec1.length != 0) {
+            if (rec1.isNotEmpty) {
               rec1 = rec1
                   .toList()[0]
                   .parentNode
@@ -299,19 +301,19 @@ class _datascrapState extends State<datascrap> {
                   .where((element) => (element.text == iplmatch["Team1"] ||
                       element.text == iplmatch["Team1_short"]));
 
-              if (rec1.length != 0) {
+              if (rec1.isNotEmpty) {
                 iplmatch['team1_stats_link'] =
                     rec1.first.attributes["href"].toString();
                 //print('rec1 ${rec1.first.attributes["href"]}');
                 matches.add(iplmatch);
               }
-            } else if (rec1.length == 0) {
+            } else if (rec1.isEmpty) {
               iplmatch['team1_stats_link'] =
                   link3.toList()[0].attributes["href"].toString();
               matches.add(iplmatch);
             }
 
-            if (rec2.length != 0) {
+            if (rec2.isNotEmpty) {
               rec2 = rec2
                   .toList()[0]
                   .parentNode
@@ -320,13 +322,13 @@ class _datascrapState extends State<datascrap> {
                   .where((element) => (element.text == iplmatch["Team2"] ||
                       element.text == iplmatch["Team2_short"]));
 
-              if (rec2.length != 0) {
+              if (rec2.isNotEmpty) {
                 iplmatch['team2_stats_link'] =
                     rec2.first.attributes["href"].toString();
                 //print('rec2 ${rec2.first.attributes["href"]}');
                 matches.add(iplmatch);
               }
-            } else if (rec2.length == 0) {
+            } else if (rec2.isEmpty) {
               iplmatch['team2_stats_link'] =
                   link3.toList()[0].attributes["href"].toString();
               matches.add(iplmatch);
@@ -341,18 +343,30 @@ class _datascrapState extends State<datascrap> {
   }
 
   List<List<dynamic>> tableinfo = [];
-  Future<List<Map<String, String>>> variable;
+  List<Map<String, String>> variable = [];
+  List<Map<String, String>> snapshot = [];
+
+  String rootLogo =
+      'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
+
   @override
   Widget build(BuildContext context) {
+    double screenheight = MediaQuery.of(context).size.height;
+
     // UTCtoLocal('Today, 3:15 am');
     Future<void> _refresh() async {
-      setState(() {
-        variable = getlivematches(globals.league_page);
+      snapshot = [];
+      await Future.delayed(const Duration(milliseconds: 5));
+      getlivematches(globals.league_page).then((value) {
+        setState(() {
+          _refreshIndicator = GlobalKey<RefreshIndicatorState>();
+          variable = value;
+          snapshot = variable;
+        });
       });
     }
 
     return Scaffold(
-        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: const Color(0xffFFB72B),
           // title: const Text(
@@ -366,116 +380,93 @@ class _datascrapState extends State<datascrap> {
                 Navigator.pop(context);
               }),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                color: Color(0xff2B2B28),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: matchstatetitle
-                        .map(
-                          (e) => Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                              bottom:
-                                  _currentSlide == matchstatetitle.indexOf(e)
-                                      ? const BorderSide(
-                                          //                   <--- right side
-                                          color: Colors.white,
-                                          width: 3.0,
-                                        )
-                                      : BorderSide.none,
-                            )),
-                            child: TextButton(
-                              onPressed: () {
-                                _controller
-                                    .jumpToPage(matchstatetitle.indexOf(e));
-                                setState(() {
-                                  _currentSlide = matchstatetitle.indexOf(e);
-                                });
-                              },
-                              child: Text(
-                                e.toString(),
-                                style: TextStyle(
-                                  fontFamily: 'Louisgeorge',
-                                  fontSize: 15.0,
-                                  color: Colors.grey.shade700,
+        body: RefreshIndicator(
+          key: _refreshIndicator,
+          color: const Color(0xffFFB72B),
+          backgroundColor: const Color(0xff2B2B28),
+          onRefresh: _refresh,
+          child: SingleChildScrollView(
+            child: Container(
+              color: const Color(0xff2B2B28),
+              child: Column(
+                children: [
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: matchstatetitle
+                          .map(
+                            (e) => Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                bottom:
+                                    _currentSlide == matchstatetitle.indexOf(e)
+                                        ? const BorderSide(
+                                            //                   <--- right side
+                                            color: Colors.white,
+                                            width: 3.0,
+                                          )
+                                        : BorderSide.none,
+                              )),
+                              child: TextButton(
+                                onPressed: () {
+                                  _controller
+                                      .jumpToPage(matchstatetitle.indexOf(e));
+                                  setState(() {
+                                    _currentSlide = matchstatetitle.indexOf(e);
+                                  });
+                                },
+                                child: Text(
+                                  e.toString(),
+                                  style: TextStyle(
+                                    fontFamily: 'Louisgeorge',
+                                    fontSize: 15.0,
+                                    color: Colors.grey.shade700,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        )
-                        .toList()),
-              ),
-              CarouselSlider(
-                carouselController: _controller,
-                options: CarouselOptions(
-                  enableInfiniteScroll: false,
-                  height: MediaQuery.of(context).size.height,
-                  viewportFraction: 1,
-                  enlargeCenterPage: false,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _currentSlide = index;
-                    });
-                  },
+                          )
+                          .toList()),
+                  CarouselSlider(
+                    carouselController: _controller,
+                    options: CarouselOptions(
+                      initialPage: _currentSlide,
+                      height: _currentSlide == 0
+                          ? (screenheight > (snapshot.length * 270.0))
+                              ? screenheight
+                              : snapshot.length * 270.0
+                          : screenheight,
 
-                  // autoPlay: false,
-                ),
-                items: [
-                  RefreshIndicator(
-                    color: const Color(0xffFFB72B),
-                    backgroundColor: const Color(0xff2B2B28),
-                    key: _refreshIndicator,
-                    onRefresh: _refresh,
-                    child: FutureBuilder<List<Map<String, String>>>(
-                      future: variable, // async work
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<Map<String, String>>> snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.waiting:
-                            return Container(
-                                color: const Color(0xff2B2B28),
-                                child: SkeletonTheme(
-                                    shimmerGradient: LinearGradient(colors: [
-                                      const Color(0xff1A3263).withOpacity(0.8),
-                                      const Color(0xff1A3263),
-                                      const Color(0xff1A3263),
-                                      const Color(0xff1A3263).withOpacity(0.8),
-                                    ]),
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.vertical,
-                                      shrinkWrap: true,
-                                      itemCount: 5,
-                                      itemBuilder: (context, index) =>
-                                          NewsCardSkelton(),
-                                    )));
-                          default:
-                            if (snapshot.hasError)
-                              return Text('Error: ${snapshot.error}');
-                            else if (snapshot.data == null) {
-                              return Container(
-                                  color: const Color(0xff2B2B28),
-                                  child: SkeletonTheme(
-                                      shimmerGradient: LinearGradient(colors: [
-                                        const Color(0xff1A3263)
-                                            .withOpacity(0.8),
-                                        const Color(0xff1A3263),
-                                        const Color(0xff1A3263),
-                                        const Color(0xff1A3263)
-                                            .withOpacity(0.8),
-                                      ]),
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.vertical,
-                                        shrinkWrap: true,
-                                        itemCount: 5,
-                                        itemBuilder: (context, index) =>
-                                            NewsCardSkelton(),
-                                      )));
-                            } else {
-                              if (snapshot.data.isEmpty) {
-                                return Container(
+                      enableInfiniteScroll: false,
+                      viewportFraction: 1,
+                      enlargeCenterPage: false,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _currentSlide = index;
+                        });
+                      },
+
+                      // autoPlay: false,
+                    ),
+                    items: [
+                      snapshot.isEmpty
+                          ? Container(
+                              color: const Color(0xff2B2B28),
+                              child: SkeletonTheme(
+                                  shimmerGradient: LinearGradient(colors: [
+                                    const Color(0xff1A3263).withOpacity(0.8),
+                                    const Color(0xff1A3263),
+                                    const Color(0xff1A3263),
+                                    const Color(0xff1A3263).withOpacity(0.8),
+                                  ]),
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    itemCount: 5,
+                                    itemBuilder: (context, index) =>
+                                        NewsCardSkelton(),
+                                  )))
+                          : snapshot == null
+                              ? Container(
                                   color: const Color(0xff2B2B28),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -518,410 +509,387 @@ class _datascrapState extends State<datascrap> {
                                       ),
                                     ],
                                   ),
-                                );
-                              } else {
-                                String root_logo =
-                                    'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
-                                return AnimationLimiter(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        color: const Color(0xff2B2B28),
-                                        height:
-                                            MediaQuery.of(context).size.height,
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              const AlwaysScrollableScrollPhysics(),
-                                          scrollDirection: Axis.vertical,
-                                          itemCount: snapshot.data.length,
-                                          itemBuilder: (context, int i) =>
-                                              AnimationConfiguration
-                                                  .staggeredList(
-                                            duration: const Duration(
-                                                milliseconds: 570),
-                                            position: i,
-                                            child: FadeInAnimation(
-                                              child: SlideAnimation(
-                                                verticalOffset: -900,
-                                                child: Column(
-                                                  children: [
-                                                    const SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Card(
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      20.0),
-                                                          side: BorderSide(
-                                                              color: Colors
-                                                                  .white
-                                                                  .withOpacity(
-                                                                      0.4))),
-                                                      color: themecolor,
-                                                      elevation: 10,
-                                                      shadowColor: Colors.white,
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          // if (snapshot.data[i]['team1_score']
-                                                          //         .isEmpty &&
-                                                          //     snapshot.data[i]['team2_score']
-                                                          //         .isEmpty) {
-                                                          //   Navigator.push(
-                                                          //       context,
-                                                          //       MaterialPageRoute(
-                                                          //         builder: (context) =>
-                                                          //             const typeofstats(
-                                                          //           disablerecentstats: false,
-                                                          //         ),
-                                                          //       ));
-                                                          // } else {
-                                                          //   ScaffoldMessenger.of(context)
-                                                          //       .showSnackBar(const SnackBar(
-                                                          //     backgroundColor: Colors.grey,
-                                                          //     duration: Duration(seconds: 2),
-                                                          //     content: Text(
-                                                          //       'Stats are not shown once the match has started/completed !!',
-                                                          //       style: TextStyle(
-                                                          //           fontSize: 14,
-                                                          //           color: Colors.black,
-                                                          //           fontFamily: 'Cocosharp'),
-                                                          //     ),
-                                                          //   ));
-                                                          //   // Navigator.push(
-                                                          //   //     context,
-                                                          //   //     MaterialPageRoute(
-                                                          //   //       builder: (context) =>
-                                                          //   //           typeofstats(
-                                                          //   //         disablerecentstats: true,
-                                                          //   //       ),
-                                                          //   //     ));
-                                                          // }
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        const typeofstats(
-                                                                  disablerecentstats:
-                                                                      false,
-                                                                ),
-                                                              ));
-                                                          setState(() {
-                                                            globals.team1_name =
-                                                                snapshot.data[i]
-                                                                        [
-                                                                        'Team1']
-                                                                    .trim();
-                                                            globals.team2_name =
-                                                                snapshot.data[i]
-                                                                        [
-                                                                        'Team2']
-                                                                    .trim();
-                                                            globals.team1__short_name =
-                                                                snapshot.data[i]
-                                                                        [
-                                                                        'Team1_short']
-                                                                    .trim();
-                                                            globals.team2__short_name =
-                                                                snapshot.data[i]
-                                                                        [
-                                                                        'Team2_short']
-                                                                    .trim();
-                                                            globals.team1_stats_link =
-                                                                snapshot.data[i]
-                                                                    [
-                                                                    'team1_stats_link'];
-                                                            globals.team2_stats_link =
-                                                                snapshot.data[i]
-                                                                    [
-                                                                    'team2_stats_link'];
-                                                            globals.ground =
-                                                                snapshot.data[i]
-                                                                        [
-                                                                        'Ground']
-                                                                    .toString()
-                                                                    .trim();
-                                                            globals.team1logo =
-                                                                snapshot.data[i]
-                                                                    [
-                                                                    'team1logo'];
-                                                            globals.team2logo =
-                                                                snapshot.data[i]
-                                                                    [
-                                                                    'team2logo'];
-                                                            globals
-                                                                .ontap = snapshot
-                                                                    .data[i]
-                                                                ['linkaddress'];
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              20.0),
-                                                                  gradient:
-                                                                      LinearGradient(
-                                                                    begin: Alignment
-                                                                        .topLeft,
-                                                                    end: Alignment
-                                                                        .bottomRight,
-                                                                    colors: [
-                                                                      const Color(
-                                                                          0xff1A3263),
-                                                                      const Color(
-                                                                              0xff1A3263)
-                                                                          .withOpacity(
-                                                                              0.8),
-                                                                    ],
+                                )
+                              : Column(
+                                  children: snapshot
+                                      .map(
+                                        (e) => AnimationConfiguration
+                                            .staggeredList(
+                                          duration:
+                                              const Duration(milliseconds: 570),
+                                          position: snapshot.indexOf(e),
+                                          child: FadeInAnimation(
+                                            child: SlideAnimation(
+                                              verticalOffset: -900,
+                                              child: Column(
+                                                children: [
+                                                  Card(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20.0),
+                                                            side: BorderSide(
+                                                                color: Colors
+                                                                    .white
+                                                                    .withOpacity(
+                                                                        0.4))),
+                                                    color: themecolor,
+                                                    elevation: 10,
+                                                    shadowColor: Colors.white,
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        // if (e['team1_score']
+                                                        //         .isEmpty &&
+                                                        //     e['team2_score']
+                                                        //         .isEmpty) {
+                                                        //   Navigator.push(
+                                                        //       context,
+                                                        //       MaterialPageRoute(
+                                                        //         builder: (context) =>
+                                                        //             const typeofstats(
+                                                        //           disablerecentstats: false,
+                                                        //         ),
+                                                        //       ));
+                                                        // } else {
+                                                        //   ScaffoldMessenger.of(context)
+                                                        //       .showSnackBar(const SnackBar(
+                                                        //     backgroundColor: Colors.grey,
+                                                        //     duration: Duration(seconds: 2),
+                                                        //     content: Text(
+                                                        //       'Stats are not shown once the match has started/completed !!',
+                                                        //       style: TextStyle(
+                                                        //           fontSize: 14,
+                                                        //           color: Colors.black,
+                                                        //           fontFamily: 'Cocosharp'),
+                                                        //     ),
+                                                        //   ));
+                                                        //   // Navigator.push(
+                                                        //   //     context,
+                                                        //   //     MaterialPageRoute(
+                                                        //   //       builder: (context) =>
+                                                        //   //           typeofstats(
+                                                        //   //         disablerecentstats: true,
+                                                        //   //       ),
+                                                        //   //     ));
+                                                        // }
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const typeofstats(
+                                                                disablerecentstats:
+                                                                    false,
+                                                              ),
+                                                            ));
+                                                        setState(() {
+                                                          globals.team1_name =
+                                                              e['Team1'].trim();
+                                                          globals.team2_name =
+                                                              e['Team2'].trim();
+                                                          globals.team1__short_name =
+                                                              e['Team1_short']
+                                                                  .trim();
+                                                          globals.team2__short_name =
+                                                              e['Team2_short']
+                                                                  .trim();
+                                                          globals.team1_stats_link =
+                                                              e['team1_stats_link'];
+                                                          globals.team2_stats_link =
+                                                              e['team2_stats_link'];
+                                                          globals.ground =
+                                                              e['Ground']
+                                                                  .toString()
+                                                                  .trim();
+                                                          globals.team1logo =
+                                                              e['team1logo'];
+                                                          globals.team2logo =
+                                                              e['team2logo'];
+                                                          globals.ontap =
+                                                              e['linkaddress'];
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20.0),
+                                                                gradient:
+                                                                    LinearGradient(
+                                                                  begin: Alignment
+                                                                      .topLeft,
+                                                                  end: Alignment
+                                                                      .bottomRight,
+                                                                  colors: [
+                                                                    const Color(
+                                                                        0xff1A3263),
+                                                                    const Color(
+                                                                            0xff1A3263)
+                                                                        .withOpacity(
+                                                                            0.8),
+                                                                  ],
+                                                                )),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: <Widget>[
+                                                            Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width -
+                                                                  30,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(5.0),
+                                                              child: Text(
+                                                                  e['Details'],
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        'Louisgeorge',
+                                                                    fontSize:
+                                                                        15.0,
+                                                                    color:
+                                                                        themecolor,
                                                                   )),
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: <Widget>[
-                                                              Container(
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width -
-                                                                    30,
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        5.0),
-                                                                child: Text(
-                                                                    snapshot.data[
-                                                                            i][
-                                                                        'Details'],
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style:
-                                                                        TextStyle(
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 5),
+                                                            Container(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(3),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            7.0),
+                                                                color: e['Time']
+                                                                        .toLowerCase()
+                                                                        .contains(
+                                                                            'result')
+                                                                    ? Colors
+                                                                        .green
+                                                                    : e['Time']
+                                                                            .toLowerCase()
+                                                                            .contains(
+                                                                                'live')
+                                                                        ? Colors
+                                                                            .black38
+                                                                        : Colors
+                                                                            .red,
+                                                              ),
+                                                              child: Text(
+                                                                  e['Time'].replaceAll(e['Details'], '').contains(RegExp(r'[0-9]'))
+                                                                      ? UTCtoLocal(globals.capitalize(e['Time'].replaceAll(
+                                                                          e[
+                                                                              'Details'],
+                                                                          '')))
+                                                                      : globals.capitalize(e['Time'].replaceAll(
+                                                                          e[
+                                                                              'Details'],
+                                                                          '')),
+                                                                  style: const TextStyle(
                                                                       fontFamily:
                                                                           'Louisgeorge',
                                                                       fontSize:
                                                                           15.0,
-                                                                      color:
-                                                                          themecolor,
-                                                                    )),
-                                                              ),
-                                                              const SizedBox(
-                                                                  height: 5),
-                                                              Container(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(3),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              7.0),
-                                                                  color: snapshot
-                                                                          .data[
-                                                                              i]
-                                                                              [
-                                                                              'Time']
-                                                                          .toLowerCase()
-                                                                          .contains(
-                                                                              'result')
-                                                                      ? Colors
-                                                                          .green
-                                                                      : snapshot
-                                                                              .data[i]['Time']
-                                                                              .toLowerCase()
-                                                                              .contains('live')
-                                                                          ? Colors.black38
-                                                                          : Colors.red,
-                                                                ),
-                                                                child: Text(snapshot.data[i]['Time'].replaceAll(snapshot.data[i]['Details'], '').contains(RegExp(r'[0-9]')) ? UTCtoLocal(globals.capitalize(snapshot.data[i]['Time'].replaceAll(snapshot.data[i]['Details'], ''))) : globals.capitalize(snapshot.data[i]['Time'].replaceAll(snapshot.data[i]['Details'], '')),
-                                                                    style: const TextStyle(
-                                                                        fontFamily:
-                                                                            'Louisgeorge',
-                                                                        fontSize:
-                                                                            15.0,
-                                                                        color: Colors
-                                                                            .white,
-                                                                        fontWeight:
-                                                                            FontWeight.bold)),
-                                                              ),
-                                                              Divider(
-                                                                color:
-                                                                    darkcolor,
-                                                                thickness: 2,
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 10,
-                                                              ),
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      snapshot.data[i]['team1logo'] !=
-                                                                              null
-                                                                          ? IconButton(
-                                                                              icon:
-                                                                                  CachedNetworkImage(
-                                                                                imageUrl: root_logo + snapshot.data[i]['team1logo'],
-                                                                              ),
-                                                                              onPressed:
-                                                                                  null)
-                                                                          : IconButton(
-                                                                              icon: Image.asset('logos/team1.png'),
-                                                                              onPressed: null),
-                                                                      Flexible(
-                                                                        child: Text(
-                                                                            snapshot.data[i][
-                                                                                'Team1'],
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontFamily: 'Louisgeorge',
-                                                                              fontSize: 15.0,
-                                                                              color: themecolor,
-                                                                            )),
-                                                                      ),
-                                                                      Flexible(
-                                                                        child: Text(
-                                                                            ' - ',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 25.0,
-                                                                              color: themecolor,
-                                                                            )),
-                                                                      ),
-                                                                      Flexible(
-                                                                        child: Text(
-                                                                            snapshot.data[i][
-                                                                                'team1_score'],
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 15.0,
-                                                                              color: themecolor,
-                                                                            )),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      snapshot.data[i]['team1logo'] !=
-                                                                              null
-                                                                          ? IconButton(
-                                                                              icon:
-                                                                                  CachedNetworkImage(
-                                                                                imageUrl: root_logo + snapshot.data[i]['team2logo'],
-                                                                              ),
-                                                                              onPressed:
-                                                                                  null)
-                                                                          : IconButton(
-                                                                              icon: Image.asset('logos/team2.png'),
-                                                                              onPressed: null),
-                                                                      Flexible(
-                                                                        child: Text(
-                                                                            snapshot.data[i]['Team2']
-                                                                                .trim(),
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontFamily: 'Louisgeorge',
-                                                                              fontSize: 15.0,
-                                                                              color: themecolor,
-                                                                            )),
-                                                                      ),
-                                                                      Flexible(
-                                                                        child: Text(
-                                                                            ' - ',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 25.0,
-                                                                              color: themecolor,
-                                                                            )),
-                                                                      ),
-                                                                      Flexible(
-                                                                        child: Text(
-                                                                            snapshot.data[i][
-                                                                                'team2_score'],
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontSize: 15.0,
-                                                                              color: themecolor,
-                                                                            )),
-                                                                      )
-                                                                    ],
-                                                                  )
-                                                                ],
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 20,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .all(
-                                                                        10.0),
-                                                                child: (snapshot.data[i]['MatchStarts']
-                                                                        .toString()
-                                                                        .contains(
-                                                                            'won'))
-                                                                    ? Text(snapshot.data[i]['MatchStarts'],
-                                                                        textAlign:
-                                                                            TextAlign
-                                                                                .center,
-                                                                        style: const TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold)),
+                                                            ),
+                                                            Divider(
+                                                              color: darkcolor,
+                                                              thickness: 2,
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    e['team1logo'] !=
+                                                                            null
+                                                                        ? IconButton(
+                                                                            icon:
+                                                                                CachedNetworkImage(
+                                                                              imageUrl: rootLogo + e['team1logo'],
+                                                                            ),
+                                                                            onPressed:
+                                                                                null)
+                                                                        : IconButton(
+                                                                            icon:
+                                                                                Image.asset('logos/team1.png'),
+                                                                            onPressed: null),
+                                                                    Flexible(
+                                                                      child: Text(
+                                                                          e[
+                                                                              'Team1'],
+                                                                          style:
+                                                                              TextStyle(
                                                                             fontFamily:
                                                                                 'Louisgeorge',
                                                                             fontSize:
-                                                                                20.0,
-                                                                            color: Colors
-                                                                                .greenAccent,
-                                                                            fontWeight: FontWeight
-                                                                                .bold))
-                                                                    : Text(snapshot.data[i]['MatchStarts'],
-                                                                        textAlign:
-                                                                            TextAlign
-                                                                                .center,
-                                                                        style: const TextStyle(
+                                                                                15.0,
+                                                                            color:
+                                                                                themecolor,
+                                                                          )),
+                                                                    ),
+                                                                    Flexible(
+                                                                      child: Text(
+                                                                          ' - ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                25.0,
+                                                                            color:
+                                                                                themecolor,
+                                                                          )),
+                                                                    ),
+                                                                    Flexible(
+                                                                      child: Text(
+                                                                          e[
+                                                                              'team1_score'],
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                15.0,
+                                                                            color:
+                                                                                themecolor,
+                                                                          )),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    e['team1logo'] !=
+                                                                            null
+                                                                        ? IconButton(
+                                                                            icon:
+                                                                                CachedNetworkImage(
+                                                                              imageUrl: rootLogo + e['team2logo'],
+                                                                            ),
+                                                                            onPressed:
+                                                                                null)
+                                                                        : IconButton(
+                                                                            icon:
+                                                                                Image.asset('logos/team2.png'),
+                                                                            onPressed: null),
+                                                                    Flexible(
+                                                                      child: Text(
+                                                                          e['Team2']
+                                                                              .trim(),
+                                                                          style:
+                                                                              TextStyle(
                                                                             fontFamily:
                                                                                 'Louisgeorge',
-                                                                            fontSize: 20.0,
-                                                                            color: Colors.amberAccent,
-                                                                            fontWeight: FontWeight.bold)),
-                                                              )
-                                                            ],
-                                                          ),
+                                                                            fontSize:
+                                                                                15.0,
+                                                                            color:
+                                                                                themecolor,
+                                                                          )),
+                                                                    ),
+                                                                    Flexible(
+                                                                      child: Text(
+                                                                          ' - ',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                25.0,
+                                                                            color:
+                                                                                themecolor,
+                                                                          )),
+                                                                    ),
+                                                                    Flexible(
+                                                                      child: Text(
+                                                                          e[
+                                                                              'team2_score'],
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                15.0,
+                                                                            color:
+                                                                                themecolor,
+                                                                          )),
+                                                                    )
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .all(
+                                                                      10.0),
+                                                              child: (e['MatchStarts']
+                                                                      .toString()
+                                                                      .contains(
+                                                                          'won'))
+                                                                  ? Text(e['MatchStarts'],
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: const TextStyle(
+                                                                          fontFamily:
+                                                                              'Louisgeorge',
+                                                                          fontSize:
+                                                                              20.0,
+                                                                          color: Colors
+                                                                              .greenAccent,
+                                                                          fontWeight: FontWeight
+                                                                              .bold))
+                                                                  : Text(e['MatchStarts'],
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: const TextStyle(
+                                                                          fontFamily:
+                                                                              'Louisgeorge',
+                                                                          fontSize:
+                                                                              20.0,
+                                                                          color: Colors
+                                                                              .amberAccent,
+                                                                          fontWeight:
+                                                                              FontWeight.bold)),
+                                                            )
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            }
-                        }
-                      },
-                    ),
+                                      )
+                                      .toList()),
+                      Container(
+                          // height: screenheight,
+                          color: const Color(0xff2B2B28),
+                          child: const pointsTableUI()),
+                    ],
                   ),
-                  Container(
-                      color: const Color(0xff2B2B28),
-                      child: const pointsTableUI()),
                 ],
               ),
-            ],
+            ),
           ),
         ));
   }

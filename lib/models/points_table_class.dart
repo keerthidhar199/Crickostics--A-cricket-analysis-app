@@ -50,10 +50,11 @@ class PointsTableSource extends DataGridSource {
       return Container(
         color: Colors.grey.shade600,
         alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Text(
           e.value.toString().trim(),
-          style: TextStyle(color: Colors.white, fontFamily: 'NewAthletic'),
+          style:
+              const TextStyle(color: Colors.white, fontFamily: 'NewAthletic'),
         ),
       );
     }).toList());
@@ -80,10 +81,11 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
   print('$titles1');
 
   titles1.removeWhere((element) => element.text.isEmpty);
+  int index = titles1.indexWhere((element) => element.text == 'Series Form');
   headings.add(titles1[0].text.toString().trim());
-  headings.add(titles1[6].text.toString().trim());
-  headings.add(titles1[7].text.toString().trim());
-  headings.add(titles1[8].text.toString().trim());
+  headings.add(titles1[index - 1].text.toString().trim());
+  headings.add(titles1[index - 2].text.toString().trim());
+  headings.add(titles1[index].text.toString().trim());
 
   var element = document1.querySelectorAll('table>tbody')[0];
   var data = element.querySelectorAll('tr');
@@ -94,6 +96,8 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
     for (int j = 0; j < data[i].children.length; j++) {
       if (data[i].children[j].text.isNotEmpty) {
         if (j == 0) {
+          print(
+              '${data[i].children[j].text.split(RegExp(r'[0-9]')).last.toString().trim()}');
           playerwise.add(data[i]
               .children[j]
               .text
@@ -101,7 +105,7 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
               .last
               .toString()
               .trim());
-        } else if ([6, 7, 8].contains(j)) {
+        } else if ([index, index - 1, index - 2].contains(j)) {
           playerwise.add(data[i].children[j].text.toString().trim());
         }
       }

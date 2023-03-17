@@ -59,14 +59,17 @@ class BattingDataSource extends DataGridSource {
 
   @override
   DataGridRowAdapter buildRow(DataGridRow row) {
+    List<DataGridCell<dynamic>> usefulcolumns = row.getCells().sublist(0, 3) +
+        [row.getCells()[5]]; //Players,runs,balls,SR
     return DataGridRowAdapter(
-        cells: row.getCells().map<Widget>((e) {
+        cells: usefulcolumns.map<Widget>((e) {
+      print('object2 ${usefulcolumns}');
       return Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Text(
           e.value.toString(),
-          style: TextStyle(color: Colors.black87),
+          style: TextStyle(color: Colors.black87, fontFamily: 'NewAthletic'),
         ),
       );
     }).toList());
@@ -96,6 +99,7 @@ batting_teams_info(var team1_info, String team1_name) async {
     }
   }
   headings.remove('Scorecard');
+
   headings.join(',');
   headings.insert(headings.length, "Team");
 

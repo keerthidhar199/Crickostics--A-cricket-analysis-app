@@ -275,8 +275,7 @@ class _HomepageState extends State<Homepage> {
                                           //     )),
                                           Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                  MainAxisAlignment.center,
                                               children: matchstatetitle
                                                   .map(
                                                     (e) => Container(
@@ -327,6 +326,7 @@ class _HomepageState extends State<Homepage> {
                                           CarouselSlider(
                                             carouselController: _controller,
                                             options: CarouselOptions(
+                                              initialPage: _currentSlide,
                                               enableInfiniteScroll: false,
                                               height: MediaQuery.of(context)
                                                   .size

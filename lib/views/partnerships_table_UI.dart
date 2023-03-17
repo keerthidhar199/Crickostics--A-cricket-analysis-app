@@ -124,7 +124,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           )),
                     ),
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -163,7 +163,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           child: Text(
                             '$i',
                             textAlign: TextAlign.left,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: 'Cocosharp',
                               fontSize: 20.0,
                               color: Colors.white,
@@ -179,9 +179,10 @@ class _widgetpartnershipState extends State<widgetpartnership> {
               (snapshot.data == null ||
                       snapshot.data.item3 == null ||
                       snapshot.data.item3.item2 == null)
-                  ? Text('No partnerships so far')
+                  ? const Text('No partnerships so far')
                   : SfDataGrid(
-                      verticalScrollPhysics: NeverScrollableScrollPhysics(),
+                      verticalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
                       isScrollbarAlwaysShown: true,
                       rowHeight: 35.0,
                       shrinkWrapRows: true,
@@ -191,8 +192,9 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           : dataGridController1,
                       sortingGestureType: SortingGestureType.tap,
                       allowSorting: true,
-                      checkboxColumnSettings: DataGridCheckboxColumnSettings(
-                          showCheckboxOnHeader: false),
+                      checkboxColumnSettings:
+                          const DataGridCheckboxColumnSettings(
+                              showCheckboxOnHeader: false),
                       source: PartnershipDataSource(
                           Data: snapshot.data.item3.item2
                               .where((element) =>
@@ -205,17 +207,15 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                         return GridColumn(
                             columnName: headings.toLowerCase(),
                             label: Container(
-                                padding: EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(16.0),
                                 alignment: Alignment.center,
                                 child: Text(
-                                  headings.trim()[0].toUpperCase() +
-                                      headings
-                                          .trim()
-                                          .substring(1)
-                                          .toLowerCase(),
+                                  globals.capitalize(headings),
+                                  style: const TextStyle(
+                                      fontFamily: 'NewAthletic'),
                                 )));
                       }).toList()),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
             ],

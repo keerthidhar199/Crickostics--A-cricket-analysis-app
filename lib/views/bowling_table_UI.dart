@@ -210,6 +210,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                                           .trim()
                                           .substring(1)
                                           .toLowerCase(),
+                                  style: TextStyle(fontFamily: 'NewAthletic'),
                                 )));
                       }).toList()),
               SizedBox(
