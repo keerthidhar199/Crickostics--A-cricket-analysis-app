@@ -30,6 +30,17 @@ class datascrap extends StatefulWidget {
 class _datascrapState extends State<datascrap> {
   var themecolor = Colors.white;
   var darkcolor = Colors.black;
+  var link2doc1;
+  final CarouselController _controller = CarouselController();
+  int _currentSlide = 0;
+
+  List<List<dynamic>> tableinfo = [];
+  List<Map<String, String>> variable = [];
+  List<Map<String, String>> snapshot = [];
+
+  String rootLogo =
+      'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
+  bool tableshow = false;
   UTCtoLocal(String s) {
     var a = s.split(RegExp(r'[0-9]')).first;
     s = s.replaceAll(a, '');
@@ -66,6 +77,8 @@ class _datascrapState extends State<datascrap> {
   GlobalKey<RefreshIndicatorState> _refreshIndicator =
       GlobalKey<RefreshIndicatorState>();
 
+  GlobalKey row1 = GlobalKey();
+
   @override
   void initState() {
     WidgetsBinding.instance
@@ -78,11 +91,6 @@ class _datascrapState extends State<datascrap> {
       });
     });
   }
-
-  var link2doc1;
-  final CarouselController _controller = CarouselController();
-  int _currentSlide = 0;
-  List<String> matchstatetitle = ['Matches', 'Points Table'];
 
   Future<List<Map<String, String>>> getlivematches(String league) async {
     var response = await http.Client()
@@ -107,12 +115,27 @@ class _datascrapState extends State<datascrap> {
         print('link1 ${link1.attributes["href"]}');
         var link2address = 'https://www.espncricinfo.com' +
             link1.attributes["href"].toString();
+
+        var forlink2 = await http.Client().get(Uri.parse(link2address));
+
+        dom.Document link2doc = parser.parse(forlink2.body);
+
         setState(() {
           globals.league_page_address = link2address;
         });
-        var forlink2 = await http.Client().get(Uri.parse(link2address));
-        dom.Document link2doc = parser.parse(forlink2.body);
-        print('link2address $link2address');
+        if (link2doc
+            .getElementsByClassName('ds-shrink-0')
+            .where((element) => element.text == 'Table')
+            .isEmpty) {
+          setState(() {
+            tableshow = false;
+          });
+        } else {
+          setState(() {
+            tableshow = true;
+          });
+        }
+
         if (link2doc
             .getElementsByClassName(
                 'ds-text-tight-m ds-font-regular ds-text-typo-mid3')
@@ -283,7 +306,7 @@ class _datascrapState extends State<datascrap> {
           if (link3.toList().isNotEmpty) {
             var teamstats = await http.Client().get(
                 Uri.parse(link3.toList()[0].attributes["href"].toString()));
-            print('assa1' + link3.toList()[0].attributes["href"].toString());
+            print('assa1 ' + link3.toList()[0].attributes["href"].toString());
             dom.Document teamstatsdoc = parser.parse(teamstats.body);
 
             var rec1 = teamstatsdoc
@@ -337,20 +360,15 @@ class _datascrapState extends State<datascrap> {
         }
       }
     }
-    print('3d ${globals.team1_name} ${globals.team2_name}');
     print('asa11 ${matches.toSet().toList()}');
     return matches.toSet().toList();
   }
 
-  List<List<dynamic>> tableinfo = [];
-  List<Map<String, String>> variable = [];
-  List<Map<String, String>> snapshot = [];
-
-  String rootLogo =
-      'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
-
   @override
   Widget build(BuildContext context) {
+    List<String> matchstatetitle =
+        (tableshow == true) ? ['Matches', 'Points table'] : ['Matches'];
+
     double screenheight = MediaQuery.of(context).size.height;
 
     // UTCtoLocal('Today, 3:15 am');
@@ -366,166 +384,174 @@ class _datascrapState extends State<datascrap> {
       });
     }
 
+    var AppBar1 = AppBar(
+      backgroundColor: const Color(0xffFFB72B),
+      // title: const Text(
+      //   'Current/Upcoming Matches',
+      //   style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
+      // ),
+      leading: IconButton(
+          color: Colors.black,
+          icon: const Icon(Icons.keyboard_arrow_left),
+          onPressed: () {
+            Navigator.pop(context);
+          }),
+    );
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color(0xffFFB72B),
-          // title: const Text(
-          //   'Current/Upcoming Matches',
-          //   style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
-          // ),
-          leading: IconButton(
-              color: Colors.black,
-              icon: const Icon(Icons.keyboard_arrow_left),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-        ),
-        body: RefreshIndicator(
-          key: _refreshIndicator,
-          color: const Color(0xffFFB72B),
-          backgroundColor: const Color(0xff2B2B28),
-          onRefresh: _refresh,
-          child: SingleChildScrollView(
-            child: Container(
-              color: const Color(0xff2B2B28),
-              child: Column(
-                children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: matchstatetitle
-                          .map(
-                            (e) => Container(
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                bottom:
-                                    _currentSlide == matchstatetitle.indexOf(e)
+        appBar: AppBar1,
+        body: Builder(builder: (context) {
+          return RefreshIndicator(
+            key: _refreshIndicator,
+            color: const Color(0xffFFB72B),
+            backgroundColor: const Color(0xff2B2B28),
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+              child: Container(
+                color: const Color(0xff2B2B28),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: matchstatetitle
+                              .map(
+                                (e) => Container(
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                    bottom: _currentSlide ==
+                                            matchstatetitle.indexOf(e)
                                         ? const BorderSide(
                                             //                   <--- right side
                                             color: Colors.white,
                                             width: 3.0,
                                           )
                                         : BorderSide.none,
-                              )),
-                              child: TextButton(
-                                onPressed: () {
-                                  _controller
-                                      .jumpToPage(matchstatetitle.indexOf(e));
-                                  setState(() {
-                                    _currentSlide = matchstatetitle.indexOf(e);
-                                  });
-                                },
-                                child: Text(
-                                  e.toString(),
-                                  style: TextStyle(
-                                    fontFamily: 'Louisgeorge',
-                                    fontSize: 15.0,
-                                    color: Colors.grey.shade700,
+                                  )),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      _controller.jumpToPage(
+                                          matchstatetitle.indexOf(e));
+                                      setState(() {
+                                        _currentSlide =
+                                            matchstatetitle.indexOf(e);
+                                      });
+                                    },
+                                    child: Text(
+                                      e.toString(),
+                                      style: TextStyle(
+                                        fontFamily: 'Cocosharp',
+                                        fontSize: 15.0,
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          )
-                          .toList()),
-                  CarouselSlider(
-                    carouselController: _controller,
-                    options: CarouselOptions(
-                      initialPage: _currentSlide,
-                      height: _currentSlide == 0
-                          ? (screenheight > (snapshot.length * 270.0))
-                              ? screenheight
-                              : snapshot.length * 270.0
-                          : screenheight,
-
-                      enableInfiniteScroll: false,
-                      viewportFraction: 1,
-                      enlargeCenterPage: false,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _currentSlide = index;
-                        });
-                      },
-
-                      // autoPlay: false,
+                              )
+                              .toList()),
                     ),
-                    items: [
-                      snapshot.isEmpty
-                          ? Container(
-                              color: const Color(0xff2B2B28),
-                              child: SkeletonTheme(
-                                  shimmerGradient: LinearGradient(colors: [
-                                    const Color(0xff1A3263).withOpacity(0.8),
-                                    const Color(0xff1A3263),
-                                    const Color(0xff1A3263),
-                                    const Color(0xff1A3263).withOpacity(0.8),
-                                  ]),
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    shrinkWrap: true,
-                                    itemCount: 5,
-                                    itemBuilder: (context, index) =>
-                                        NewsCardSkelton(),
-                                  )))
-                          : snapshot == null
-                              ? Container(
-                                  color: const Color(0xff2B2B28),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text('  Oh My CrickOh! ',
-                                          style: TextStyle(
-                                            fontFamily: 'Louisgeorge',
-                                            fontSize: 20.0,
-                                            color: Colors.white,
-                                          )),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      const Text('Stats not available.',
-                                          style: TextStyle(
-                                            fontFamily: 'Louisgeorge',
-                                            fontSize: 20.0,
-                                            color: Colors.white,
-                                          )),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                              icon: Image.asset(
-                                                'logos/ball.png',
-                                              ),
-                                              onPressed: null),
-                                          const Flexible(
-                                            child: Text(
-                                                'The league might have started recently due to which enough data is not found.',
-                                                style: TextStyle(
-                                                  fontFamily: 'Louisgeorge',
-                                                  fontSize: 15.0,
-                                                  color: Colors.white,
-                                                )),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Column(
-                                  children: snapshot
-                                      .map(
-                                        (e) => AnimationConfiguration
-                                            .staggeredList(
-                                          duration:
-                                              const Duration(milliseconds: 570),
-                                          position: snapshot.indexOf(e),
-                                          child: FadeInAnimation(
-                                            child: SlideAnimation(
-                                              verticalOffset: -900,
-                                              child: Column(
-                                                children: [
-                                                  Card(
-                                                    shape:
-                                                        RoundedRectangleBorder(
+                    CarouselSlider(
+                      carouselController: _controller,
+                      options: CarouselOptions(
+                        initialPage: _currentSlide,
+                        height: _currentSlide == 0
+                            ? (screenheight > (snapshot.length * 310.0))
+                                ? screenheight
+                                : snapshot.length * 310.0
+                            : screenheight,
+
+                        enableInfiniteScroll: false,
+                        viewportFraction: 1,
+                        enlargeCenterPage: false,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _currentSlide = index;
+                          });
+                        },
+
+                        // autoPlay: false,
+                      ),
+                      items: [
+                        snapshot.isEmpty
+                            ? Container(
+                                color: const Color(0xff2B2B28),
+                                child: SkeletonTheme(
+                                    shimmerGradient: LinearGradient(colors: [
+                                      const Color(0xff1A3263).withOpacity(0.8),
+                                      const Color(0xff1A3263),
+                                      const Color(0xff1A3263),
+                                      const Color(0xff1A3263).withOpacity(0.8),
+                                    ]),
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.vertical,
+                                      shrinkWrap: true,
+                                      itemCount: 5,
+                                      itemBuilder: (context, index) =>
+                                          NewsCardSkelton(),
+                                    )))
+                            : snapshot == null
+                                ? Container(
+                                    color: const Color(0xff2B2B28),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text('  Oh My CrickOh! ',
+                                            style: TextStyle(
+                                              fontFamily: 'Litsans',
+                                              fontSize: 20.0,
+                                              color: Colors.white,
+                                            )),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('Stats not available.',
+                                            style: TextStyle(
+                                              fontFamily: 'Litsans',
+                                              fontSize: 20.0,
+                                              color: Colors.white,
+                                            )),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                                icon: Image.asset(
+                                                  'logos/ball.png',
+                                                ),
+                                                onPressed: null),
+                                            const Flexible(
+                                              child: Text(
+                                                  'The league might have started recently due to which enough data is not found.',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Litsans',
+                                                    fontSize: 15.0,
+                                                    color: Colors.white,
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Column(
+                                    children: snapshot
+                                        .map(
+                                          (e) => AnimationConfiguration
+                                              .staggeredList(
+                                            duration: const Duration(
+                                                milliseconds: 570),
+                                            position: snapshot.indexOf(e),
+                                            child: FadeInAnimation(
+                                              child: SlideAnimation(
+                                                verticalOffset: -900,
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 310,
+                                                      child: Card(
+                                                        shape: RoundedRectangleBorder(
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
@@ -535,362 +561,291 @@ class _datascrapState extends State<datascrap> {
                                                                     .white
                                                                     .withOpacity(
                                                                         0.4))),
-                                                    color: themecolor,
-                                                    elevation: 10,
-                                                    shadowColor: Colors.white,
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        // if (e['team1_score']
-                                                        //         .isEmpty &&
-                                                        //     e['team2_score']
-                                                        //         .isEmpty) {
-                                                        //   Navigator.push(
-                                                        //       context,
-                                                        //       MaterialPageRoute(
-                                                        //         builder: (context) =>
-                                                        //             const typeofstats(
-                                                        //           disablerecentstats: false,
-                                                        //         ),
-                                                        //       ));
-                                                        // } else {
-                                                        //   ScaffoldMessenger.of(context)
-                                                        //       .showSnackBar(const SnackBar(
-                                                        //     backgroundColor: Colors.grey,
-                                                        //     duration: Duration(seconds: 2),
-                                                        //     content: Text(
-                                                        //       'Stats are not shown once the match has started/completed !!',
-                                                        //       style: TextStyle(
-                                                        //           fontSize: 14,
-                                                        //           color: Colors.black,
-                                                        //           fontFamily: 'Cocosharp'),
-                                                        //     ),
-                                                        //   ));
-                                                        //   // Navigator.push(
-                                                        //   //     context,
-                                                        //   //     MaterialPageRoute(
-                                                        //   //       builder: (context) =>
-                                                        //   //           typeofstats(
-                                                        //   //         disablerecentstats: true,
-                                                        //   //       ),
-                                                        //   //     ));
-                                                        // }
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  const typeofstats(
-                                                                disablerecentstats:
-                                                                    false,
-                                                              ),
-                                                            ));
-                                                        setState(() {
-                                                          globals.team1_name =
-                                                              e['Team1'].trim();
-                                                          globals.team2_name =
-                                                              e['Team2'].trim();
-                                                          globals.team1__short_name =
-                                                              e['Team1_short']
-                                                                  .trim();
-                                                          globals.team2__short_name =
-                                                              e['Team2_short']
-                                                                  .trim();
-                                                          globals.team1_stats_link =
-                                                              e['team1_stats_link'];
-                                                          globals.team2_stats_link =
-                                                              e['team2_stats_link'];
-                                                          globals.ground =
-                                                              e['Ground']
+                                                        color: themecolor,
+                                                        elevation: 10,
+                                                        shadowColor:
+                                                            Colors.white,
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            // if (e['team1_score']
+                                                            //         .isEmpty &&
+                                                            //     e['team2_score']
+                                                            //         .isEmpty) {
+                                                            //   Navigator.push(
+                                                            //       context,
+                                                            //       MaterialPageRoute(
+                                                            //         builder: (context) =>
+                                                            //             const typeofstats(
+                                                            //           disablerecentstats: false,
+                                                            //         ),
+                                                            //       ));
+                                                            // } else {
+                                                            //   ScaffoldMessenger.of(context)
+                                                            //       .showSnackBar(const SnackBar(
+                                                            //     backgroundColor: Colors.grey,
+                                                            //     duration: Duration(seconds: 2),
+                                                            //     content: Text(
+                                                            //       'Stats are not shown once the match has started/completed !!',
+                                                            //       style: TextStyle(
+                                                            //           fontSize: 14,
+                                                            //           color: Colors.black,
+                                                            //           fontFamily: 'Cocosharp'),
+                                                            //     ),
+                                                            //   ));
+                                                            //   // Navigator.push(
+                                                            //   //     context,
+                                                            //   //     MaterialPageRoute(
+                                                            //   //       builder: (context) =>
+                                                            //   //           typeofstats(
+                                                            //   //         disablerecentstats: true,
+                                                            //   //       ),
+                                                            //   //     ));
+                                                            // }
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const typeofstats(
+                                                                    disablerecentstats:
+                                                                        false,
+                                                                  ),
+                                                                ));
+                                                            setState(() {
+                                                              globals.team1_name =
+                                                                  e['Team1']
+                                                                      .trim();
+                                                              globals.team2_name =
+                                                                  e['Team2']
+                                                                      .trim();
+                                                              globals.team1__short_name =
+                                                                  e['Team1_short']
+                                                                      .trim();
+                                                              globals.team2__short_name =
+                                                                  e['Team2_short']
+                                                                      .trim();
+                                                              globals.team1_stats_link =
+                                                                  e['team1_stats_link'];
+                                                              globals.team2_stats_link =
+                                                                  e['team2_stats_link'];
+                                                              globals
+                                                                  .ground = e[
+                                                                      'Ground']
                                                                   .toString()
                                                                   .trim();
-                                                          globals.team1logo =
-                                                              e['team1logo'];
-                                                          globals.team2logo =
-                                                              e['team2logo'];
-                                                          globals.ontap =
-                                                              e['linkaddress'];
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
+                                                              globals.team1logo =
+                                                                  e['team1logo'];
+                                                              globals.team2logo =
+                                                                  e['team2logo'];
+                                                              globals.ontap = e[
+                                                                  'linkaddress'];
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             20.0),
-                                                                gradient:
-                                                                    LinearGradient(
-                                                                  begin: Alignment
-                                                                      .topLeft,
-                                                                  end: Alignment
-                                                                      .bottomRight,
-                                                                  colors: [
-                                                                    const Color(
-                                                                        0xff1A3263),
-                                                                    const Color(
-                                                                            0xff1A3263)
-                                                                        .withOpacity(
-                                                                            0.8),
-                                                                  ],
-                                                                )),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: <Widget>[
-                                                            Container(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width -
-                                                                  30,
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(5.0),
-                                                              child: Text(
-                                                                  e['Details'],
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        'Louisgeorge',
-                                                                    fontSize:
-                                                                        15.0,
-                                                                    color:
-                                                                        themecolor,
-                                                                  )),
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 5),
-                                                            Container(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(3),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            7.0),
-                                                                color: e['Time']
-                                                                        .toLowerCase()
-                                                                        .contains(
-                                                                            'result')
-                                                                    ? Colors
-                                                                        .green
-                                                                    : e['Time']
-                                                                            .toLowerCase()
-                                                                            .contains(
-                                                                                'live')
-                                                                        ? Colors
-                                                                            .black38
-                                                                        : Colors
-                                                                            .red,
-                                                              ),
-                                                              child: Text(
-                                                                  e['Time'].replaceAll(e['Details'], '').contains(RegExp(r'[0-9]'))
-                                                                      ? UTCtoLocal(globals.capitalize(e['Time'].replaceAll(
-                                                                          e[
-                                                                              'Details'],
-                                                                          '')))
-                                                                      : globals.capitalize(e['Time'].replaceAll(
-                                                                          e[
-                                                                              'Details'],
-                                                                          '')),
-                                                                  style: const TextStyle(
-                                                                      fontFamily:
-                                                                          'Louisgeorge',
-                                                                      fontSize:
-                                                                          15.0,
-                                                                      color: Colors
-                                                                          .white,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold)),
-                                                            ),
-                                                            Divider(
-                                                              color: darkcolor,
-                                                              thickness: 2,
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 10,
-                                                            ),
-                                                            Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topLeft,
+                                                                      end: Alignment
+                                                                          .bottomRight,
+                                                                      colors: [
+                                                                        const Color(
+                                                                            0xff1A3263),
+                                                                        const Color(0xff1A3263)
+                                                                            .withOpacity(0.8),
+                                                                      ],
+                                                                    )),
+                                                            child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: <
+                                                                  Widget>[
                                                                 Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
-                                                                    e['team1logo'] !=
-                                                                            null
-                                                                        ? IconButton(
-                                                                            icon:
-                                                                                CachedNetworkImage(
-                                                                              imageUrl: rootLogo + e['team1logo'],
-                                                                            ),
-                                                                            onPressed:
-                                                                                null)
-                                                                        : IconButton(
-                                                                            icon:
-                                                                                Image.asset('logos/team1.png'),
-                                                                            onPressed: null),
-                                                                    Flexible(
+                                                                    Container(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width -
+                                                                          30,
+                                                                      padding:
+                                                                          const EdgeInsets.all(
+                                                                              5.0),
                                                                       child: Text(
                                                                           e[
-                                                                              'Team1'],
+                                                                              'Details'],
+                                                                          textAlign: TextAlign
+                                                                              .center,
                                                                           style:
                                                                               TextStyle(
                                                                             fontFamily:
-                                                                                'Louisgeorge',
+                                                                                'Litsans',
                                                                             fontSize:
                                                                                 15.0,
                                                                             color:
                                                                                 themecolor,
                                                                           )),
                                                                     ),
-                                                                    Flexible(
-                                                                      child: Text(
-                                                                          ' - ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontSize:
-                                                                                25.0,
-                                                                            color:
-                                                                                themecolor,
-                                                                          )),
+                                                                  ],
+                                                                ),
+                                                                Divider(
+                                                                  color:
+                                                                      darkcolor,
+                                                                  thickness: 2,
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        e['team1logo'] !=
+                                                                                null
+                                                                            ? IconButton(
+                                                                                icon: CachedNetworkImage(
+                                                                                  imageUrl: rootLogo + e['team1logo'],
+                                                                                ),
+                                                                                onPressed: null)
+                                                                            : IconButton(icon: Image.asset('logos/team1.png'), onPressed: null),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                              e['Team1'],
+                                                                              style: TextStyle(
+                                                                                fontFamily: 'Litsans',
+                                                                                fontSize: 15.0,
+                                                                                color: themecolor,
+                                                                              )),
+                                                                        ),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                              ' - ',
+                                                                              style: TextStyle(
+                                                                                fontSize: 25.0,
+                                                                                color: themecolor,
+                                                                              )),
+                                                                        ),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                              e['team1_score'],
+                                                                              style: globals.Litsanswhite),
+                                                                        )
+                                                                      ],
                                                                     ),
-                                                                    Flexible(
-                                                                      child: Text(
-                                                                          e[
-                                                                              'team1_score'],
+                                                                    Row(
+                                                                      children: [
+                                                                        e['team1logo'] !=
+                                                                                null
+                                                                            ? IconButton(
+                                                                                icon: CachedNetworkImage(
+                                                                                  imageUrl: rootLogo + e['team2logo'],
+                                                                                ),
+                                                                                onPressed: null)
+                                                                            : IconButton(icon: Image.asset('logos/team2.png'), onPressed: null),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                              e['Team2'].trim(),
+                                                                              style: TextStyle(
+                                                                                fontFamily: 'Litsans',
+                                                                                fontSize: 15.0,
+                                                                                color: themecolor,
+                                                                              )),
+                                                                        ),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                              ' - ',
+                                                                              style: TextStyle(
+                                                                                fontSize: 25.0,
+                                                                                color: themecolor,
+                                                                              )),
+                                                                        ),
+                                                                        Text(
+                                                                          e['team2_score'],
                                                                           style:
-                                                                              TextStyle(
-                                                                            fontSize:
-                                                                                15.0,
-                                                                            color:
-                                                                                themecolor,
-                                                                          )),
+                                                                              globals.Litsanswhite,
+                                                                        )
+                                                                      ],
                                                                     )
                                                                   ],
                                                                 ),
-                                                                Row(
-                                                                  children: [
-                                                                    e['team1logo'] !=
-                                                                            null
-                                                                        ? IconButton(
-                                                                            icon:
-                                                                                CachedNetworkImage(
-                                                                              imageUrl: rootLogo + e['team2logo'],
-                                                                            ),
-                                                                            onPressed:
-                                                                                null)
-                                                                        : IconButton(
-                                                                            icon:
-                                                                                Image.asset('logos/team2.png'),
-                                                                            onPressed: null),
-                                                                    Flexible(
-                                                                      child: Text(
-                                                                          e['Team2']
-                                                                              .trim(),
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontFamily:
-                                                                                'Louisgeorge',
-                                                                            fontSize:
-                                                                                15.0,
-                                                                            color:
-                                                                                themecolor,
-                                                                          )),
-                                                                    ),
-                                                                    Flexible(
-                                                                      child: Text(
-                                                                          ' - ',
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontSize:
-                                                                                25.0,
-                                                                            color:
-                                                                                themecolor,
-                                                                          )),
-                                                                    ),
-                                                                    Flexible(
-                                                                      child: Text(
+                                                                const SizedBox(
+                                                                  height: 20,
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                              .all(
+                                                                          10.0),
+                                                                  child: (e['MatchStarts']
+                                                                          .toString()
+                                                                          .contains(
+                                                                              'won'))
+                                                                      ? Text(
                                                                           e[
-                                                                              'team2_score'],
+                                                                              'MatchStarts'],
+                                                                          textAlign: TextAlign
+                                                                              .center,
                                                                           style:
-                                                                              TextStyle(
+                                                                              const TextStyle(
+                                                                            fontFamily:
+                                                                                'Litsans',
                                                                             fontSize:
-                                                                                15.0,
+                                                                                20.0,
                                                                             color:
-                                                                                themecolor,
+                                                                                Colors.greenAccent,
+                                                                          ))
+                                                                      : Text(
+                                                                          e[
+                                                                              'MatchStarts'],
+                                                                          textAlign: TextAlign
+                                                                              .center,
+                                                                          style:
+                                                                              const TextStyle(
+                                                                            fontFamily:
+                                                                                'Litsans',
+                                                                            fontSize:
+                                                                                20.0,
+                                                                            color:
+                                                                                Colors.amberAccent,
                                                                           )),
-                                                                    )
-                                                                  ],
                                                                 )
                                                               ],
                                                             ),
-                                                            const SizedBox(
-                                                              height: 20,
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .all(
-                                                                      10.0),
-                                                              child: (e['MatchStarts']
-                                                                      .toString()
-                                                                      .contains(
-                                                                          'won'))
-                                                                  ? Text(e['MatchStarts'],
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                      style: const TextStyle(
-                                                                          fontFamily:
-                                                                              'Louisgeorge',
-                                                                          fontSize:
-                                                                              20.0,
-                                                                          color: Colors
-                                                                              .greenAccent,
-                                                                          fontWeight: FontWeight
-                                                                              .bold))
-                                                                  : Text(e['MatchStarts'],
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                      style: const TextStyle(
-                                                                          fontFamily:
-                                                                              'Louisgeorge',
-                                                                          fontSize:
-                                                                              20.0,
-                                                                          color: Colors
-                                                                              .amberAccent,
-                                                                          fontWeight:
-                                                                              FontWeight.bold)),
-                                                            )
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      )
-                                      .toList()),
-                      Container(
-                          // height: screenheight,
-                          color: const Color(0xff2B2B28),
-                          child: const pointsTableUI()),
-                    ],
-                  ),
-                ],
+                                        )
+                                        .toList()),
+                        tableshow == true
+                            ? Container(
+                                // height: screenheight,
+                                color: const Color(0xff2B2B28),
+                                child: const pointsTableUI())
+                            : Container()
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ));
+          );
+        }));
   }
 }

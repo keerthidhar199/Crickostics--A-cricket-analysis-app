@@ -220,7 +220,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                       children: [
                         Text('  Oh My CrickOh! ',
                             style: TextStyle(
-                              fontFamily: 'Louisgeorge',
+                              fontFamily: 'Litsans',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
@@ -229,7 +229,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                         ),
                         Text('Stats not available.',
                             style: TextStyle(
-                              fontFamily: 'Louisgeorge',
+                              fontFamily: 'Litsans',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
@@ -247,7 +247,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                               child: Text(
                                   'The league might have started recently due to which enough data is not found.',
                                   style: TextStyle(
-                                    fontFamily: 'Louisgeorge',
+                                    fontFamily: 'Litsans',
                                     fontSize: 15.0,
                                     color: Colors.white,
                                   )),

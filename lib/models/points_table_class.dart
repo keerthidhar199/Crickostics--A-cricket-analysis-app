@@ -88,9 +88,9 @@ class PointsTableSource extends DataGridSource {
                   e.value.toString(),
                   softWrap: true,
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'NewAthletic',
-                      fontSize: 15),
+                    color: Colors.white,
+                    fontFamily: 'Litsans',
+                  ),
                 ),
               ),
       );
@@ -180,7 +180,7 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
 //                               softWrap: true,
 //                               style: const TextStyle(
 //                                   color: Colors.white,
-//                                   fontFamily: 'NewAthletic'),
+//                                   fontFamily: 'Litsans'),
 //                             ),
 //                           )
 //                         ],

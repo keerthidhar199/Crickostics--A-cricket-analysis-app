@@ -44,7 +44,7 @@ dependencies:
   provider: ^6.0.5
   lottie: ^2.2.0
   shared_preferences: ^2.0.18
-
+  flutter_html: ^2.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -64,6 +64,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - logos/
+    - fonts/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -80,28 +81,41 @@ flutter:
     - family: RestaurantMenu
       fonts:
         - asset: fonts/RestaurantMenuHollow.ttf
-    - family: Cocogoose
-      fonts:
-        - asset: fonts/CocogoosePro.ttf
     - family: Cocosharp
       fonts:
         - asset: fonts/Cocosharp.ttf
-    - family: Moonrising
+    - family: AmericanCaptain
       fonts:
-        - asset: fonts/Moonrising.ttf
-    - family: Louisgeorge
-      fonts:
-      - asset: fonts/Louisgeorge.ttf
-    - family: KGHAPPYShadow
-      fonts:
-        - asset: fonts/KGHAPPYShadows.ttf
-    - family: KGHAPPYSolid
-      fonts:
-        - asset: fonts/KGHAPPYSolid.ttf   
+        - asset: fonts/AmericanCaptain.ttf   
     - family: NewAthletic
       fonts:
-        - asset: fonts/NewAthletic.ttf   
-        
+        - asset: fonts/NewAthletic.ttf
+    - family: Litsans
+      fonts:
+        - asset: fonts/Litsans.otf
+    - family: Exo
+      fonts:
+        - asset: fonts/Exo/exo-2-0.black.otf
+        - asset: fonts/Exo/exo-2-0.bold.otf
+        - asset: fonts/Exo/exo-2-0.extra-bold.otf
+        - asset: fonts/Exo/exo-2-0.extra-light.otf
+        - asset: fonts/Exo/exo-2-0.light.otf
+        - asset: fonts/Exo/exo-2-0.medium.otf
+        - asset: fonts/Exo/exo-2-0.regular.otf
+        - asset: fonts/Exo/exo-2-0.semi-bold.otf
+        - asset: fonts/Exo/exo-2-0.thin.otf
+    - family: Kanit
+      fonts:
+        - asset: fonts/Kanit/kanit.black.ttf
+        - asset: fonts/Kanit/kanit.bold.ttf
+        - asset: fonts/Kanit/kanit.extrabold.ttf
+        - asset: fonts/Kanit/kanit.extralight.ttf
+        - asset: fonts/Kanit/kanit.italic.ttf
+        - asset: fonts/Kanit/kanit.light.ttf
+        - asset: fonts/Kanit/kanit.medium.ttf
+        - asset: fonts/Kanit/kanit.regular.ttf
+        - asset: fonts/Kanit/kanit.semibold.ttf
+        - asset: fonts/Kanit/kanit.thin.ttf    
        
   #   - family: Trajan Pro
   #     fonts:

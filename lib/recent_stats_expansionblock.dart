@@ -34,7 +34,7 @@ class _expansionTileState extends State<expansionTile> {
 
   bool isBack = false;
   bool expandTile = false;
-  List<Color> onPlayerclicked = List.filled(20, Color(0xff005874));
+  List<Color> onPlayerclicked = List.filled(20, const Color(0xff005874));
   List<bool> tapon = List.filled(20, false);
 
   @override
@@ -106,7 +106,7 @@ class _expansionTileState extends State<expansionTile> {
                 ...countofplayer.entries
                     .map((player) => GestureDetector(
                           child: Container(
-                            padding: EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.white54),
                                 borderRadius: new BorderRadius.all(
@@ -119,24 +119,24 @@ class _expansionTileState extends State<expansionTile> {
                                         .toList()
                                         .indexOf(player
                                             .key)], //change color when clicked on that player
-                                    Color(0xff1C819E),
+                                    const Color(0xff1C819E),
 
                                     // Colors.white38,
                                   ],
                                 )),
                             child: Wrap(
                               children: [
-                                Text(player.key, style: globals.Louisgeorge),
+                                Text(player.key, style: globals.Litsans),
                                 tapon[countofplayer.keys
                                             .toList()
                                             .indexOf(player.key)] ==
                                         true
-                                    ? Icon(
+                                    ? const Icon(
                                         Icons.cancel_rounded,
                                         color: Colors.white,
                                         size: 15,
                                       )
-                                    : Icon(
+                                    : const Icon(
                                         null,
                                         size: 5,
                                       )
@@ -169,7 +169,7 @@ class _expansionTileState extends State<expansionTile> {
                                       filterplayer.removeWhere((element) =>
                                           element == player.key.trim());
                                       onPlayerclicked[topplayer] =
-                                          Color(0xff005874);
+                                          const Color(0xff005874);
                                     });
                                     //if tile is open and all the cards are back faced, just assign the player value
                                   } else {
@@ -203,15 +203,15 @@ class _expansionTileState extends State<expansionTile> {
                 filterplayer.isNotEmpty
                     ? GestureDetector(
                         child: Container(
-                          padding: EdgeInsets.all(8),
-                          child: Text('Clear', style: globals.Louisgeorgewhite),
+                          padding: const EdgeInsets.all(8),
+                          child: Text('Clear', style: globals.Litsanswhite),
                           decoration: globals.recentStatePage_Decoration,
                         ),
                         onTap: () {
                           setState(() {
                             //Clear all the players, their colours and tapons
                             onPlayerclicked =
-                                List.filled(20, Color(0xff005874));
+                                List.filled(20, const Color(0xff005874));
                             tapon = List.filled(20, false);
                             filterplayer.clear();
                           });
@@ -222,7 +222,7 @@ class _expansionTileState extends State<expansionTile> {
         ),
         ExpansionTile(
           initiallyExpanded: true,
-          tilePadding: EdgeInsets.all(0.0),
+          tilePadding: const EdgeInsets.all(0.0),
           // trailing: const SizedBox(),
           title: GestureDetector(
             onTap: () {
@@ -252,7 +252,7 @@ class _expansionTileState extends State<expansionTile> {
               });
             },
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 25),
+              padding: const EdgeInsets.symmetric(vertical: 25),
               decoration: BoxDecoration(
                   // borderRadius: BorderRadius.all(Radius.circular(20)),
                   border: Border.all(color: Colors.teal.shade300, width: 2)),
@@ -348,24 +348,21 @@ class _expansionTileState extends State<expansionTile> {
                                                         const EdgeInsets.all(8),
                                                     padding:
                                                         const EdgeInsets.all(8),
-                                                    decoration: new BoxDecoration(
+                                                    decoration: BoxDecoration(
                                                         borderRadius:
-                                                            new BorderRadius
-                                                                .all(new Radius
-                                                                    .circular(
-                                                                10.0)),
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    10.0)),
                                                         color: Colors.white60),
                                                     child: Text(
                                                       e['matches_details'][i]
                                                           .toString()
                                                           .split(',')
                                                           .first,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 15.0,
                                                         fontFamily: 'Cocosharp',
                                                         color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),
@@ -377,13 +374,10 @@ class _expansionTileState extends State<expansionTile> {
                                                             8.0),
                                                     child: Text(
                                                       "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').substring(1).trim()}",
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            'Louisgeorge',
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Litsans',
                                                         color: Colors.white70,
                                                         fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold,
                                                       ),
                                                     ),
                                                   ),
@@ -401,13 +395,10 @@ class _expansionTileState extends State<expansionTile> {
                                                       e['match_winner'][i]
                                                           .toString(),
                                                       softWrap: true,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12,
-                                                          fontFamily:
-                                                              'Louisgeorge',
+                                                          fontFamily: 'Litsans',
                                                           color: Colors.teal,
-                                                          fontWeight:
-                                                              FontWeight.bold,
                                                           fontStyle:
                                                               FontStyle.italic),
                                                     ),
@@ -417,12 +408,12 @@ class _expansionTileState extends State<expansionTile> {
                                                     padding:
                                                         const EdgeInsets.all(
                                                             10.0),
-                                                    child: Text(
+                                                    child: const Text(
                                                         'Tap to view top performers of this match.',
                                                         style: TextStyle(
                                                             fontSize: 12,
                                                             fontFamily:
-                                                                'Louisgeorge',
+                                                                'Litsans',
                                                             color: Colors
                                                                 .white24)),
                                                   )
@@ -437,7 +428,7 @@ class _expansionTileState extends State<expansionTile> {
                                                   child: Container(
                                                     child: Text(
                                                       '${character}',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontFamily: 'Cocosharp',
                                                         fontSize: 20.0,
                                                         color: Colors.black,
@@ -487,9 +478,9 @@ class _expansionTileState extends State<expansionTile> {
                                                   MainAxisAlignment.spaceAround,
                                               children: [
                                                 Text('Batters',
-                                                    style: globals.Louisgeorge),
+                                                    style: globals.Litsans),
                                                 Text('Bowlers',
-                                                    style: globals.Louisgeorge),
+                                                    style: globals.Litsans),
                                               ],
                                             ),
                                             FittedBox(
@@ -515,7 +506,7 @@ class _expansionTileState extends State<expansionTile> {
                                                                             ? Colors.green // and highlight the name that is clicked
                                                                             : Colors.transparent,
                                                                         padding: EdgeInsets.zero,
-                                                                        minimumSize: Size(50, 30),
+                                                                        minimumSize: const Size(50, 30),
                                                                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                                                         alignment: Alignment.centerLeft),
                                                                     onPressed:
@@ -531,12 +522,12 @@ class _expansionTileState extends State<expansionTile> {
                                                                       recentplayer
                                                                           .toString(),
                                                                       style: globals
-                                                                          .Louisgeorge,
+                                                                          .Litsans,
                                                                     ),
                                                                   ))
                                                           .toList(),
                                                     ),
-                                                    VerticalDivider(
+                                                    const VerticalDivider(
                                                       thickness: 3,
                                                       color: Colors.white,
                                                     ),
@@ -556,7 +547,7 @@ class _expansionTileState extends State<expansionTile> {
                                                                             ? Colors.green // and highlight the name that is clicked
                                                                             : Colors.transparent,
                                                                         padding: EdgeInsets.zero,
-                                                                        minimumSize: Size(50, 30),
+                                                                        minimumSize: const Size(50, 30),
                                                                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                                                         alignment: Alignment.centerLeft),
                                                                     onPressed:
@@ -569,7 +560,7 @@ class _expansionTileState extends State<expansionTile> {
                                                                         recentplayer
                                                                             .toString(),
                                                                         style: globals
-                                                                            .Louisgeorge),
+                                                                            .Litsans),
                                                                   ))
                                                           .toList(),
                                                     ),

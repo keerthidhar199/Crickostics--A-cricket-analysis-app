@@ -67,31 +67,32 @@ class _HomepageState extends State<Homepage> {
     List takethisimglogosdata = List.from(imglogosdata)..addAll(imglogosdata1);
 
     for (var i in takethisimglogosdata) {
-      if (!i['status'].toString().startsWith('Not covered') &&
-          (i['state'].toString() == 'PRE')) {
-        validMatches.add(i['series']['longName']);
-      } else {
-        // var objectid = i['series']['objectId'];
-        // var link = 'https://www.espncricinfo.com/ci/engine/series/' +
-        //     objectid.toString() +
-        //     '.html?view=records';
-        // var teamstats = await http.Client().get(Uri.parse(link));
-        // dom.Document teamstatsdoc = parser.parse(teamstats.body);
-        // var rec1 = teamstatsdoc
-        //     .getElementsByClassName('RecBulAro')
-        //     .where((element) => element.text == 'Records by team');
-        // var rec2 = teamstatsdoc
-        //     .getElementsByClassName('RecBulAro')
-        //     .where((element) => element.text == 'Records by team');
-        // if (rec1.toList().isNotEmpty && rec2.toList().isNotEmpty) {
-        if (i['state'].toString() == 'POST') {
-          finishedmatches.add(i['series']['longName']);
-        } else if (i['state'].toString() == 'LIVE') {
-          ongoingmatches.add(i['series']['longName']);
+      if (!i['status'].toString().startsWith('Not covered')) {
+        if ((i['state'].toString() == 'PRE')) {
+          validMatches.add(i['series']['longName']);
+        } else {
+          // var objectid = i['series']['objectId'];
+          // var link = 'https://www.espncricinfo.com/ci/engine/series/' +
+          //     objectid.toString() +
+          //     '.html?view=records';
+          // var teamstats = await http.Client().get(Uri.parse(link));
+          // dom.Document teamstatsdoc = parser.parse(teamstats.body);
+          // var rec1 = teamstatsdoc
+          //     .getElementsByClassName('RecBulAro')
+          //     .where((element) => element.text == 'Records by team');
+          // var rec2 = teamstatsdoc
+          //     .getElementsByClassName('RecBulAro')
+          //     .where((element) => element.text == 'Records by team');
+          // if (rec1.toList().isNotEmpty && rec2.toList().isNotEmpty) {
+          if (i['state'].toString() == 'POST') {
+            finishedmatches.add(i['series']['longName']);
+          } else if (i['state'].toString() == 'LIVE') {
+            ongoingmatches.add(i['series']['longName']);
 
-          // print(i['series']['longName']);
-          // print(i['series']['longName']);
-          // validMatches.add(i['series']['longName']);
+            // print(i['series']['longName']);
+            // print(i['series']['longName']);
+            // validMatches.add(i['series']['longName']);
+          }
         }
       }
     }
@@ -204,7 +205,9 @@ class _HomepageState extends State<Homepage> {
                         position: 1,
                         child: ScaleAnimation(
                           child: SlideAnimation(
-                            child: match_leagues_refresh[0].isEmpty
+                            child: (match_leagues_refresh[0].isEmpty &&
+                                    match_leagues_refresh[1].isEmpty &&
+                                    match_leagues_refresh[2].isEmpty)
                                 ? Center(
                                     child: Container(
                                       color: const Color(0xff2B2B28),
@@ -214,7 +217,7 @@ class _HomepageState extends State<Homepage> {
                                         children: [
                                           const Text('  Oh My CrickOh! ',
                                               style: TextStyle(
-                                                fontFamily: 'Louisgeorge',
+                                                fontFamily: 'Cocosharp',
                                                 fontSize: 20.0,
                                                 color: Colors.white,
                                               )),
@@ -232,7 +235,7 @@ class _HomepageState extends State<Homepage> {
                                                 child: Text(
                                                     'No Scheduled matches as of now. Matches appear before 10-12hr of the match start time.',
                                                     style: TextStyle(
-                                                      fontFamily: 'Louisgeorge',
+                                                      fontFamily: 'Litsans',
                                                       fontSize: 17.0,
                                                       color: Colors.white,
                                                     )),
@@ -254,7 +257,7 @@ class _HomepageState extends State<Homepage> {
                                               'Choose your league',
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
-                                                fontFamily: 'Louisgeorge',
+                                                fontFamily: 'Cocosharp',
                                                 fontSize: 20.0,
                                                 color: Colors.white,
                                               ),
@@ -312,7 +315,7 @@ class _HomepageState extends State<Homepage> {
                                                               TextAlign.left,
                                                           style: TextStyle(
                                                             fontFamily:
-                                                                'Louisgeorge',
+                                                                'Cocosharp',
                                                             fontSize: 15.0,
                                                             color: Colors
                                                                 .grey.shade700,
@@ -419,7 +422,7 @@ class _HomepageState extends State<Homepage> {
                                                                           style:
                                                                               const TextStyle(
                                                                             fontFamily:
-                                                                                'Louisgeorge',
+                                                                                'Litsans',
                                                                             fontSize:
                                                                                 20.0,
                                                                             color:

@@ -13,12 +13,14 @@ class exportcsv {
     List<Map<String, List<dynamic>>> associateList1 = [
       Analysis.battersmap,
       Analysis.bowlersmap,
-      Analysis.partnershipsmap
+      Analysis.partnershipsmap,
+      Analysis.previousmatchmap
     ];
     var finalMap = {}
       ..addAll(associateList1[0])
       ..addAll(associateList1[1])
-      ..addAll(associateList1[2]);
+      ..addAll(associateList1[2])
+      ..addAll(associateList1[3]);
 
     print('ik1 $finalMap');
 
@@ -44,8 +46,11 @@ class exportcsv {
       List<dynamic> row = [];
       for (var j in finalMap.keys) {
         if (j.toString().contains(k)) {
-          var category = j.toString().split('_')[3][0].toUpperCase() +
+          var category;
+
+          category = j.toString().split('_')[3][0].toUpperCase() +
               j.toString().split('_')[3].substring(1).toLowerCase();
+
           teamwise.add(finalMap[j] + [category]);
         }
       }

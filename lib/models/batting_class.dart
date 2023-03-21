@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import 'package:html/dom.dart' as dom;
@@ -50,26 +52,21 @@ class BattingDataSource extends DataGridSource {
             ]))
         .toList();
   }
-  String root_logo =
-      'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
-  List<DataGridRow> _batData = [];
 
+  List<DataGridRow> _batData = [];
   @override
   List<DataGridRow> get rows => _batData;
 
   @override
   DataGridRowAdapter buildRow(DataGridRow row) {
-    List<DataGridCell<dynamic>> usefulcolumns = row.getCells().sublist(0, 3) +
-        [row.getCells()[5]]; //Players,runs,balls,SR
     return DataGridRowAdapter(
-        cells: usefulcolumns.map<Widget>((e) {
-      print('object2 ${usefulcolumns}');
+        cells: row.getCells().map<Widget>((e) {
       return Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.all(8.0),
         child: Text(
           e.value.toString(),
-          style: TextStyle(color: Colors.black87, fontFamily: 'NewAthletic'),
+          style: const TextStyle(color: Colors.black87, fontFamily: 'Litsans'),
         ),
       );
     }).toList());
@@ -99,7 +96,6 @@ batting_teams_info(var team1_info, String team1_name) async {
     }
   }
   headings.remove('Scorecard');
-
   headings.join(',');
   headings.insert(headings.length, "Team");
 
@@ -119,6 +115,8 @@ batting_teams_info(var team1_info, String team1_name) async {
 
     playerwise.insert(playerwise.length, team1_name);
     allplayers.add(playerwise);
+    allplayers.sort((a, b) => int.parse(b[1].replaceAll('*', ''))
+        .compareTo(int.parse(a[1].replaceAll('*', ''))));
   }
 
   print(headings);

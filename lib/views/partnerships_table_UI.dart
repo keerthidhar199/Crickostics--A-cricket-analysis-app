@@ -211,8 +211,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   globals.capitalize(headings),
-                                  style: const TextStyle(
-                                      fontFamily: 'NewAthletic'),
+                                  style: const TextStyle(fontFamily: 'Litsans'),
                                 )));
                       }).toList()),
               const SizedBox(

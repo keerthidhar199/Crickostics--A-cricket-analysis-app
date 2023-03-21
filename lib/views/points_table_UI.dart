@@ -31,18 +31,7 @@ class pointsTableUI extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           default:
-            if (snapshot.data == null) {
-              return Center(
-                  child: Container(
-                      color: Colors.blueGrey,
-                      child: const Text(
-                        'Table Data not available',
-                        style: TextStyle(
-                            fontFamily: 'NewAthletic',
-                            fontSize: 25,
-                            color: Colors.white),
-                      )));
-            } else {
+            {
               return Column(
                 children: [
                   const SizedBox(
@@ -60,40 +49,44 @@ class pointsTableUI extends StatelessWidget {
                       ],
                     )),
                     child: Text(
-                      '${globals.league_page} \n Points Table',
+                      '${globals.league_page}',
                       style: const TextStyle(
                           fontSize: 20,
                           color: Colors.white,
-                          fontFamily: 'Cocosharp'),
+                          fontFamily: 'Litsans'),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   Expanded(
                     child: SfDataGrid(
-                      shrinkWrapRows: true,
                       verticalScrollPhysics:
                           const NeverScrollableScrollPhysics(),
                       source:
                           PointsTableSource(pointsData: snapshot.data.item2),
-                      defaultColumnWidth: 150,
-                      rowHeight: 100,
+                      defaultColumnWidth:
+                          MediaQuery.of(context).size.width * 0.32,
+
                       // columnWidthMode: ColumnWidthMode.fill,
                       selectionMode: SelectionMode.multiple,
                       columns: snapshot.data.item1.map(
                         (headings) {
                           return GridColumn(
                               columnName: headings.toLowerCase(),
-                              columnWidthMode:
-                                  snapshot.data.item1.indexOf(headings) != 0
-                                      ? ColumnWidthMode.lastColumnFill
-                                      : ColumnWidthMode.none,
+                              columnWidthMode: [
+                                1,
+                                2
+                              ].contains(snapshot.data.item1.indexOf(headings))
+                                  ? ColumnWidthMode.fill
+                                  : ColumnWidthMode.none,
                               label: Container(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    globals.capitalize(headings),
+                                    headings,
                                     style: const TextStyle(
+                                        letterSpacing: 0.5,
+                                        fontSize: 15,
                                         color: Colors.white,
-                                        fontFamily: 'NewAthletic'),
+                                        fontFamily: 'Litsans'),
                                   )));
                         },
                       ).toList(),

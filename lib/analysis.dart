@@ -23,6 +23,8 @@ class Analysis extends StatefulWidget {
 
   static Map<String, List> partnershipsmap = {};
 
+  static Map<String, List> previousmatchmap = {};
+
   /// Creates the home page.
   Analysis({Key key}) : super(key: key);
 
@@ -60,7 +62,7 @@ class _AnalysisState extends State<Analysis> {
     Analysis.battersmap.clear();
     Analysis.bowlersmap.clear();
     Analysis.partnershipsmap.clear();
-
+    Analysis.previousmatchmap.clear();
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(

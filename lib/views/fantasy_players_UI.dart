@@ -146,7 +146,7 @@ class _fantasyteamState extends State<fantasyteam> {
               children: [
                 const Text('  Oh My CrickOh! ',
                     style: TextStyle(
-                      fontFamily: 'Louisgeorge',
+                      fontFamily: 'Litsans',
                       fontSize: 20.0,
                       color: Colors.white,
                     )),
@@ -155,7 +155,7 @@ class _fantasyteamState extends State<fantasyteam> {
                 ),
                 const Text('No Fantasy players added !',
                     style: TextStyle(
-                      fontFamily: 'Louisgeorge',
+                      fontFamily: 'Litsans',
                       fontSize: 20.0,
                       color: Colors.white,
                     )),
@@ -173,7 +173,7 @@ class _fantasyteamState extends State<fantasyteam> {
                       child: Text(
                           'Select your players and click on +Add to fantasy to add players in the Fantasy Lot.',
                           style: TextStyle(
-                            fontFamily: 'Louisgeorge',
+                            fontFamily: 'Litsans',
                             fontSize: 15.0,
                             color: Colors.white,
                           )),
@@ -415,7 +415,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                   child: Text(
                                                                     'Player',
                                                                     style: globals
-                                                                        .Louisgeorge,
+                                                                        .Litsans,
                                                                   ),
                                                                 ),
                                                                 Container(
@@ -430,7 +430,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                         ? 'Runs'
                                                                         : 'Wickets',
                                                                     style: globals
-                                                                        .Louisgeorge,
+                                                                        .Litsans,
                                                                   ),
                                                                 ),
                                                                 Container(
@@ -440,7 +440,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                         ? 'Strike Rate'
                                                                         : 'Economy',
                                                                     style: globals
-                                                                        .Louisgeorge,
+                                                                        .Litsans,
                                                                   ),
                                                                 ),
                                                               ],
@@ -463,7 +463,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                               .where((element) => element.startsWith(RegExp(r'[A-Z]')))
                                                                               .join(' '),
                                                                           style:
-                                                                              globals.LouisgeorgeBOLD,
+                                                                              globals.Litsans,
                                                                         ),
                                                                       ),
                                                                       Container(
@@ -479,7 +479,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                               .first
                                                                               .trim(),
                                                                           style:
-                                                                              globals.Louisgeorge,
+                                                                              globals.Litsans,
                                                                         ),
                                                                       ),
                                                                       Container(
@@ -491,7 +491,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                               .where((element) => element.startsWith(RegExp(r'[0-9]')))
                                                                               .last,
                                                                           style:
-                                                                              globals.Louisgeorge,
+                                                                              globals.Litsans,
                                                                         ),
                                                                       )
                                                                     ],
@@ -535,7 +535,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                           Text(
                                                                         'Players',
                                                                         style: globals
-                                                                            .Louisgeorge,
+                                                                            .Litsans,
                                                                       ),
                                                                     ),
                                                                     Container(
@@ -543,7 +543,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                           Text(
                                                                         'Runs',
                                                                         style: globals
-                                                                            .Louisgeorge,
+                                                                            .Litsans,
                                                                       ),
                                                                     ),
                                                                     //Each player and their stats
@@ -566,7 +566,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                               eachteam[as][i].toString() + ', ' + eachteam[as][i + 1].toString().split('&')[0],
                                                                               //  + player.toString().split('&')[1][0],
 
-                                                                              style: globals.LouisgeorgeBOLD,
+                                                                              style: globals.Litsans,
                                                                             ),
                                                                           ),
                                                                           // Text(eachteam[as].toString()),
@@ -574,7 +574,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                                                             child:
                                                                                 Text(
                                                                               eachteam[as][i + 1].toString().split('&')[1],
-                                                                              style: globals.Louisgeorge,
+                                                                              style: globals.Litsans,
                                                                             ),
                                                                           ),
                                                                         ],

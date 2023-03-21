@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:datascrap/globals.dart' as globals;
 
+import '../analysis.dart';
+
 class pastmatches extends StatefulWidget {
   final snapshot;
   const pastmatches({Key key, this.snapshot}) : super(key: key);
@@ -20,10 +22,20 @@ class _pastmatchesState extends State<pastmatches> {
           Tuple2<List<String>, List<Batting_player>>,
           Tuple2<List<String>, List<Player>>,
           Tuple2<List<String>, List<Partnership>>>> snapshot;
+  final DataGridController dataGridController = DataGridController();
+  final DataGridController dataGridController1 = DataGridController();
+
+  final DataGridController dataGridController2 = DataGridController();
+
   String root_logo =
       'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
-  List<String> teamnames = [globals.team1_name, globals.team2_name];
   List<String> teamlogos = [globals.team1logo, globals.team2logo];
+  List<String> teamnames = [globals.team1_name, globals.team2_name];
+  List<String> shortteamnames = [
+    globals.team1__short_name,
+    globals.team2__short_name
+  ];
+
   _pastmatchesState(this.snapshot);
 
   @override
@@ -32,7 +44,7 @@ class _pastmatchesState extends State<pastmatches> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -46,8 +58,8 @@ class _pastmatchesState extends State<pastmatches> {
               SizedBox(
                 height: 40.0,
                 width: MediaQuery.of(context).size.width * 0.6,
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
+                child: const Padding(
+                  padding: EdgeInsets.all(6.0),
                   child: Text(
                     'Batting',
                     textAlign: TextAlign.left,
@@ -66,53 +78,93 @@ class _pastmatchesState extends State<pastmatches> {
         (snapshot.data == null ||
                 snapshot.data.item1 == null ||
                 snapshot.data.item1.item2 == null)
-            ? Text('Not yet batted')
-            : SfDataGrid(
-                verticalScrollPhysics: NeverScrollableScrollPhysics(),
-                rowHeight: 35.0,
-                shrinkWrapRows: true,
-                checkboxColumnSettings:
-                    DataGridCheckboxColumnSettings(showCheckboxOnHeader: false),
-                showCheckboxColumn: true,
-                allowSorting: true,
-                source: BattingDataSource(
-                    batData: snapshot.data.item1.item2.where((element) {
-                  print('yeuegwie' + globals.team2__short_name);
-
-                  //Just having a check with both the name and the abbreviation of the team.
-                  // For example, both 'United States of America' and 'U.S.A'
-                  return (((globals.team1_name.contains(element.team)) &&
-                          ((globals.team2_name).contains(element.opposition
-                                  .replaceAll('v', '')
-                                  .trim()) ||
-                              globals.team2__short_name.contains(element
-                                  .opposition
-                                  .replaceAll('v', '')
-                                  .trim()))) ||
-                      (globals.team2_name.contains(element.team) &&
-                          (globals.team1_name.contains(element.opposition
-                                  .replaceAll('v', '')
-                                  .trim()) ||
-                              globals.team1__short_name.contains(element
-                                  .opposition
-                                  .replaceAll('v', '')
-                                  .trim()))));
-                }).toList()),
-                columnWidthMode: ColumnWidthMode.auto,
-                selectionMode: SelectionMode.multiple,
-                columns: snapshot.data.item1.item1.map((headings) {
-                  return GridColumn(
-                      columnName: headings.toLowerCase(),
-                      label: Container(
-                          padding: EdgeInsets.all(16.0),
-                          alignment: Alignment.center,
-                          child: Text(
-                            headings.trim()[0].toUpperCase() +
-                                headings.trim().substring(1).toLowerCase(),
-                          )));
-                }).toList()),
+            ? const Text('Not yet batted')
+            : Column(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        List previousmatchfantasy = [];
+                        for (var k in dataGridController.selectedRows) {
+                          var acc = k.getCells();
+                          previousmatchfantasy.add(
+                              '${acc[0].value} ${acc[1].value} ${acc[5].value} ${acc[9].value}');
+                        }
+                        Analysis.previousmatchmap[globals.league_page +
+                            '_' +
+                            globals.team1_name +
+                            'vs' +
+                            globals.team2_name +
+                            '_headtohead_batting'] = previousmatchfantasy;
+                      });
+                    },
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.deepOrange),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ))),
+                    child: const Text('+Add to Fantasy',
+                        style: TextStyle(
+                          fontFamily: 'Cocosharp',
+                          fontSize: 15,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  SfDataGrid(
+                      verticalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
+                      rowHeight: 35.0,
+                      shrinkWrapRows: true,
+                      checkboxColumnSettings:
+                          const DataGridCheckboxColumnSettings(
+                              showCheckboxOnHeader: false),
+                      showCheckboxColumn: true,
+                      allowSorting: true,
+                      controller: dataGridController,
+                      source: BattingDataSource(
+                          batData: snapshot.data.item1.item2.where((element) {
+                        //Just having a check with both the name and the abbreviation of the team.
+                        // For example, both 'United States of America' and 'U.S.A'
+                        return (((globals.team1_name.contains(element.team)) &&
+                                ((globals.team2_name).contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()) ||
+                                    globals.team2__short_name.contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()))) ||
+                            (globals.team2_name.contains(element.team) &&
+                                (globals.team1_name.contains(element.opposition
+                                        .replaceAll('v', '')
+                                        .trim()) ||
+                                    globals.team1__short_name.contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()))));
+                      }).toList()),
+                      columnWidthMode: ColumnWidthMode.auto,
+                      selectionMode: SelectionMode.multiple,
+                      columns: snapshot.data.item1.item1.map((headings) {
+                        return GridColumn(
+                            columnName: headings.toLowerCase(),
+                            label: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  headings.trim()[0].toUpperCase() +
+                                      headings
+                                          .trim()
+                                          .substring(1)
+                                          .toLowerCase(),
+                                )));
+                      }).toList()),
+                ],
+              ),
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -126,8 +178,8 @@ class _pastmatchesState extends State<pastmatches> {
               SizedBox(
                 height: 40.0,
                 width: MediaQuery.of(context).size.width * 0.6,
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
+                child: const Padding(
+                  padding: EdgeInsets.all(6.0),
                   child: Text(
                     'Bowling',
                     textAlign: TextAlign.left,
@@ -146,49 +198,93 @@ class _pastmatchesState extends State<pastmatches> {
         (snapshot.data == null ||
                 snapshot.data.item2 == null ||
                 snapshot.data.item2.item2 == null)
-            ? Text('Not yet bowled')
-            : SfDataGrid(
-                verticalScrollPhysics: NeverScrollableScrollPhysics(),
-                rowHeight: 35.0,
-                shrinkWrapRows: true,
-                checkboxColumnSettings:
-                    DataGridCheckboxColumnSettings(showCheckboxOnHeader: false),
-                showCheckboxColumn: true,
-                allowSorting: true,
-                source: bowlingDataSource(
-                    bowlingData: snapshot.data.item2.item2.where((element) {
-                  return (((globals.team1_name.contains(element.team)) &&
-                          ((globals.team2_name).contains(element.opposition
-                                  .replaceAll('v', '')
-                                  .trim()) ||
-                              globals.team2__short_name.contains(element
-                                  .opposition
-                                  .replaceAll('v', '')
-                                  .trim()))) ||
-                      (globals.team2_name.contains(element.team) &&
-                          (globals.team1_name.contains(element.opposition
-                                  .replaceAll('v', '')
-                                  .trim()) ||
-                              globals.team1__short_name.contains(element
-                                  .opposition
-                                  .replaceAll('v', '')
-                                  .trim()))));
-                }).toList()),
-                columnWidthMode: ColumnWidthMode.auto,
-                selectionMode: SelectionMode.multiple,
-                columns: snapshot.data.item2.item1.map((headings) {
-                  return GridColumn(
-                      columnName: headings.toLowerCase(),
-                      label: Container(
-                          padding: EdgeInsets.all(16.0),
-                          alignment: Alignment.center,
-                          child: Text(
-                            headings.trim()[0].toUpperCase() +
-                                headings.trim().substring(1).toLowerCase(),
-                          )));
-                }).toList()),
+            ? const Text('Not yet bowled')
+            : Column(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        List previousmatchfantasy = [];
+
+                        for (var k in dataGridController1.selectedRows) {
+                          var acc = k.getCells();
+                          previousmatchfantasy.add(
+                              '${acc[0].value} ${acc[1].value} ${acc[4].value} ${acc[8].value}');
+                        }
+                        Analysis.previousmatchmap[globals.league_page +
+                            '_' +
+                            globals.team1_name +
+                            'vs' +
+                            globals.team2_name +
+                            '_headtohead_bowling'] = previousmatchfantasy;
+                      });
+                    },
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.deepOrange),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ))),
+                    child: const Text('+Add to Fantasy',
+                        style: TextStyle(
+                          fontFamily: 'Cocosharp',
+                          fontSize: 15,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  SfDataGrid(
+                      verticalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
+                      rowHeight: 35.0,
+                      shrinkWrapRows: true,
+                      checkboxColumnSettings:
+                          const DataGridCheckboxColumnSettings(
+                              showCheckboxOnHeader: false),
+                      showCheckboxColumn: true,
+                      controller: dataGridController1,
+                      allowSorting: true,
+                      source: bowlingDataSource(
+                          bowlingData:
+                              snapshot.data.item2.item2.where((element) {
+                        return (((globals.team1_name.contains(element.team)) &&
+                                ((globals.team2_name).contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()) ||
+                                    globals.team2__short_name.contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()))) ||
+                            (globals.team2_name.contains(element.team) &&
+                                (globals.team1_name.contains(element.opposition
+                                        .replaceAll('v', '')
+                                        .trim()) ||
+                                    globals.team1__short_name.contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()))));
+                      }).toList()),
+                      columnWidthMode: ColumnWidthMode.auto,
+                      selectionMode: SelectionMode.multiple,
+                      columns: snapshot.data.item2.item1.map((headings) {
+                        return GridColumn(
+                            columnName: headings.toLowerCase(),
+                            label: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  headings.trim()[0].toUpperCase() +
+                                      headings
+                                          .trim()
+                                          .substring(1)
+                                          .toLowerCase(),
+                                )));
+                      }).toList()),
+                ],
+              ),
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -202,8 +298,8 @@ class _pastmatchesState extends State<pastmatches> {
               SizedBox(
                 height: 40.0,
                 width: MediaQuery.of(context).size.width * 0.6,
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
+                child: const Padding(
+                  padding: EdgeInsets.all(6.0),
                   child: Text(
                     'Partnerships',
                     textAlign: TextAlign.left,
@@ -222,47 +318,91 @@ class _pastmatchesState extends State<pastmatches> {
         (snapshot.data == null ||
                 snapshot.data.item3 == null ||
                 snapshot.data.item3.item2 == null)
-            ? Text('No partnerships so far')
-            : SfDataGrid(
-                verticalScrollPhysics: NeverScrollableScrollPhysics(),
-                rowHeight: 35.0,
-                shrinkWrapRows: true,
-                showCheckboxColumn: true,
-                checkboxColumnSettings:
-                    DataGridCheckboxColumnSettings(showCheckboxOnHeader: false),
-                allowSorting: true,
-                source: PartnershipDataSource(
-                    Data: snapshot.data.item3.item2.where((element) {
-                  return (((globals.team1_name.contains(element.team)) &&
-                          ((globals.team2_name).contains(element.opposition
-                                  .replaceAll('v', '')
-                                  .trim()) ||
-                              globals.team2__short_name.contains(element
-                                  .opposition
-                                  .replaceAll('v', '')
-                                  .trim()))) ||
-                      (globals.team2_name.contains(element.team) &&
-                          (globals.team1_name.contains(element.opposition
-                                  .replaceAll('v', '')
-                                  .trim()) ||
-                              globals.team1__short_name.contains(element
-                                  .opposition
-                                  .replaceAll('v', '')
-                                  .trim()))));
-                }).toList()),
-                columnWidthMode: ColumnWidthMode.auto,
-                selectionMode: SelectionMode.multiple,
-                columns: snapshot.data.item3.item1.map((headings) {
-                  return GridColumn(
-                      columnName: headings.toLowerCase(),
-                      label: Container(
-                          padding: EdgeInsets.all(16.0),
-                          alignment: Alignment.center,
-                          child: Text(
-                            headings.trim()[0].toUpperCase() +
-                                headings.trim().substring(1).toLowerCase(),
-                          )));
-                }).toList()),
+            ? const Text('No partnerships so far')
+            : Column(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        List previousmatchfantasy = [];
+
+                        for (var k in dataGridController2.selectedRows) {
+                          var acc = k.getCells();
+                          previousmatchfantasy.add(
+                              '${acc[0].value} &${acc[1].value} ${acc[6].value}');
+                        }
+                        Analysis.previousmatchmap[globals.league_page +
+                            '_' +
+                            globals.team1_name +
+                            'vs' +
+                            globals.team2_name +
+                            '_headtohead_partnership'] = previousmatchfantasy;
+                      });
+                      print('Previous clashes ${Analysis.previousmatchmap}');
+                    },
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.deepOrange),
+                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ))),
+                    child: const Text('+Add to Fantasy',
+                        style: TextStyle(
+                          fontFamily: 'Cocosharp',
+                          fontSize: 15,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                  SfDataGrid(
+                      verticalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
+                      rowHeight: 35.0,
+                      shrinkWrapRows: true,
+                      showCheckboxColumn: true,
+                      checkboxColumnSettings:
+                          const DataGridCheckboxColumnSettings(
+                              showCheckboxOnHeader: false),
+                      allowSorting: true,
+                      controller: dataGridController2,
+                      source: PartnershipDataSource(
+                          Data: snapshot.data.item3.item2.where((element) {
+                        return (((globals.team1_name.contains(element.team)) &&
+                                ((globals.team2_name).contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()) ||
+                                    globals.team2__short_name.contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()))) ||
+                            (globals.team2_name.contains(element.team) &&
+                                (globals.team1_name.contains(element.opposition
+                                        .replaceAll('v', '')
+                                        .trim()) ||
+                                    globals.team1__short_name.contains(element
+                                        .opposition
+                                        .replaceAll('v', '')
+                                        .trim()))));
+                      }).toList()),
+                      columnWidthMode: ColumnWidthMode.auto,
+                      selectionMode: SelectionMode.multiple,
+                      columns: snapshot.data.item3.item1.map((headings) {
+                        return GridColumn(
+                            columnName: headings.toLowerCase(),
+                            label: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  headings.trim()[0].toUpperCase() +
+                                      headings
+                                          .trim()
+                                          .substring(1)
+                                          .toLowerCase(),
+                                )));
+                      }).toList()),
+                ],
+              ),
       ],
     );
     Widget pastmatches = Column(
@@ -272,7 +412,7 @@ class _pastmatchesState extends State<pastmatches> {
           child: Card(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
-                side: BorderSide(
+                side: const BorderSide(
                   color: Colors.black,
                   width: 2.0,
                 )),
@@ -286,7 +426,7 @@ class _pastmatchesState extends State<pastmatches> {
                     Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20.0),
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
@@ -299,7 +439,7 @@ class _pastmatchesState extends State<pastmatches> {
                         children: [
                           Column(
                             children: [
-                              Text(
+                              const Text(
                                 'Previous',
                                 style: TextStyle(
                                   fontFamily: 'Cocosharp',
@@ -328,7 +468,7 @@ class _pastmatchesState extends State<pastmatches> {
                                 width: 100,
                                 height: 100,
                               ),
-                              Text('VS',
+                              const Text('VS',
                                   style: TextStyle(
                                     fontFamily: 'Cocosharp',
                                     fontSize: 20.0,
@@ -339,7 +479,7 @@ class _pastmatchesState extends State<pastmatches> {
                           ),
                           Column(
                             children: [
-                              Text(
+                              const Text(
                                 'Clashes',
                                 style: TextStyle(
                                   fontFamily: 'Cocosharp',

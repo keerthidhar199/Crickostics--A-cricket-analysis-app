@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:datascrap/models/ColoredrowCircle.dart';
 import 'package:datascrap/recent_stats_expansionblock.dart';
 import 'package:datascrap/recentplayersform.dart';
 import 'package:datascrap/skeleton.dart';
@@ -276,7 +275,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                       children: [
                         Text('  Oh My CrickOh! ',
                             style: TextStyle(
-                              fontFamily: 'Louisgeorge',
+                              fontFamily: 'Litsans',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
@@ -285,7 +284,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                         ),
                         Text('Stats not available.',
                             style: TextStyle(
-                              fontFamily: 'Louisgeorge',
+                              fontFamily: 'Litsans',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
@@ -303,7 +302,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                               child: Text(
                                   'The league might have started recently due to which enough data is not found.',
                                   style: TextStyle(
-                                    fontFamily: 'Louisgeorge',
+                                    fontFamily: 'Litsans',
                                     fontSize: 15.0,
                                     color: Colors.white,
                                   )),

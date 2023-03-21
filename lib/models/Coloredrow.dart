@@ -24,10 +24,7 @@ class ColoredRow extends StatelessWidget {
           child: Center(
             child: Text(
               string[index],
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: Colors.white, fontFamily: 'Litsans'),
             ),
           ),
         ),

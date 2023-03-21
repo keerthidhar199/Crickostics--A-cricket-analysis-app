@@ -51,7 +51,7 @@ class PartnershipDataSource extends DataGridSource {
         padding: EdgeInsets.all(8.0),
         child: Text(
           e.value.toString(),
-          style: TextStyle(fontFamily: 'NewAthletic'),
+          style: TextStyle(fontFamily: 'Litsans'),
         ),
       );
     }).toList());

@@ -17,27 +17,24 @@ String league_page;
 String team1logo;
 String team2logo;
 var league_page_address;
-TextStyle noble = TextStyle(fontFamily: 'Cocosharp', color: Colors.white);
-TextStyle nobleblack = TextStyle(fontFamily: 'Cocosharp', color: Colors.black);
-TextStyle Louisgeorgewhite =
-    TextStyle(fontFamily: 'Louisgeorge', color: Colors.white);
-TextStyle LouisgeorgeBOLD = TextStyle(
-    fontFamily: 'Louisgeorge',
-    color: Colors.black,
-    fontWeight: FontWeight.w900);
-TextStyle Louisgeorge = TextStyle(
-  fontFamily: 'Louisgeorge',
+TextStyle noble = const TextStyle(fontFamily: 'Cocosharp', color: Colors.white);
+TextStyle nobleblack =
+    const TextStyle(fontFamily: 'Cocosharp', color: Colors.black);
+TextStyle Litsanswhite =
+    const TextStyle(fontFamily: 'Litsans', color: Colors.white);
+TextStyle Litsans = const TextStyle(
+  fontFamily: 'Litsans',
   color: Colors.black,
 );
 TextStyle smallnobleblack =
-    TextStyle(fontFamily: 'Cocosharp', fontSize: 12, color: Colors.black);
+    const TextStyle(fontFamily: 'Cocosharp', fontSize: 12, color: Colors.black);
 
 TextStyle smallnoble =
-    TextStyle(fontFamily: 'Cocosharp', fontSize: 12, color: Colors.white);
-BoxDecoration recentStatePage_Decoration = new BoxDecoration(
+    const TextStyle(fontFamily: 'Cocosharp', fontSize: 12, color: Colors.white);
+BoxDecoration recentStatePage_Decoration = BoxDecoration(
     border: Border.all(color: Colors.white54),
-    borderRadius: new BorderRadius.all(new Radius.circular(10.0)),
-    gradient: LinearGradient(
+    borderRadius: new BorderRadius.all(const Radius.circular(10.0)),
+    gradient: const LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [

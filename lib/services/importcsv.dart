@@ -53,6 +53,7 @@ class importcsv {
     String file = "$dir";
     final prefs = await SharedPreferences.getInstance();
     var SharedPrefData = jsonDecode(prefs.getString('FantasyData'));
+    print('SharedPrefData $SharedPrefData');
     // List<dynamic> un = [
     //   ['Team', 'Player Stats', 'Teamlogo'],
     //   [

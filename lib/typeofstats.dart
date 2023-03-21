@@ -60,7 +60,7 @@ class _typeofstatsState extends State<typeofstats> {
                         title: Text(
                           'Stats by Pitch',
                           style: TextStyle(
-                            fontFamily: 'Louisgeorge',
+                            fontFamily: 'Litsans',
                             fontSize: 15.0,
                             color: Colors.white,
                           ),
@@ -68,7 +68,7 @@ class _typeofstatsState extends State<typeofstats> {
                         subtitle: Text(
                           '\nGives you an analysis of matches based on the venue played.',
                           style: TextStyle(
-                            fontFamily: 'Louisgeorge',
+                            fontFamily: 'Litsans',
                             fontSize: 15.0,
                             color: Colors.grey,
                           ),
@@ -129,7 +129,7 @@ class _typeofstatsState extends State<typeofstats> {
                         title: Text(
                           'Stats by Recent matches',
                           style: TextStyle(
-                            fontFamily: 'Louisgeorge',
+                            fontFamily: 'Litsans',
                             fontSize: 15.0,
                             color: Colors.white,
                           ),
@@ -137,7 +137,7 @@ class _typeofstatsState extends State<typeofstats> {
                         subtitle: Text(
                           '\nGives you an analysis of report based upon the last five matches played by the each team.',
                           style: TextStyle(
-                            fontFamily: 'Louisgeorge',
+                            fontFamily: 'Litsans',
                             fontSize: 15.0,
                             color: Colors.grey,
                           ),

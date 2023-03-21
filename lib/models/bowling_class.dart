@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import 'package:html/dom.dart' as dom;
@@ -41,7 +42,7 @@ class bowlingDataSource extends DataGridSource {
             ]))
         .toList();
   }
-
+  @override
   List<DataGridRow> _bowlingData = [];
 
   @override
@@ -56,7 +57,7 @@ class bowlingDataSource extends DataGridSource {
         padding: EdgeInsets.all(8.0),
         child: Text(
           e.value.toString(),
-          style: TextStyle(fontFamily: 'NewAthletic'),
+          style: const TextStyle(fontFamily: 'Litsans'),
         ),
       );
     }).toList());

@@ -50,9 +50,9 @@ class _widgetbowlingState extends State<widgetbowling> {
                             var acc = k.getCells();
 
                             print(
-                                'assa11end1 ${acc[0].value} ${acc[1].value} ${acc[4].value}');
+                                'assa11end1 ${acc[0].value} ${acc[3].value} ${acc[4].value}');
                             team1_bowlfantasy.add(
-                                '${acc[0].value} ${acc[1].value} ${acc[4].value}');
+                                '${acc[0].value} ${acc[3].value} ${acc[4].value}');
                           }
                           Analysis.bowlersmap[globals.league_page +
                               '_' +
@@ -182,14 +182,16 @@ class _widgetbowlingState extends State<widgetbowling> {
                       verticalScrollPhysics: NeverScrollableScrollPhysics(),
                       rowHeight: 35.0,
                       shrinkWrapRows: true,
+                      showSortNumbers: true,
                       showCheckboxColumn: true,
                       sortingGestureType: SortingGestureType.tap,
                       allowSorting: true,
                       controller: teamnames.indexOf(i) == 0
                           ? dataGridController
                           : dataGridController1,
-                      checkboxColumnSettings: DataGridCheckboxColumnSettings(
-                          showCheckboxOnHeader: false),
+                      checkboxColumnSettings:
+                          const DataGridCheckboxColumnSettings(
+                              showCheckboxOnHeader: false),
                       source: bowlingDataSource(
                           bowlingData: snapshot.data.item2.item2
                               .where((element) =>
@@ -210,7 +212,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                                           .trim()
                                           .substring(1)
                                           .toLowerCase(),
-                                  style: TextStyle(fontFamily: 'NewAthletic'),
+                                  style: const TextStyle(fontFamily: 'Litsans'),
                                 )));
                       }).toList()),
               SizedBox(
