@@ -67,18 +67,16 @@ partnership_teams_info(var team_info, String team1_name) async {
   //     .text
   //     .contains('Records'));
   print(document1.text.toString());
-  var headers1 = document1.querySelectorAll('table.engineTable>thead>tr')[0];
+  var headers1 = document1.querySelectorAll('table>thead>tr')[0];
   var titles1 = headers1.querySelectorAll('th');
   titles1.removeWhere((element) => element.text.length == 0);
   for (int i = 0; i < titles1.length; i++) {
     print(titles1[i].text.toString().trim());
     headings.add(titles1[i].text.toString().trim());
   }
-  headings.remove('Scorecard');
-  headings.join(',');
   headings.insert(headings.length, "Team");
 
-  var element = document1.querySelectorAll('table.engineTable>tbody')[0];
+  var element = document1.querySelectorAll('table>tbody')[0];
   var data = element.querySelectorAll('tr');
   data.removeWhere((element) => element.text.length == 0);
   for (int i = 0; i < data.length; i++) {
@@ -88,8 +86,6 @@ partnership_teams_info(var team_info, String team1_name) async {
         playerwise.add(data[i].children[j].text.toString().trim());
       }
     }
-    playerwise.removeAt(6);
-    playerwise.join(',');
     playerwise.insert(playerwise.length, team1_name);
     allplayers.add(playerwise);
   }

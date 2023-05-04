@@ -59,16 +59,20 @@ class _recentmatchdataState extends State<recentmatchdata> {
     //     'https://www.espncricinfo.com/series/england-in-bangladesh-2022-23-1351394/bangladesh-vs-england-2nd-odi-1351398/match-preview';
     if (link2address.toString().split('/').last != 'live-cricket-score') {
       var forlink2 = await http.Client().get(Uri.parse(link2address));
+      print('object $link2address');
       dom.Document link2doc1 = parser.parse(forlink2.body);
       var link_correction = link2doc1
-          .getElementsByClassName('ds-h-10')[0]
-          .attributes['href']
-          .toString();
-      var forlink21 = await http.Client()
-          .get(Uri.parse('https://www.espncricinfo.com' + link_correction));
+          .getElementsByClassName('ds-px-3 ds-py-2 hover:ds-text-typo-primary')
+          .first;
+      print('linkcorrectiion $link_correction');
+      var forlink21 = await http.Client().get(Uri.parse(
+          'https://www.espncricinfo.com' + link_correction.toString()));
       link2doc = parser.parse(forlink21.body);
     } else {
+      print('object $link2address');
+
       var forlink2 = await http.Client().get(Uri.parse(link2address));
+
       link2doc = parser.parse(forlink2.body);
     }
 

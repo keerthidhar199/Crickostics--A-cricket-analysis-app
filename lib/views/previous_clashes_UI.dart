@@ -88,7 +88,7 @@ class _pastmatchesState extends State<pastmatches> {
                         for (var k in dataGridController.selectedRows) {
                           var acc = k.getCells();
                           previousmatchfantasy.add(
-                              '${acc[0].value} ${acc[1].value} ${acc[5].value} ${acc[9].value}');
+                              '${acc[0].value} ${acc[1].value} ${acc[5].value}');
                         }
                         Analysis.previousmatchmap[globals.league_page +
                             '_' +
@@ -209,7 +209,7 @@ class _pastmatchesState extends State<pastmatches> {
                         for (var k in dataGridController1.selectedRows) {
                           var acc = k.getCells();
                           previousmatchfantasy.add(
-                              '${acc[0].value} ${acc[1].value} ${acc[4].value} ${acc[8].value}');
+                              '${acc[0].value} ${acc[1].value} ${acc[3].value} ${acc[4].value}');
                         }
                         Analysis.previousmatchmap[globals.league_page +
                             '_' +
@@ -328,8 +328,8 @@ class _pastmatchesState extends State<pastmatches> {
 
                         for (var k in dataGridController2.selectedRows) {
                           var acc = k.getCells();
-                          previousmatchfantasy.add(
-                              '${acc[0].value} &${acc[1].value} ${acc[6].value}');
+                          previousmatchfantasy
+                              .add('${acc[0].value} &${acc[1].value}');
                         }
                         Analysis.previousmatchmap[globals.league_page +
                             '_' +

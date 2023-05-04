@@ -112,18 +112,24 @@ class _datascrapState extends State<datascrap> {
       // if (matchdetails.querySelectorAll('a').isNotEmpty) {
       if (matchdetails.text.contains(league)) {
         var link1 = matchdetails.querySelectorAll('a')[0];
-        print('link1 ${link1.attributes["href"]}');
-        var link2address = 'https://www.espncricinfo.com' +
-            link1.attributes["href"].toString();
 
+        var link1update = link1.attributes["href"].toString();
+        var matchaddress = 'https://www.espncricinfo.com' + link1update;
+        link1update = link1update.replaceAll(
+            link1update.split('/')[3] + '/' + link1update.split('/').last, '');
+        print('link1update1 ${link1update}');
+
+        var link2address = 'https://www.espncricinfo.com' + link1update;
         var forlink2 = await http.Client().get(Uri.parse(link2address));
-
         dom.Document link2doc = parser.parse(forlink2.body);
 
+        var formatch2 = await http.Client().get(Uri.parse(matchaddress));
+        dom.Document match2doc = parser.parse(formatch2.body);
+
         setState(() {
-          globals.league_page_address = link2address;
+          globals.league_page_address = matchaddress;
         });
-        if (link2doc
+        if (match2doc
             .getElementsByClassName('ds-shrink-0')
             .where((element) => element.text == 'Table')
             .isEmpty) {
@@ -136,85 +142,91 @@ class _datascrapState extends State<datascrap> {
           });
         }
 
-        if (link2doc
-            .getElementsByClassName(
-                'ds-text-tight-m ds-font-regular ds-text-typo-mid3')
-            .toList()
-            .isNotEmpty) {
-          var link2 = link2doc
-              .getElementsByClassName(
-                  'ds-text-tight-m ds-font-regular ds-text-typo-mid3')[0]
-              .querySelector('a'); //
+        var forlink3 = await http.Client()
+            .get(Uri.parse('https://www.espncricinfo.com' + link1update));
+        dom.Document link3doc = parser.parse(forlink3.body);
 
-          print('adfsfsgb  $link2');
+        var link3 = link3doc
+            .getElementsByClassName('ds-px-3 ds-py-2')
+            .where((element) => element.text == 'Stats');
+        print('link3 ${link3.toList()[0].attributes['href']}');
 
-          print(
-              'link2.attributes["href"].toString() ${link2.attributes["href"].toString()}');
-
-          var forlink3 = await http.Client().get(Uri.parse(
-              'https://www.espncricinfo.com' +
-                  link2.attributes["href"].toString()));
-          dom.Document link3doc = parser.parse(forlink3.body);
-          var link3 = link3doc
-              .getElementsByClassName('ds-px-3 ds-py-2')
-              .where((element) => element.text == 'Stats');
-
-          // print('link3 ${link3.toList()[0].attributes["href"]}');
-
-          for (var y
-              in matchdetails.getElementsByClassName('ds-text-compact-xxs')) {
-            var matchDet =
-                y.getElementsByClassName('ds-flex ds-justify-between')[0];
-            if (!matchDet.text.toLowerCase().contains('covered')) {
-              var matchDet1 = y.getElementsByClassName(
-                      'ds-text-tight-xs ds-truncate ds-text-typo-mid3')[
-                  0]; // 11th Match (N), DY Patil, March 13, 2023, Women's Premier League
-              var teams1 = y
+        for (var y
+            in matchdetails.getElementsByClassName('ds-text-compact-xxs')) {
+          var matchDet =
+              y.getElementsByClassName('ds-flex ds-justify-between')[0];
+          if (!matchDet.text.toLowerCase().contains('covered')) {
+            var matchDet1 = y.getElementsByClassName(
+                    'ds-text-tight-xs ds-truncate ds-text-typo-mid3')[
+                0]; // 11th Match (N), DY Patil, March 13, 2023, Women's Premier League
+            var teams1 = y
+                .getElementsByClassName(
+                    'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[0]
+                .querySelector('p')
+                .text; //team1 name Mumbai Indians Women
+            var teams2 = y
+                .getElementsByClassName(
+                    'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[1]
+                .querySelector('p')
+                .text; //team2 name Gujarat Giants Women
+            var teamscore = y.getElementsByClassName(
+                'ds-text-compact-s ds-text-typo ds-text-right ds-whitespace-nowrap');
+            String stauts;
+            if (y
+                .getElementsByClassName(
+                    'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo')
+                .isEmpty) {
+              stauts = '';
+            } else {
+              stauts = y
                   .getElementsByClassName(
-                      'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[0]
-                  .querySelector('p')
-                  .text; //team1 name Mumbai Indians Women
-              var teams2 = y
-                  .getElementsByClassName(
-                      'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[1]
-                  .querySelector('p')
-                  .text; //team2 name Gujarat Giants Women
-              var teamscore = y.getElementsByClassName(
-                  'ds-text-compact-s ds-text-typo ds-text-right ds-whitespace-nowrap');
-              String stauts;
-              if (y
-                  .getElementsByClassName(
-                      'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo')
-                  .isEmpty) {
-                stauts = '';
+                      'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo')[0]
+                  .text;
+            }
+            var response1 = await http.Client().get(
+                Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
+            dom.Document document1 = parser.parse(response1.body);
+            List imglogosdata = json.decode(
+                    document1.getElementById('__NEXT_DATA__').text)['props']
+                ['editionDetails']['trendingMatches']['matches'];
+            List imglogosdata1 = json.decode(
+                    document1.getElementById('__NEXT_DATA__').text)['props']
+                ['appPageProps']['data']['content']['matches'];
+            List takethisimglogosdata = List.from(imglogosdata)
+              ..addAll(imglogosdata1);
+
+            for (var i in takethisimglogosdata) {
+              if ((i['teams'][0]['team']['name'] == teams1) &&
+                  (i['teams'][1]['team']['name'] == teams2)) {
+                iplmatch['linkaddress'] = matchaddress;
+                iplmatch['Team1'] = teams1;
+                iplmatch['Team2'] = teams2;
+                iplmatch['Team1_short'] =
+                    i['teams'][0]['team']['longName'].toString();
+                iplmatch['Team2_short'] =
+                    i['teams'][1]['team']['longName'].toString();
+                if (i['teams'][0]['team']['image'] == null ||
+                    i['teams'][1]['team']['image'] == null) {
+                  iplmatch['team1logo'] = null;
+
+                  iplmatch['team2logo'] = null;
+                } else {
+                  iplmatch['team1logo'] =
+                      i['teams'][0]['team']['image']['url'].toString();
+                  iplmatch['team2logo'] =
+                      i['teams'][1]['team']['image']['url'].toString();
+                }
               } else {
-                stauts = y
-                    .getElementsByClassName(
-                        'ds-text-tight-s ds-font-regular ds-truncate ds-text-typo')[0]
-                    .text;
-              }
-              var response1 = await http.Client().get(
-                  Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
-              dom.Document document1 = parser.parse(response1.body);
-              List imglogosdata = json.decode(
-                      document1.getElementById('__NEXT_DATA__').text)['props']
-                  ['editionDetails']['trendingMatches']['matches'];
-              List imglogosdata1 = json.decode(
-                      document1.getElementById('__NEXT_DATA__').text)['props']
-                  ['appPageProps']['data']['content']['matches'];
-              List takethisimglogosdata = List.from(imglogosdata)
-                ..addAll(imglogosdata1);
-
-              for (var i in takethisimglogosdata) {
-                if ((i['teams'][0]['team']['name'] == teams1) &&
-                    (i['teams'][1]['team']['name'] == teams2)) {
-                  iplmatch['linkaddress'] = link2address;
+                if ((i['teams'][0]['team']['longName'] == teams1) &&
+                    (i['teams'][1]['team']['longName'] == teams2)) {
+                  iplmatch['linkaddress'] = matchaddress;
                   iplmatch['Team1'] = teams1;
                   iplmatch['Team2'] = teams2;
                   iplmatch['Team1_short'] =
-                      i['teams'][0]['team']['longName'].toString();
+                      i['teams'][0]['team']['name'].toString();
                   iplmatch['Team2_short'] =
-                      i['teams'][1]['team']['longName'].toString();
+                      i['teams'][1]['team']['name'].toString();
+
                   if (i['teams'][0]['team']['image'] == null ||
                       i['teams'][1]['team']['image'] == null) {
                     iplmatch['team1logo'] = null;
@@ -226,73 +238,51 @@ class _datascrapState extends State<datascrap> {
                     iplmatch['team2logo'] =
                         i['teams'][1]['team']['image']['url'].toString();
                   }
-                } else {
-                  if ((i['teams'][0]['team']['longName'] == teams1) &&
-                      (i['teams'][1]['team']['longName'] == teams2)) {
-                    iplmatch['linkaddress'] = link2address;
-                    iplmatch['Team1'] = teams1;
-                    iplmatch['Team2'] = teams2;
-                    iplmatch['Team1_short'] =
-                        i['teams'][0]['team']['name'].toString();
-                    iplmatch['Team2_short'] =
-                        i['teams'][1]['team']['name'].toString();
-
-                    if (i['teams'][0]['team']['image'] == null ||
-                        i['teams'][1]['team']['image'] == null) {
-                      iplmatch['team1logo'] = null;
-
-                      iplmatch['team2logo'] = null;
-                    } else {
-                      iplmatch['team1logo'] =
-                          i['teams'][0]['team']['image']['url'].toString();
-                      iplmatch['team2logo'] =
-                          i['teams'][1]['team']['image']['url'].toString();
-                    }
-                  }
                 }
               }
-              //print('hero team1: ${teams1}');
-              //print('hero match_det: ${match_det.text}');
-              //print('hero match_det1: ${match_det1.text}');
-              //print('hero team2: ${teams2}');
-              // //print('hero teamscore: ${teamscore[0].text}');
-              // //print('hero teamscore: ${teamscore[1].text}');
-              //print('hero stauts: ${stauts.text}');
+            }
+            //print('hero team1: ${teams1}');
+            //print('hero match_det: ${match_det.text}');
+            //print('hero match_det1: ${match_det1.text}');
+            //print('hero team2: ${teams2}');
+            // //print('hero teamscore: ${teamscore[0].text}');
+            // //print('hero teamscore: ${teamscore[1].text}');
+            //print('hero stauts: ${stauts.text}');
 
-              iplmatch['Time'] = matchDet.text;
-              iplmatch['Match_name'] = matchDet1.text.split(',').last;
+            iplmatch['Time'] = matchDet.text;
+            iplmatch['Match_name'] = matchDet1.text.split(',').last;
 
-              iplmatch['MatchStarts'] = stauts;
-              iplmatch['Details'] = matchDet1.text;
+            iplmatch['MatchStarts'] = stauts;
+            iplmatch['Details'] = matchDet1.text;
 
-              final DateTime today = DateTime.now();
-              final DateFormat format2 = DateFormat('MMMM');
-              //print(format2.format(
-              // today));
-              //getting current month name like January, February...
-              var detailslist = matchDet1.text.split(',');
+            final DateTime today = DateTime.now();
+            final DateFormat format2 = DateFormat('MMMM');
+            //print(format2.format(
+            // today));
+            //getting current month name like January, February...
+            var detailslist = matchDet1.text.split(',');
 
-              print('bass' + detailslist.toString());
-              for (var k in detailslist) {
-                print('bass' + k.toString());
-                if (k.contains(format2.format(today).toString())) {
-                  iplmatch['Ground'] =
-                      detailslist[detailslist.indexOf(k) - 1].trim();
-                  //taking the ground name from the list which is the one before Date details
-                } else {}
-              }
-              print('assa1' + iplmatch.toString());
+            print('bass' + detailslist.toString());
+            for (var k in detailslist) {
+              print('bass' + k.toString());
+              if (k.contains(format2.format(today).toString())) {
+                iplmatch['Ground'] =
+                    detailslist[detailslist.indexOf(k) - 1].trim();
+                //taking the ground name from the list which is the one before Date details
+              } else {}
+            }
+            print('assa1' + iplmatch.toString());
 
-              if (teamscore.length == 2) {
-                iplmatch['team1_score'] = teamscore[0].text.trim();
-                iplmatch['team2_score'] = teamscore[1].text.trim();
-              } else if (teamscore.length == 1) {
-                iplmatch['team1_score'] = teamscore[0].text.trim();
-                iplmatch['team2_score'] = '';
-              } else {
-                iplmatch['team1_score'] = '';
-                iplmatch['team2_score'] = '';
-              }
+            if (teamscore.length == 2) {
+              iplmatch['team1_score'] = teamscore[0].text.trim();
+              iplmatch['team2_score'] = teamscore[1].text.trim();
+            } else if (teamscore.length == 1) {
+              iplmatch['team1_score'] = teamscore[0].text.trim();
+              iplmatch['team2_score'] = '';
+            } else {
+              iplmatch['team1_score'] = '';
+              iplmatch['team2_score'] = '';
+            }
 
 //                    hero team1: Kolkata Knight Riders
 //                    hero match_det: Live
@@ -301,61 +291,66 @@ class _datascrapState extends State<datascrap> {
 //                     hero teamscore: 177/6
 //                    hero teamscore: (17.6/20 ov, T:178) 113/7
 //                     hero stauts: Sunrisers need 65 runs in 12 balls.
-            }
           }
-          if (link3.toList().isNotEmpty) {
-            var teamstats = await http.Client().get(
-                Uri.parse(link3.toList()[0].attributes["href"].toString()));
-            print('assa1 ' + link3.toList()[0].attributes["href"].toString());
-            dom.Document teamstatsdoc = parser.parse(teamstats.body);
+        }
+        if (link3.toList().isNotEmpty) {
+          var teamstats = await http.Client().get(Uri.parse(
+              'https://www.espncricinfo.com' +
+                  link3.toList()[0].attributes["href"].toString()));
+          dom.Document viewstatsdoc = parser.parse(teamstats.body);
+          var viewstats = viewstatsdoc
+              .getElementsByClassName('ds-flex')
+              .where((element) => element.text == 'View all stats');
+          teamstats = await http.Client().get(Uri.parse(
+              'https://www.espncricinfo.com' +
+                  viewstats.last.attributes['href'].toString()));
+          print('viewstast ${viewstats.last.attributes['href'].toString()}');
+          // ('assa1 ' + link3.toList()[0].attributes["href"].toString());
+          dom.Document teamstatsdoc = parser.parse(teamstats.body);
 
-            var rec1 = teamstatsdoc
-                .getElementsByClassName('RecBulAro')
-                .where((element) => element.text == 'Records by team');
-            var rec2 = teamstatsdoc
-                .getElementsByClassName('RecBulAro')
-                .where((element) => element.text == 'Records by team');
+          var rec1 = teamstatsdoc
+              .getElementsByClassName(
+                  'ds-flex ds-items-center ds-cursor-pointer ds-px-4 ds-py-3')
+              .where((element) => element.text == 'Records by team');
+          var rec2 = teamstatsdoc
+              .getElementsByClassName(
+                  'ds-flex ds-items-center ds-cursor-pointer ds-px-4 ds-py-3')
+              .where((element) => element.text == 'Records by team');
+          if (rec1.isNotEmpty) {
+            rec1 = rec1.first.parentNode.children.last
+                .getElementsByTagName('li')
+                .where((element) => (element.text == iplmatch["Team1"] ||
+                    element.text == iplmatch["Team1_short"]));
             if (rec1.isNotEmpty) {
-              rec1 = rec1
-                  .toList()[0]
-                  .parentNode
-                  .children[2]
-                  .getElementsByClassName('RecordLinks')
-                  .where((element) => (element.text == iplmatch["Team1"] ||
-                      element.text == iplmatch["Team1_short"]));
-
-              if (rec1.isNotEmpty) {
-                iplmatch['team1_stats_link'] =
-                    rec1.first.attributes["href"].toString();
-                //print('rec1 ${rec1.first.attributes["href"]}');
-                matches.add(iplmatch);
-              }
-            } else if (rec1.isEmpty) {
               iplmatch['team1_stats_link'] =
-                  link3.toList()[0].attributes["href"].toString();
+                  rec1.first.getElementsByTagName('a')[0].attributes['href'];
+              // print('rec1 ${rec1.first.attributes["href"]}');
               matches.add(iplmatch);
             }
+          } else if (rec1.isEmpty) {
+            iplmatch['team1_stats_link'] =
+                link3.toList()[0].attributes["href"].toString();
+            matches.add(iplmatch);
+          }
+          print(
+              'rec11 ${rec1.first.text} ${rec1.first.getElementsByTagName('a')[0].attributes['href']} ');
+
+          if (rec2.isNotEmpty) {
+            rec2 = rec2.first.parentNode.children.last
+                .getElementsByTagName('li')
+                .where((element) => (element.text == iplmatch["Team2"] ||
+                    element.text == iplmatch["Team2_short"]));
 
             if (rec2.isNotEmpty) {
-              rec2 = rec2
-                  .toList()[0]
-                  .parentNode
-                  .children[2]
-                  .getElementsByClassName('RecordLinks')
-                  .where((element) => (element.text == iplmatch["Team2"] ||
-                      element.text == iplmatch["Team2_short"]));
-
-              if (rec2.isNotEmpty) {
-                iplmatch['team2_stats_link'] =
-                    rec2.first.attributes["href"].toString();
-                //print('rec2 ${rec2.first.attributes["href"]}');
-                matches.add(iplmatch);
-              }
-            } else if (rec2.isEmpty) {
               iplmatch['team2_stats_link'] =
-                  link3.toList()[0].attributes["href"].toString();
+                  rec1.first.getElementsByTagName('a')[0].attributes['href'];
+              //print('rec2 ${rec2.first.attributes["href"]}');
               matches.add(iplmatch);
             }
+          } else if (rec2.isEmpty) {
+            iplmatch['team2_stats_link'] =
+                link3.toList()[0].attributes["href"].toString();
+            matches.add(iplmatch);
           }
         }
       }

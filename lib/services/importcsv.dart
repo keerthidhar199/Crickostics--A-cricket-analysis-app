@@ -10,23 +10,22 @@ class importcsv {
   //[PWH de Silva 4.0 6.5, FA Allen 4.0 5.75, Bowling],
   //[P Nissanka, PHKD Mendis &36, KNA Bandara, C Karunaratne &42, Partnership]]
 
-  static Future<Map<String, List<dynamic>>> getcsvdata() async {
-    Map<String, List<dynamic>> parseData(league_name, team, csvOutput, logo) {
+  static Future<List<Map<String, List<dynamic>>>> getcsvdata() async {
+    Map<String, List<dynamic>> parseData(league_name, team, csvOutput) {
       int index1, index2, index3;
 
       List batting = [], bowling = [], partnerships = [];
       Map<String, List<dynamic>> playerstats = {};
-      print('ik22 csvoutput $csvOutput');
+      print('thecsvoutput $csvOutput');
       List players = csvOutput
           .toString()
           .replaceAll('[', '')
           .replaceAll(']', '')
           .split(',');
-      print('ik22 $players');
       for (var i in players) {
         players[players.indexOf(i)] = i.trim();
       }
-      print('ik2 $players');
+      print('brudh $players');
 
       index1 = players.indexOf('Batting');
       index2 = players.indexOf('Bowling');
@@ -44,7 +43,7 @@ class importcsv {
       playerstats['Batting'] = batting;
       playerstats['Bowling'] = bowling;
       playerstats['Partnerships'] = partnerships;
-      playerstats['Logo'] = [logo];
+      // playerstats['Logo'] = [logo];
       return playerstats;
     }
 
@@ -53,42 +52,17 @@ class importcsv {
     String file = "$dir";
     final prefs = await SharedPreferences.getInstance();
     var SharedPrefData = jsonDecode(prefs.getString('FantasyData'));
-    print('SharedPrefData $SharedPrefData');
-    // List<dynamic> un = [
-    //   ['Team', 'Player Stats', 'Teamlogo'],
-    //   [
-    //     'Pakistan Super League_Lahore QalandarsvsMultan Sultans_Lahore Qalandars',
-    //     [
-    //       ['Fakhar Zaman 96 213.33', 'Sikandar Raza* 71 208.82', 'Batting'],
-    //       ['Shaheen Shah Afridi 4.0 10.0', 'Rashid Khan 4.0 3.75', 'Bowling'],
-    //       [
-    //         'Fakhar Zaman',
-    //         'Abdullah Shafique &120',
-    //         'Fakhar Zaman',
-    //         'SW Billings &88',
-    //         'Partnership'
-    //       ]
-    //     ],
-    //     '/db/PICTURES/CMS/313500/313523.logo.png'
-    //   ],
-    //   [
-    //     'Pakistan Super League_Lahore QalandarsvsMultan Sultans_Multan Sultans',
-    //     [
-    //       ['KA Pollard 39 139.28', 'Mohammad Rizwan 30 111.11', 'Batting'],
-    //       ['KA Pollard 2.0 8.0', 'Anwar Ali 3.0 7.0', 'Bowling'],
-    //       [
-    //         'KA Pollard',
-    //         'Anwar Ali &49',
-    //         'Shan Masood',
-    //         'Mohammad Rizwan &48',
-    //         'Partnership'
-    //       ]
-    //     ],
-    //     '/db/PICTURES/CMS/313500/313550.logo.png'
-    //   ]
-    // ];
+    print('SharedPrefData ${SharedPrefData}');
+    //[[Team, Player Stats, Teamlogo],
+    //[The Ford Trophy_Central DistrictsvsCanterbury_Central Districts,
+    // [[TC Bruce 80 121.21, WA Young 71 98.61, Batting],
+    //[JA Clarkson 3 2.5, SHA Rance 2 6.0, Bowling],
+    //[JCT Boyle, TC Bruce &57, Partnership]], /db/PICTURES/CMS/313300/313331.logo.png],
+    //[The Ford Trophy_Central DistrictsvsCanterbury_headtohead,
+    //[[D Cleaver 60 88.23, KJ McClure* 100 78.74, Batting],
+    //[BG Randell 10.0 2 2.9, Bowling],
+    //[JCT Boyle, BD Schmulian &27, W Clark, BG Randell &18, BD Schmulian, JA Clarkson &5, JCT Boyle, BS Smith &26, Partnership]], /db/PICTURES/CMS/313300/313330.logo.png]]
 
-    // fields1['Result'] = fields1['Results'] + un;
     var SharedPrefDatatoList = [];
     for (var j in SharedPrefData.keys) {
       SharedPrefDatatoList.add(SharedPrefData[j]);
@@ -97,10 +71,12 @@ class importcsv {
 
     List<Map<String, List<dynamic>>> result = [];
     Map<String, List<dynamic>> league_data = {};
+    Map<String, List<dynamic>> previous_clashes_data = {};
     Set distinct_leagues = {};
     Map<String, List<dynamic>> dummy = {};
     if (SharedPrefDatatoList.isNotEmpty) {
       for (var fields in SharedPrefDatatoList) {
+        print('fiels $fields');
         for (int i = 1; i < fields.length; i++) {
           //map {Lanka Premier League_Galle GladiatorsvsColombo Stars:[parseData[1],parseData[2]]
           // }
@@ -111,11 +87,11 @@ class importcsv {
               '_' +
               fields[i][0].toString().split('_')[1];
           league_data[league_name_and_vs] = [];
-
+          previous_clashes_data['headtohead'] = [];
           dummy[team_of_the_league] = [
-            parseData(league_name_and_vs, team_of_the_league, fields[i][1],
-                fields[i][2])
+            parseData(league_name_and_vs, team_of_the_league, fields[i][1])
           ];
+          print('what si dummy $dummy');
           for (int i = 1; i < fields.length; i++) {
             var league_name_and_vs = fields[i][0].toString().split('_')[0] +
                 '_' +
@@ -124,6 +100,8 @@ class importcsv {
             for (var j in dummy.keys) {
               if (league_name_and_vs.contains(j)) {
                 league_data[league_name_and_vs] += dummy[j];
+              } else if (j == 'headtohead') {
+                previous_clashes_data['headtohead'] = dummy[j];
               }
               // distinct_leagues.add(fields[i][0].toString().split('_')[0] +
               //     '_' +
@@ -132,8 +110,8 @@ class importcsv {
           }
         }
       }
-      // print('import_datayu $league_data');
-      return league_data;
+      print('import_datayu $league_data');
+      return [league_data, previous_clashes_data];
     } else {
       return null;
     }

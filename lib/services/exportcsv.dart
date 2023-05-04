@@ -57,7 +57,7 @@ class exportcsv {
       mapteamwise[k] = teamwise;
       row.add(k);
       row.add(teamwise);
-      row.add(teamlogos[distinct_teams.toList().indexOf(k)]);
+      // row.add(teamlogos[distinct_teams.toList().indexOf(k)]);
       rows.add(row);
     }
     print('export_datayu $rows');

@@ -4,6 +4,7 @@ import 'package:datascrap/models/bowling_class.dart';
 import 'package:datascrap/models/partnership_class.dart';
 import 'package:datascrap/services/exportcsv.dart';
 import 'package:datascrap/views/previous_clashes_UI.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
@@ -144,14 +145,14 @@ class _AnalysisState extends State<Analysis> {
                     Widget bowling = widgetbowling(
                       snapshot: snapshot,
                     );
-                    Widget partnership = widgetpartnership(
-                      snapshot: snapshot,
-                    );
+                    // Widget partnership = widgetpartnership(
+                    //   snapshot: snapshot,
+                    // );
 
                     List<Widget> categories = [
                       batting,
                       bowling,
-                      partnership,
+                      // partnership,
                     ];
                     List<Widget> list = categories
                         .map(
@@ -281,9 +282,9 @@ class _AnalysisState extends State<Analysis> {
           Tuple2<List<String>, List<Batting_player>>,
           Tuple2<List<String>, List<Player>>,
           Tuple2<List<String>, List<Partnership>>>> getData() async {
-    var bowling = 'bowling/best_figures_innings';
-    var batting = 'batting/highest_strike_rate_innings';
-    var partnership = 'fow/highest_partnerships_for_any_wicket';
+    var bowling = 'bowling-best-figures-innings';
+    var batting = 'batting-highest-strike-rate-innings';
+    var partnership = 'fow-highest-partnerships-for-any-wicket';
     List<List<String>> teams_bowling = [];
     List<String> teams_bowling_headings = [];
     List<List<String>> teams_batting = [];
@@ -293,7 +294,7 @@ class _AnalysisState extends State<Analysis> {
 
 //BATTING*******************************************************
     print('Manali ${globals.team1_stats_link}');
-    var root = 'https://stats.espncricinfo.com';
+    var root = 'https://www.espncricinfo.com';
     dom.Document document;
     String containing;
     Tuple3<
@@ -312,14 +313,28 @@ class _AnalysisState extends State<Analysis> {
       document = parser.parse(response_team1.body);
     }
 
-    var team1_batting_table = document.querySelectorAll('a').where(
-        (element) => element.attributes['href'].toString().contains(batting));
-    print('team1_batting_table $team1_batting_table');
-    var team1_bowling_table = document.querySelectorAll('a').where(
-        (element) => element.attributes['href'].toString().contains(bowling));
-    var team1_partnership_table = document.querySelectorAll('a').where(
-        (element) =>
-            element.attributes['href'].toString().contains(partnership));
+    var team1_batting_table = document.querySelectorAll('li').where((element) =>
+        element
+            .getElementsByTagName('a')[0]
+            .attributes['href']
+            .contains(batting));
+    print(
+        'team1_batting_table1 ${team1_batting_table.first.getElementsByTagName('a')[0].attributes['href']}');
+    var team1_bowling_table = document.querySelectorAll('li').where((element) =>
+        element
+            .getElementsByTagName('a')[0]
+            .attributes['href']
+            .toString()
+            .contains(bowling));
+    print(
+        'team1_bowling_table ${team1_bowling_table.first.getElementsByTagName('a')[0].attributes['href']}');
+
+    var team1_partnership_table = document.querySelectorAll('li').where(
+        (element) => element
+            .getElementsByTagName('a')[0]
+            .attributes['href']
+            .toString()
+            .contains(partnership));
 
     if (team1_batting_table.isEmpty ||
         team1_bowling_table.isEmpty ||
@@ -341,14 +356,24 @@ class _AnalysisState extends State<Analysis> {
       document1 = parser.parse(response_team2.body);
     }
 
-    var team2_batting_table = document1.querySelectorAll('a').where(
-        (element) => element.attributes['href'].toString().contains(batting));
-    var team2_bowling_table = document1.querySelectorAll('a').where(
-        (element) => element.attributes['href'].toString().contains(bowling));
+    var team2_batting_table = document1.querySelectorAll('li').where(
+        (element) => element
+            .getElementsByTagName('a')[0]
+            .attributes['href']
+            .contains(batting));
+    var team2_bowling_table = document1.querySelectorAll('li').where(
+        (element) => element
+            .getElementsByTagName('a')[0]
+            .attributes['href']
+            .toString()
+            .contains(bowling));
 
-    var team2_partnership_table = document1.querySelectorAll('a').where(
-        (element) =>
-            element.attributes['href'].toString().contains(partnership));
+    var team2_partnership_table = document1.querySelectorAll('li').where(
+        (element) => element
+            .getElementsByTagName('a')[0]
+            .attributes['href']
+            .toString()
+            .contains(partnership));
     if (team2_batting_table.isEmpty == null ||
         team2_bowling_table.isEmpty == null ||
         team2_partnership_table.isEmpty == null) {
@@ -356,10 +381,14 @@ class _AnalysisState extends State<Analysis> {
       return overall_data;
     }
 
-    var team1_info_batting = await http.Client().get(Uri.parse(
-        root + team1_batting_table.first.attributes['href'].toString()));
-    var team2_info_batting = await http.Client().get(Uri.parse(
-        root + team2_batting_table.first.attributes['href'].toString()));
+    var team1_info_batting = await http.Client().get(Uri.parse(root +
+        team1_batting_table.first
+            .getElementsByTagName('a')[0]
+            .attributes['href']));
+    var team2_info_batting = await http.Client().get(Uri.parse(root +
+        team2_batting_table.first
+            .getElementsByTagName('a')[0]
+            .attributes['href']));
     var value1 =
         await batting_teams_info(team1_info_batting, globals.team1_name);
     var value2 =
@@ -385,7 +414,7 @@ class _AnalysisState extends State<Analysis> {
               int.parse(i[1].replaceAll('*', '').trim()),
               int.parse(i[2].trim()),
               int.parse(i[3].trim()),
-              int.parse(i[4].trim()),
+              i[4].trim() == '0.0' ? 0 : int.parse(i[4].trim()),
               double.parse(i[5].trim()),
               i[6].trim(),
               i[7].trim(),
@@ -397,7 +426,7 @@ class _AnalysisState extends State<Analysis> {
               int.parse(i[1].trim()),
               int.parse(i[2].trim()),
               int.parse(i[3].trim()),
-              int.parse(i[4].trim()),
+              i[4].trim() == '0.0' ? 0 : int.parse(i[4].trim()),
               double.parse(i[5].trim()),
               i[6].trim(),
               i[7].trim(),
@@ -411,10 +440,14 @@ class _AnalysisState extends State<Analysis> {
 
 //BOWLING*******************************************************
 
-    var team1_info_bowling = await http.Client().get(Uri.parse(
-        root + team1_bowling_table.first.attributes['href'].toString()));
-    var team2_info_bowling = await http.Client().get(Uri.parse(
-        root + team2_bowling_table.first.attributes['href'].toString()));
+    var team1_info_bowling = await http.Client().get(Uri.parse(root +
+        team1_bowling_table.first
+            .getElementsByTagName('a')[0]
+            .attributes['href']));
+    var team2_info_bowling = await http.Client().get(Uri.parse(root +
+        team2_bowling_table.first
+            .getElementsByTagName('a')[0]
+            .attributes['href']));
     var value3 =
         await bowling_teams_info(team1_info_bowling, globals.team1_name);
     var value4 =
@@ -441,59 +474,66 @@ class _AnalysisState extends State<Analysis> {
       }
     }
 //PARTNERSHIPS*******************************************************
-    var team1_info_partnerships = await http.Client().get(Uri.parse(
-        root + team1_partnership_table.first.attributes['href'].toString()));
-    var team2_info_partnerships = await http.Client().get(Uri.parse(
-        root + team2_partnership_table.first.attributes['href'].toString()));
+    // var team1_info_partnerships = await http.Client().get(Uri.parse(root +
+    //     team1_partnership_table.first
+    //         .getElementsByTagName('a')[0]
+    //         .attributes['href']));
+    // var team2_info_partnerships = await http.Client().get(Uri.parse(root +
+    //     team2_partnership_table.first
+    //         .getElementsByTagName('a')[0]
+    //         .attributes['href']));
 
-    var value5 = await partnership_teams_info(
-        team1_info_partnerships, globals.team1_name);
-    var value6 = await partnership_teams_info(
-        team2_info_partnerships, globals.team2_name);
-    partnerships_headings = value5.item1;
+    // var value5 = await partnership_teams_info(
+    //     team1_info_partnerships, globals.team1_name);
+    // var value6 = await partnership_teams_info(
+    //     team2_info_partnerships, globals.team2_name);
+    // partnerships_headings = value5.item1;
 
-    print('partnerships $partnerships_headings');
-    List<Partnership> partnership_playersdata = [];
-    if (value5.item1 == null || value6.item1 == null) {
-      partnership_playersdata = null;
-    } else {
-      partnerships = new List.from(value5.item2)..addAll(value6.item2);
+    // print('partnerships $partnerships_headings');
+    // List<Partnership> partnership_playersdata = [];
+    // if (value5.item1 == null || value6.item1 == null) {
+    //   partnership_playersdata = null;
+    // } else {
+    //   partnerships = new List.from(value5.item2)..addAll(value6.item2);
 
-      for (var i in partnerships) {
-        if (i[1].trim().contains('*')) {
-          partnership_playersdata.add(Partnership(
-            i[0].trim() + '*',
-            int.parse(i[1].replaceAll('*', '').trim()),
-            i[2].trim(),
-            i[3].trim(),
-            i[4].trim(),
-            i[5].trim(),
-            i[6].trim(),
-          ));
-        } else {
-          partnership_playersdata.add(Partnership(
-            i[0].trim(),
-            int.parse(i[1].trim()),
-            i[2].trim(),
-            i[3].trim(),
-            i[4].trim(),
-            i[5].trim(),
-            i[6].trim(),
-          ));
-        }
-      }
-      print('playersdata $partnership_playersdata');
-      // return Tuple2(teams_batting_headings, batting_playersdata1);
-    }
+    //   for (var i in partnerships) {
+    //     if (i[1].trim().contains('*')) {
+    //       partnership_playersdata.add(Partnership(
+    //         i[0].trim() + '*',
+    //         int.parse(i[1].replaceAll('*', '').trim()),
+    //         i[2].trim(),
+    //         i[3].trim(),
+    //         i[4].trim(),
+    //         i[5].trim(),
+    //         i[6].trim(),
+    //       ));
+    //     } else {
+    //       partnership_playersdata.add(Partnership(
+    //         i[0].trim(),
+    //         int.parse(i[1].trim()),
+    //         i[2].trim(),
+    //         i[3].trim(),
+    //         i[4].trim(),
+    //         i[5].trim(),
+    //         i[6].trim(),
+    //       ));
+    //     }
+    //   }
+    //   print('playersdata $partnership_playersdata');
+    //   // return Tuple2(teams_batting_headings, batting_playersdata1);
+    // }
     Tuple2<List<String>, List<Player>> bowlingdataheadings = Tuple2(
         teams_bowling_headings, bowling_playersdata1); //bowling data overall
     Tuple2<List<String>, List<Batting_player>> battingdataheadings = Tuple2(
         teams_batting_headings, batting_playersdata1); // batting data overall
-    Tuple2<List<String>, List<Partnership>> partnershipsdataheadings = Tuple2(
-        partnerships_headings, partnership_playersdata); // batting data overall
+    // Tuple2<List<String>, List<Partnership>> partnershipsdataheadings = Tuple2(
+    //     partnerships_headings, partnership_playersdata); // partnership data overall
 
-    overall_data = Tuple3(
-        battingdataheadings, bowlingdataheadings, partnershipsdataheadings);
+    // overall_data = Tuple3(
+    //     battingdataheadings, bowlingdataheadings, partnershipsdataheadings);
+    overall_data =
+        Tuple3(battingdataheadings, bowlingdataheadings, Tuple2([], []));
+
     return overall_data; //((batting_headers_table,batting_players),(bowling_headers_table,bowling_players))
   }
 }

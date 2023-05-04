@@ -105,6 +105,13 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
 
   List<PointsTable> pointstableinfo = [];
   List<String> pointstablehead = [];
+  if (!league_address.contains('points-table-standings')) {
+    league_address = league_address + 'points-table-standings';
+  }
+  if (!league_address.split('/').last.contains('points-table-standings')) {
+    league_address = league_address + 'points-table-standings';
+  }
+
   league_address = league_address.replaceAll(
       league_address.split('/').last, 'points-table-standings');
   var forlink2 = await http.Client().get(Uri.parse(league_address));

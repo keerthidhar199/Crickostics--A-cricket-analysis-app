@@ -90,9 +90,9 @@ class _widgetbowlingState extends State<widgetbowling> {
                             var acc = k.getCells();
 
                             print(
-                                'assa11end1 ${acc[0].value} ${acc[1].value} ${acc[4].value}');
+                                'assa11end1 ${acc[0].value} ${acc[3].value} ${acc[4].value}');
                             team2_bowlfantasy.add(
-                                '${acc[0].value} ${acc[1].value} ${acc[4].value}');
+                                '${acc[0].value} ${acc[3].value} ${acc[4].value}');
                           }
                           Analysis.bowlersmap[globals.league_page +
                               '_' +
@@ -204,7 +204,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                         return GridColumn(
                             columnName: headings.toLowerCase(),
                             label: Container(
-                                padding: EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(16.0),
                                 alignment: Alignment.center,
                                 child: Text(
                                   headings.trim()[0].toUpperCase() +

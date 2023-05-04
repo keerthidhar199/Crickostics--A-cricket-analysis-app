@@ -82,9 +82,9 @@ batting_teams_info(var team1_info, String team1_name) async {
   //     .text
   //     .contains('Records'));
   print('deppthy1' + document1.text.toString());
-  var headers1 = document1.querySelectorAll('table.engineTable>thead>tr')[0];
-  var titles1 = headers1.querySelectorAll('th');
-  titles1.removeWhere((element) => element.text.length == 0);
+  var headers1 = document1.querySelectorAll('table>thead>tr')[0];
+  var titles1 = headers1.querySelectorAll('td');
+  titles1.removeWhere((element) => element.text.isEmpty);
   for (int i = 0; i < titles1.length; i++) {
     print(titles1[i].text.toString().trim());
     if (titles1[i].text.toString().trim().contains('4')) {
@@ -95,25 +95,23 @@ batting_teams_info(var team1_info, String team1_name) async {
       headings.add(titles1[i].text.toString().trim());
     }
   }
-  headings.remove('Scorecard');
-  headings.join(',');
   headings.insert(headings.length, "Team");
 
-  var element = document1.querySelectorAll('table.engineTable>tbody')[0];
+  var element = document1.querySelectorAll('table>tbody')[0];
   var data = element.querySelectorAll('tr');
-  data.removeWhere((element) => element.text.length == 0);
+  data.removeWhere((element) => element.text.isEmpty);
   for (int i = 0; i < data.length; i++) {
     List<String> playerwise = [];
     for (int j = 0; j < data[i].children.length; j++) {
-      if (data[i].children[j].text.length != 0) {
+      if (data[i].children[j].text.isNotEmpty) {
         playerwise.add(data[i].children[j].text.toString().trim());
       }
     }
 
-    playerwise.removeAt(9);
-    playerwise.join(',');
+    // playerwise.removeAt(9);
+    // playerwise.join(',');
 
-    playerwise.insert(playerwise.length, team1_name);
+    playerwise.add(team1_name);
     allplayers.add(playerwise);
     allplayers.sort((a, b) => int.parse(b[1].replaceAll('*', ''))
         .compareTo(int.parse(a[1].replaceAll('*', ''))));
@@ -121,6 +119,8 @@ batting_teams_info(var team1_info, String team1_name) async {
 
   print(headings);
   print(allplayers);
+  print('batting headers' + headings.length.toString());
+  print('batting data' + allplayers.length.toString());
   print(allplayers[0].length);
   print(headings.length);
   // ground_based = allplayers
