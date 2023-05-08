@@ -8,8 +8,17 @@ import 'package:tuple/tuple.dart';
 
 class Player {
   /// Creates the employee class with required details.
-  Player(this.player, this.overs, this.runs, this.wickets, this.econ,
-      this.opposition, this.ground, this.match_date, this.team);
+  Player(
+      this.player,
+      this.overs,
+      this.runs,
+      this.wickets,
+      this.econ,
+      this.opposition,
+      this.ground,
+      this.match_date,
+      this.team,
+      this.player_link);
   final String player;
   final double overs;
   final int runs;
@@ -19,6 +28,7 @@ class Player {
   final String ground;
   final String match_date;
   final String team;
+  final String player_link;
 }
 
 /// An object to set the employee collection data source to the datagrid. This
@@ -38,7 +48,9 @@ class bowlingDataSource extends DataGridSource {
               DataGridCell<String>(columnName: 'ground', value: e.ground),
               DataGridCell<String>(
                   columnName: 'match date', value: e.match_date),
-              DataGridCell<String>(columnName: 'tean', value: e.team),
+              DataGridCell<String>(columnName: 'team', value: e.team),
+              DataGridCell<String>(
+                  columnName: 'player link', value: e.player_link),
             ]))
         .toList();
   }
@@ -76,35 +88,46 @@ bowling_teams_info(var team1_info, String team1_name) async {
   print('deppthy' + document1.text.toString());
   var headers1 = document1.querySelectorAll('table>thead>tr')[0];
   var titles1 = headers1.querySelectorAll('td');
+
   if (headers1 == null || titles1 == null) {
     return Tuple2(null, null);
   } else {
     titles1.removeWhere((element) => element.text.length == 0);
     for (int i = 0; i < titles1.length; i++) {
       headings.add(titles1[i].text.toString().trim());
-      headings.remove('Mdns');
-      headings.join(',');
     }
     headings.insert(headings.length, "Team");
 
+    headings.insert(headings.length, 'Player Link');
+
     var element = document1.querySelectorAll('table>tbody')[0];
     var data = element.querySelectorAll('tr');
-    data.removeWhere((element) => element.text.length == 0);
+    data.removeWhere((element) => element.text.isEmpty);
     for (int i = 0; i < data.length; i++) {
       List<String> playerwise = [];
       for (int j = 0; j < data[i].children.length; j++) {
-        if (data[i].children[j].text.length != 0) {
+        if (data[i].children[j].text.isNotEmpty) {
           playerwise.add(data[i].children[j].text.toString().trim());
         }
       }
-      playerwise.removeAt(2);
-      playerwise.insert(playerwise.length, team1_name);
+
+      playerwise.add(team1_name);
+      playerwise.add(data[i].getElementsByTagName('a')[0].attributes['href']);
+
       allplayers.add(playerwise);
     }
+    if (headings.contains('Mdns')) {
+      for (var element in allplayers) {
+        element.removeAt(2);
+      }
+      headings.remove('Mdns');
+      headings.join(',');
+    }
+
     print(headings);
     print(allplayers);
-    print('bowling headers' + headings.length.toString());
-    print('bowling data' + allplayers.length.toString());
+    print('bowling headers' + headings.toString());
+    print('bowling data' + allplayers.toString());
     print(allplayers[0].length);
     print(headings.length);
     // ground_based = allplayers

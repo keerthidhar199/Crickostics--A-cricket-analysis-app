@@ -114,6 +114,8 @@ class _datascrapState extends State<datascrap> {
         var link1 = matchdetails.querySelectorAll('a')[0];
 
         var link1update = link1.attributes["href"].toString();
+        print('link1update1.0 ${link1update}');
+
         var matchaddress = 'https://www.espncricinfo.com' + link1update;
         link1update = link1update.replaceAll(
             link1update.split('/')[3] + '/' + link1update.split('/').last, '');
@@ -301,53 +303,52 @@ class _datascrapState extends State<datascrap> {
           var viewstats = viewstatsdoc
               .getElementsByClassName('ds-flex')
               .where((element) => element.text == 'View all stats');
-          teamstats = await http.Client().get(Uri.parse(
-              'https://www.espncricinfo.com' +
-                  viewstats.last.attributes['href'].toString()));
-          print('viewstast ${viewstats.last.attributes['href'].toString()}');
+          if (viewstats.last.attributes['href']
+              .toString()
+              .startsWith('https')) {
+            teamstats = await http.Client()
+                .get(Uri.parse(viewstats.last.attributes['href'].toString()));
+          } else {
+            teamstats = await http.Client().get(Uri.parse(
+                'https://www.espncricinfo.com' +
+                    viewstats.last.attributes['href'].toString()));
+            print('viewstast ${viewstats.last.attributes['href'].toString()}');
+          }
           // ('assa1 ' + link3.toList()[0].attributes["href"].toString());
           dom.Document teamstatsdoc = parser.parse(teamstats.body);
 
-          var rec1 = teamstatsdoc
+          var recordsbyteam = teamstatsdoc
               .getElementsByClassName(
                   'ds-flex ds-items-center ds-cursor-pointer ds-px-4 ds-py-3')
               .where((element) => element.text == 'Records by team');
-          var rec2 = teamstatsdoc
-              .getElementsByClassName(
-                  'ds-flex ds-items-center ds-cursor-pointer ds-px-4 ds-py-3')
-              .where((element) => element.text == 'Records by team');
-          if (rec1.isNotEmpty) {
-            rec1 = rec1.first.parentNode.children.last
+
+          if (recordsbyteam.isNotEmpty) {
+            var teamrec1 = recordsbyteam.first.parentNode.children.last
                 .getElementsByTagName('li')
                 .where((element) => (element.text == iplmatch["Team1"] ||
                     element.text == iplmatch["Team1_short"]));
-            if (rec1.isNotEmpty) {
-              iplmatch['team1_stats_link'] =
-                  rec1.first.getElementsByTagName('a')[0].attributes['href'];
-              // print('rec1 ${rec1.first.attributes["href"]}');
-              matches.add(iplmatch);
-            }
-          } else if (rec1.isEmpty) {
-            iplmatch['team1_stats_link'] =
-                link3.toList()[0].attributes["href"].toString();
-            matches.add(iplmatch);
-          }
-          print(
-              'rec11 ${rec1.first.text} ${rec1.first.getElementsByTagName('a')[0].attributes['href']} ');
-
-          if (rec2.isNotEmpty) {
-            rec2 = rec2.first.parentNode.children.last
+            var teamrec2 = recordsbyteam.first.parentNode.children.last
                 .getElementsByTagName('li')
                 .where((element) => (element.text == iplmatch["Team2"] ||
                     element.text == iplmatch["Team2_short"]));
-
-            if (rec2.isNotEmpty) {
-              iplmatch['team2_stats_link'] =
-                  rec1.first.getElementsByTagName('a')[0].attributes['href'];
-              //print('rec2 ${rec2.first.attributes["href"]}');
+            print('rec1 $teamrec1 rec2 $teamrec2');
+            if (teamrec1.isNotEmpty && teamrec2.isNotEmpty) {
+              iplmatch['team1_stats_link'] = teamrec1.first
+                  .getElementsByTagName('a')[0]
+                  .attributes['href'];
+              // print('rec1 ${rec1.first.attributes["href"]}');
+              iplmatch['team2_stats_link'] = teamrec2.first
+                  .getElementsByTagName('a')[0]
+                  .attributes['href'];
               matches.add(iplmatch);
+              print(
+                  'rec11 ${teamrec1.first.text} ${teamrec1.first.getElementsByTagName('a')[0].attributes['href']} ');
+              print(
+                  'rec22 ${teamrec2.first.text} ${teamrec2.first.getElementsByTagName('a')[0].attributes['href']}');
             }
-          } else if (rec2.isEmpty) {
+          } else if (recordsbyteam.isEmpty) {
+            iplmatch['team1_stats_link'] =
+                link3.toList()[0].attributes["href"].toString();
             iplmatch['team2_stats_link'] =
                 link3.toList()[0].attributes["href"].toString();
             matches.add(iplmatch);

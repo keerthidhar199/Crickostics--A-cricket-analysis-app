@@ -20,11 +20,10 @@ class widgetpartnership extends StatefulWidget {
 }
 
 class _widgetpartnershipState extends State<widgetpartnership> {
-  AsyncSnapshot<
-      Tuple3<
-          Tuple2<List<String>, List<Batting_player>>,
-          Tuple2<List<String>, List<Player>>,
-          Tuple2<List<String>, List<Partnership>>>> snapshot;
+  Tuple3<
+      Tuple2<List<String>, List<Batting_player>>,
+      Tuple2<List<String>, List<Player>>,
+      Tuple2<List<String>, List<Partnership>>> snapshot;
   final DataGridController dataGridController = DataGridController();
   final DataGridController dataGridController1 = DataGridController();
   List<String> teamnames = [globals.team1_name, globals.team2_name];
@@ -176,9 +175,9 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                   ],
                 ),
               ),
-              (snapshot.data == null ||
-                      snapshot.data.item3 == null ||
-                      snapshot.data.item3.item2 == null)
+              (snapshot == null ||
+                      snapshot.item3 == null ||
+                      snapshot.item3.item2 == null)
                   ? const Text('No partnerships so far')
                   : SfDataGrid(
                       verticalScrollPhysics:
@@ -196,14 +195,14 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           const DataGridCheckboxColumnSettings(
                               showCheckboxOnHeader: false),
                       source: PartnershipDataSource(
-                          Data: snapshot.data.item3.item2
+                          Data: snapshot.item3.item2
                               .where((element) =>
                                   element.team == i &&
                                   element.ground == globals.ground)
                               .toList()),
                       columnWidthMode: ColumnWidthMode.auto,
                       selectionMode: SelectionMode.multiple,
-                      columns: snapshot.data.item3.item1.map((headings) {
+                      columns: snapshot.item3.item1.map((headings) {
                         return GridColumn(
                             columnName: headings.toLowerCase(),
                             label: Container(

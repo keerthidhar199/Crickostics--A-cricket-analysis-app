@@ -20,11 +20,10 @@ class widgetbatting extends StatefulWidget {
 }
 
 class _widgetbattingState extends State<widgetbatting> {
-  AsyncSnapshot<
-      Tuple3<
-          Tuple2<List<String>, List<Batting_player>>,
-          Tuple2<List<String>, List<Player>>,
-          Tuple2<List<String>, List<Partnership>>>> snapshot;
+  Tuple3<
+      Tuple2<List<String>, List<Batting_player>>,
+      Tuple2<List<String>, List<Player>>,
+      Tuple2<List<String>, List<Partnership>>> snapshot;
   List<String> teamnames = [globals.team1_name, globals.team2_name];
   List<String> teamlogos = [globals.team1logo, globals.team2logo];
 
@@ -32,6 +31,16 @@ class _widgetbattingState extends State<widgetbatting> {
       'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
 
   _widgetbattingState(this.snapshot);
+  List<String> hiddenColumns = [
+    'fours',
+    'sixes',
+    'Opposition',
+    'Ground',
+    'Match Date',
+    'Team',
+    'Player Link'
+  ];
+
   @override
   Widget build(BuildContext context) {
     DataGridController dataGridController = DataGridController();
@@ -176,9 +185,9 @@ class _widgetbattingState extends State<widgetbatting> {
                   ],
                 ),
               ),
-              (snapshot.data == null ||
-                      snapshot.data.item1 == null ||
-                      snapshot.data.item1.item2 == null)
+              (snapshot == null ||
+                      snapshot.item1 == null ||
+                      snapshot.item1.item2 == null)
                   ? const Text('Not batted yet')
                   : SfDataGrid(
                       verticalScrollPhysics:
@@ -196,14 +205,26 @@ class _widgetbattingState extends State<widgetbatting> {
                           const DataGridCheckboxColumnSettings(
                               showCheckboxOnHeader: false),
                       source: BattingDataSource(
-                          batData: snapshot.data.item1.item2
+                          batData: snapshot.item1.item2
                               .where((element) =>
                                   element.team == i &&
                                   element.ground == globals.ground)
                               .toList()),
                       columnWidthMode: ColumnWidthMode.auto,
                       selectionMode: SelectionMode.multiple,
-                      columns: snapshot.data.item1.item1.map(
+                      onCellTap: (details) {
+                        print(BattingDataSource(
+                                batData: snapshot.item1.item2
+                                    .where((element) =>
+                                        element.team == i &&
+                                        element.ground == globals.ground)
+                                    .toList())
+                            .rows[details.rowColumnIndex.rowIndex - 1]
+                            .getCells()
+                            .last
+                            .value);
+                      },
+                      columns: snapshot.item1.item1.map(
                         (headings) {
                           return GridColumn(
                               columnName: headings.toLowerCase(),
@@ -216,10 +237,11 @@ class _widgetbattingState extends State<widgetbatting> {
                                             .trim()
                                             .substring(1)
                                             .toLowerCase(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.black87,
                                         fontFamily: 'Cocosharp'),
-                                  )));
+                                  )),
+                              visible: !hiddenColumns.contains(headings));
                         },
                       ).toList(),
                     ),

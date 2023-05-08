@@ -58,16 +58,12 @@ class _recentmatchdataState extends State<recentmatchdata> {
     // var link2address =
     //     'https://www.espncricinfo.com/series/england-in-bangladesh-2022-23-1351394/bangladesh-vs-england-2nd-odi-1351398/match-preview';
     if (link2address.toString().split('/').last != 'live-cricket-score') {
+      link2address.toString().replaceAll(
+          link2address.toString().split('/').last, 'live-cricket-score');
       var forlink2 = await http.Client().get(Uri.parse(link2address));
       print('object $link2address');
-      dom.Document link2doc1 = parser.parse(forlink2.body);
-      var link_correction = link2doc1
-          .getElementsByClassName('ds-px-3 ds-py-2 hover:ds-text-typo-primary')
-          .first;
-      print('linkcorrectiion $link_correction');
-      var forlink21 = await http.Client().get(Uri.parse(
-          'https://www.espncricinfo.com' + link_correction.toString()));
-      link2doc = parser.parse(forlink21.body);
+
+      link2doc = parser.parse(forlink2.body);
     } else {
       print('object $link2address');
 
@@ -80,7 +76,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
 
     if (link2doc
         .getElementsByClassName(
-            'ds-text-tight-m ds-font-regular ds-text-typo-mid3')
+            'ds-flex ds-px-4 ds-border-b ds-border-line ds-py-3')
         .toList()
         .isNotEmpty) {
       var recent_perform =
@@ -93,7 +89,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
           .querySelector(
               'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
           .text;
-      print('team1_recentname $team1_recentname');
+      print('team1_recentname $team1_recentname');  
 
       print('asa11 ${team1_recentname}');
       var team1_recentform = team1_recent.querySelectorAll(

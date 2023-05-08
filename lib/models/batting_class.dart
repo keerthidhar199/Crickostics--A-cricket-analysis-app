@@ -15,8 +15,18 @@ import 'package:datascrap/globals.dart' as globals;
 ///
 class Batting_player {
   /// Creates the employee class with required details.
-  Batting_player(this.player, this.runs, this.balls, this.fours, this.sixes,
-      this.sr, this.opposition, this.ground, this.match_date, this.team);
+  Batting_player(
+      this.player,
+      this.runs,
+      this.balls,
+      this.fours,
+      this.sixes,
+      this.sr,
+      this.opposition,
+      this.ground,
+      this.match_date,
+      this.team,
+      this.player_link);
 
   final String player;
   final int runs;
@@ -28,6 +38,7 @@ class Batting_player {
   final String ground;
   final String match_date;
   final String team;
+  final String player_link;
 }
 
 /// An object to set the employee collection data source to the datagrid. This
@@ -49,6 +60,8 @@ class BattingDataSource extends DataGridSource {
               DataGridCell<String>(
                   columnName: 'match date', value: e.match_date),
               DataGridCell<String>(columnName: 'team', value: e.team),
+              DataGridCell<String>(
+                  columnName: 'player link', value: e.player_link),
             ]))
         .toList();
   }
@@ -84,6 +97,7 @@ batting_teams_info(var team1_info, String team1_name) async {
   print('deppthy1' + document1.text.toString());
   var headers1 = document1.querySelectorAll('table>thead>tr')[0];
   var titles1 = headers1.querySelectorAll('td');
+
   titles1.removeWhere((element) => element.text.isEmpty);
   for (int i = 0; i < titles1.length; i++) {
     print(titles1[i].text.toString().trim());
@@ -96,7 +110,7 @@ batting_teams_info(var team1_info, String team1_name) async {
     }
   }
   headings.insert(headings.length, "Team");
-
+  headings.insert(headings.length, 'Player Link');
   var element = document1.querySelectorAll('table>tbody')[0];
   var data = element.querySelectorAll('tr');
   data.removeWhere((element) => element.text.isEmpty);
@@ -112,6 +126,7 @@ batting_teams_info(var team1_info, String team1_name) async {
     // playerwise.join(',');
 
     playerwise.add(team1_name);
+    playerwise.add(data[i].getElementsByTagName('a')[0].attributes['href']);
     allplayers.add(playerwise);
     allplayers.sort((a, b) => int.parse(b[1].replaceAll('*', ''))
         .compareTo(int.parse(a[1].replaceAll('*', ''))));

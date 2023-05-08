@@ -19,16 +19,21 @@ class widgetbowling extends StatefulWidget {
 }
 
 class _widgetbowlingState extends State<widgetbowling> {
-  AsyncSnapshot<
-      Tuple3<
-          Tuple2<List<String>, List<Batting_player>>,
-          Tuple2<List<String>, List<Player>>,
-          Tuple2<List<String>, List<Partnership>>>> snapshot;
+  Tuple3<
+      Tuple2<List<String>, List<Batting_player>>,
+      Tuple2<List<String>, List<Player>>,
+      Tuple2<List<String>, List<Partnership>>> snapshot;
   final DataGridController dataGridController = DataGridController();
   final DataGridController dataGridController1 = DataGridController();
   List<String> teamnames = [globals.team1_name, globals.team2_name];
   List<String> teamlogos = [globals.team1logo, globals.team2logo];
-
+  List<String> hiddenColumns = [
+    'Opposition',
+    'Ground',
+    'Match Date',
+    'Team',
+    'Player Link'
+  ];
   String root_logo =
       'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
 
@@ -122,7 +127,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                           )),
                     ),
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -161,7 +166,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                           child: Text(
                             '${i}',
                             textAlign: TextAlign.left,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: 'Cocosharp',
                               fontSize: 20.0,
                               color: Colors.white,
@@ -174,12 +179,13 @@ class _widgetbowlingState extends State<widgetbowling> {
                   ],
                 ),
               ),
-              (snapshot.data == null ||
-                      snapshot.data.item2 == null ||
-                      snapshot.data.item2.item2 == null)
-                  ? Text('Not yet bowled')
+              (snapshot == null ||
+                      snapshot.item2 == null ||
+                      snapshot.item2.item2 == null)
+                  ? const Text('Not yet bowled')
                   : SfDataGrid(
-                      verticalScrollPhysics: NeverScrollableScrollPhysics(),
+                      verticalScrollPhysics:
+                          const NeverScrollableScrollPhysics(),
                       rowHeight: 35.0,
                       shrinkWrapRows: true,
                       showSortNumbers: true,
@@ -193,14 +199,26 @@ class _widgetbowlingState extends State<widgetbowling> {
                           const DataGridCheckboxColumnSettings(
                               showCheckboxOnHeader: false),
                       source: bowlingDataSource(
-                          bowlingData: snapshot.data.item2.item2
+                          bowlingData: snapshot.item2.item2
                               .where((element) =>
                                   element.team == i &&
                                   element.ground == globals.ground)
                               .toList()),
                       columnWidthMode: ColumnWidthMode.auto,
                       selectionMode: SelectionMode.multiple,
-                      columns: snapshot.data.item2.item1.map((headings) {
+                      onCellTap: (details) {
+                        print(bowlingDataSource(
+                                bowlingData: snapshot.item2.item2
+                                    .where((element) =>
+                                        element.team == i &&
+                                        element.ground == globals.ground)
+                                    .toList())
+                            .rows[details.rowColumnIndex.rowIndex - 1]
+                            .getCells()
+                            .last
+                            .value);
+                      },
+                      columns: snapshot.item2.item1.map((headings) {
                         return GridColumn(
                             columnName: headings.toLowerCase(),
                             label: Container(
@@ -213,14 +231,15 @@ class _widgetbowlingState extends State<widgetbowling> {
                                           .substring(1)
                                           .toLowerCase(),
                                   style: const TextStyle(fontFamily: 'Litsans'),
-                                )));
+                                )),
+                            visible: !hiddenColumns.contains(headings));
                       }).toList()),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
             ],
           ),
-        // for (var i in snapshot.data.item2.item2)
+        // for (var i in snapshot.item2.item2)
         //   if ((globals.team1_name.contains(i.team) &&
         //           globals.team2_name.contains(i.opposition)) ||
         //       (globals.team2_name.contains(i.team) &&

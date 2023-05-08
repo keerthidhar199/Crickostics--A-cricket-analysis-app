@@ -36,9 +36,17 @@ class Analysis extends StatefulWidget {
 class _AnalysisState extends State<Analysis> {
   bool _isButtonDisabled;
   bool addtofantasyteam;
-
+  Tuple3<
+      Tuple2<List<String>, List<Batting_player>>,
+      Tuple2<List<String>, List<Player>>,
+      Tuple2<List<String>, List<Partnership>>> snapshot;
   @override
   void initState() {
+    getData().then((value) {
+      setState(() {
+        snapshot = value;
+      });
+    });
     _isButtonDisabled = true;
     super.initState();
   }
@@ -57,6 +65,10 @@ class _AnalysisState extends State<Analysis> {
 
   List<String> teamnames = [globals.team1_name, globals.team2_name];
   List<String> teamlogos = [globals.team1logo, globals.team2logo];
+  int _currentSlide = 0;
+  final CarouselController _controller = CarouselController();
+  List<String> matchstatetitle = ['Batting', 'Bowling', 'Head to Head'];
+
   @override
   Widget build(BuildContext context) {
     print('assa11endva ${Analysis.battersmap}');
@@ -64,7 +76,8 @@ class _AnalysisState extends State<Analysis> {
     Analysis.bowlersmap.clear();
     Analysis.partnershipsmap.clear();
     Analysis.previousmatchmap.clear();
-    return Scaffold(
+    if (snapshot == null) {
+      return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: const Color(0xffFFB72B),
@@ -110,171 +123,234 @@ class _AnalysisState extends State<Analysis> {
           ],
         ),
         body: Container(
-          color: const Color(0xff2B2B28),
-          height: MediaQuery.of(context).size.height,
-          child: FutureBuilder<
-              Tuple3<
-                  Tuple2<List<String>, List<Batting_player>>,
-                  Tuple2<List<String>, List<Player>>,
-                  Tuple2<List<String>, List<Partnership>>>>(
-            future: getData(), // async work
-            builder: (BuildContext context,
-                AsyncSnapshot<
-                        Tuple3<
-                            Tuple2<List<String>, List<Batting_player>>,
-                            Tuple2<List<String>, List<Player>>,
-                            Tuple2<List<String>, List<Partnership>>>>
-                    snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return Center(
-                      child: Container(
-                    color: const Color(0xff2B2B28),
-                    child: Lottie.asset(
-                      'logos/loading_anim.json',
-                      filterQuality: FilterQuality.high,
-                    ),
-                  ));
-                default:
-                  if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    Widget batting = widgetbatting(
-                      snapshot: snapshot,
-                    );
-                    Widget bowling = widgetbowling(
-                      snapshot: snapshot,
-                    );
-                    // Widget partnership = widgetpartnership(
-                    //   snapshot: snapshot,
-                    // );
+            color: const Color(0xff2B2B28),
+            height: MediaQuery.of(context).size.height,
+            child: Center(
+                child: Container(
+              color: const Color(0xff2B2B28),
+              child: Lottie.asset(
+                'logos/loading_anim.json',
+                filterQuality: FilterQuality.high,
+              ),
+            ))),
+      );
+    } else {
+      Widget batting = widgetbatting(
+        snapshot: snapshot,
+      );
+      Widget bowling = widgetbowling(
+        snapshot: snapshot,
+      );
+      // Widget partnership = widgetpartnership(
+      //   snapshot: snapshot,
+      // );
 
-                    List<Widget> categories = [
-                      batting,
-                      bowling,
-                      // partnership,
-                    ];
-                    List<Widget> list = categories
-                        .map(
-                          (e) => SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Text(
-                                      "Once all players are selected, Click Submit on the top to save all your selected players.",
-                                      style: globals.smallnoble),
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width - 15,
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                        side: const BorderSide(
-                                          color: Colors.black,
-                                          width: 2.0,
-                                        )),
-                                    color: Colors.white,
-                                    elevation: 10,
-                                    shadowColor: Colors.blue,
-                                    child: SingleChildScrollView(
-                                      child: Container(
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.0),
-                                                  gradient:
-                                                      const LinearGradient(
-                                                    begin: Alignment.topLeft,
-                                                    end: Alignment.bottomRight,
-                                                    colors: [
-                                                      Colors.white38,
-                                                      Colors.white60,
-                                                    ],
-                                                  )),
-                                              child: Column(
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        '${globals.capitalize(names[categories.indexOf(e)])}',
-                                                        style: const TextStyle(
-                                                          fontFamily:
-                                                              'Cocosharp',
-                                                          fontSize: 15.0,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      Image.asset(
-                                                        'logos/' +
-                                                            '${names[categories.indexOf(e)]}' +
-                                                            '.png',
-                                                        color: Colors.black,
-                                                        width: 100,
-                                                        height: 100,
-                                                      ),
-                                                      Text(
-                                                        'In ${globals.ground}',
-                                                        style: const TextStyle(
-                                                          fontFamily:
-                                                              'Cocosharp',
-                                                          fontSize: 15.0,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
+      List<Widget> categories = [
+        batting,
+        bowling,
+        // partnership,
+        pastmatches(
+          snapshot: snapshot,
+        )
+      ];
+      List<Widget> list = categories
+          .map(
+            (e) => Column(
+              children: [
+                const SizedBox(
+                  height: 60,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                      "Once all players are selected, Click Submit on the top to save all your selected players.",
+                      style: globals.smallnoble),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 15,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        side: const BorderSide(
+                          color: Colors.black,
+                          width: 2.0,
+                        )),
+                    color: Colors.white,
+                    elevation: 10,
+                    shadowColor: Colors.blue,
+                    child: Container(
+                      child: Column(
+                        children: [
+                          categories.indexOf(e) == 2
+                              ? previous_clashes_header()
+                              : Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      gradient: const LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.white38,
+                                          Colors.white60,
+                                        ],
+                                      )),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            '${globals.capitalize(names[categories.indexOf(e)])}',
+                                            style: const TextStyle(
+                                              fontFamily: 'Cocosharp',
+                                              fontSize: 15.0,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            e
-                                          ],
-                                        ),
+                                          ),
+                                          Image.asset(
+                                            'logos/' +
+                                                '${names[categories.indexOf(e)]}' +
+                                                '.png',
+                                            color: Colors.black,
+                                            width: 100,
+                                            height: 100,
+                                          ),
+                                          Text(
+                                            'In ${globals.ground}',
+                                            style: const TextStyle(
+                                              fontFamily: 'Cocosharp',
+                                              fontSize: 15.0,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ),
-                              ],
+                          e
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+          .toList();
+
+      return Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            backgroundColor: const Color(0xffFFB72B),
+            title: const Text(
+              'Stack',
+              style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
+            ),
+            leading: IconButton(
+                color: Colors.black,
+                icon: const Icon(Icons.keyboard_arrow_left),
+                onPressed: () {
+                  Navigator.pop(context);
+                }),
+            actions: [
+              IconButton(
+                  color: Colors.black,
+                  icon: const Icon(Icons.done_all),
+                  onPressed: () {
+                    exportcsv.getcsv().then((value) => null);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          duration: const Duration(seconds: 3),
+                          behavior: SnackBarBehavior.floating,
+                          content: Row(children: [
+                            Image.asset(
+                              'logos/my_fantasy.png',
+                              width: 50,
+                              height: 50,
+                            ),
+                            Text(
+                                "Cricked !!\n"
+                                "Added to your Fantasy lot\n"
+                                "You can view these in 'Your Fantasy' tab.",
+                                style: globals.nobleblack),
+                          ]),
+                          backgroundColor: Colors.amberAccent,
+                          padding: const EdgeInsets.all(8),
+                          margin: EdgeInsetsDirectional.only(
+                            bottom: MediaQuery.of(context).size.height / 2,
+                          )),
+                    );
+                  }),
+            ],
+          ),
+          body: Stack(children: [
+            SingleChildScrollView(
+              child: Container(
+                  color: const Color(0xff2B2B28),
+                  height: MediaQuery.of(context).size.height * 1.5,
+                  child: CarouselSlider(
+                    carouselController: _controller,
+                    options: CarouselOptions(
+                      aspectRatio: 2,
+                      height: MediaQuery.of(context).size.height * 1.5,
+                      viewportFraction: 1.0,
+                      enlargeCenterPage: false,
+                      // autoPlay: false,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _currentSlide = index;
+                        });
+                      },
+                    ),
+                    items: list,
+                  )),
+            ),
+            Container(
+              color: const Color(0xff2B2B28),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: matchstatetitle
+                      .map(
+                        (e) => Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                            bottom: _currentSlide == matchstatetitle.indexOf(e)
+                                ? const BorderSide(
+                                    //                   <--- right side
+                                    color: Colors.white,
+                                    width: 3.0,
+                                  )
+                                : BorderSide.none,
+                          )),
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextButton(
+                            onPressed: () {
+                              _controller
+                                  .jumpToPage(matchstatetitle.indexOf(e));
+                              setState(() {
+                                _currentSlide = matchstatetitle.indexOf(e);
+                              });
+                            },
+                            child: Text(
+                              e.toString(),
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontFamily: 'Cocosharp',
+                                fontSize: 15.0,
+                                color: Colors.grey.shade700,
+                              ),
                             ),
                           ),
-                        )
-                        .toList();
-                    Widget d = SingleChildScrollView(
-                      child: pastmatches(
-                        snapshot: snapshot,
-                      ),
-                    );
-                    list.add(d);
-                    return Builder(
-                      builder: (context) {
-                        return CarouselSlider(
-                          options: CarouselOptions(
-                            aspectRatio: 2,
-                            height: MediaQuery.of(context).size.height,
-                            viewportFraction: 1.0,
-                            enlargeCenterPage: false,
-                            // autoPlay: false,
-                          ),
-                          items: list,
-                        );
-                      },
-                    );
-                  }
-              }
-            },
-          ),
-        ));
+                        ),
+                      )
+                      .toList()),
+            ),
+          ]));
+    }
   }
 
   Future<
@@ -413,25 +489,27 @@ class _AnalysisState extends State<Analysis> {
               i[0].trim() + '*',
               int.parse(i[1].replaceAll('*', '').trim()),
               int.parse(i[2].trim()),
-              int.parse(i[3].trim()),
+              i[3].trim() == '0.0' ? 0 : int.parse(i[3].trim()),
               i[4].trim() == '0.0' ? 0 : int.parse(i[4].trim()),
               double.parse(i[5].trim()),
               i[6].trim(),
               i[7].trim(),
               i[8].trim(),
-              i[9].trim()));
+              i[9].trim(),
+              i[10].trim()));
         } else {
           batting_playersdata1.add(Batting_player(
               i[0].trim(),
               int.parse(i[1].trim()),
               int.parse(i[2].trim()),
-              int.parse(i[3].trim()),
+              i[3].trim() == '0.0' ? 0 : int.parse(i[3].trim()),
               i[4].trim() == '0.0' ? 0 : int.parse(i[4].trim()),
               double.parse(i[5].trim()),
               i[6].trim(),
               i[7].trim(),
               i[8].trim(),
-              i[9].trim()));
+              i[9].trim(),
+              i[10].trim()));
         }
       }
       print('playersdata $batting_playersdata1');
@@ -470,7 +548,8 @@ class _AnalysisState extends State<Analysis> {
             i[5].trim(),
             i[6].trim(),
             i[7].trim(),
-            i[8].trim()));
+            i[8].trim(),
+            i[9]));
       }
     }
 //PARTNERSHIPS*******************************************************

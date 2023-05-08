@@ -49,6 +49,7 @@ class pointsTableUI extends StatelessWidget {
                       ],
                     )),
                     child: Text(
+                      // ignore: unnecessary_string_interpolations
                       '${globals.league_page}',
                       style: const TextStyle(
                           fontSize: 20,
@@ -59,13 +60,12 @@ class pointsTableUI extends StatelessWidget {
                   ),
                   Expanded(
                     child: SfDataGrid(
-                      verticalScrollPhysics:
+                      horizontalScrollPhysics:
                           const NeverScrollableScrollPhysics(),
                       source:
                           PointsTableSource(pointsData: snapshot.data.item2),
                       defaultColumnWidth:
                           MediaQuery.of(context).size.width * 0.32,
-
                       // columnWidthMode: ColumnWidthMode.fill,
                       selectionMode: SelectionMode.multiple,
                       columns: snapshot.data.item1.map(
