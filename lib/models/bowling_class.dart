@@ -97,7 +97,6 @@ bowling_teams_info(var team1_info, String team1_name) async {
       headings.add(titles1[i].text.toString().trim());
     }
     headings.insert(headings.length, "Team");
-
     headings.insert(headings.length, 'Player Link');
 
     var element = document1.querySelectorAll('table>tbody')[0];

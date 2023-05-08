@@ -214,8 +214,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                                         element.ground == globals.ground)
                                     .toList())
                             .rows[details.rowColumnIndex.rowIndex - 1]
-                            .getCells()
-                            .last
+                            .getCells()[9]
                             .value);
                       },
                       columns: snapshot.item2.item1.map((headings) {

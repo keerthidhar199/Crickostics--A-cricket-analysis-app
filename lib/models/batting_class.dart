@@ -86,10 +86,10 @@ class BattingDataSource extends DataGridSource {
   }
 }
 
-batting_teams_info(var team1_info, String team1_name) async {
+batting_teams_info(var team1Info, String team1Name) async {
   List<List<String>> allplayers = [];
   List<String> headings = [];
-  dom.Document document1 = parser.parse(team1_info.body);
+  dom.Document document1 = parser.parse(team1Info.body);
   // print(document
   //     .querySelectorAll('table.engineTable>tbody')[1]
   //     .text
@@ -125,7 +125,7 @@ batting_teams_info(var team1_info, String team1_name) async {
     // playerwise.removeAt(9);
     // playerwise.join(',');
 
-    playerwise.add(team1_name);
+    playerwise.add(team1Name);
     playerwise.add(data[i].getElementsByTagName('a')[0].attributes['href']);
     allplayers.add(playerwise);
     allplayers.sort((a, b) => int.parse(b[1].replaceAll('*', ''))
@@ -135,7 +135,7 @@ batting_teams_info(var team1_info, String team1_name) async {
   print(headings);
   print(allplayers);
   print('batting headers' + headings.length.toString());
-  print('batting data' + allplayers.length.toString());
+  print('batting data' + allplayers.toString());
   print(allplayers[0].length);
   print(headings.length);
   // ground_based = allplayers

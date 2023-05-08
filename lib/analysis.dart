@@ -475,11 +475,15 @@ class _AnalysisState extends State<Analysis> {
     if (value1.item1 == null || value2.item1 == null) {
       batting_playersdata1 = null;
     } else {
-      teams_batting = new List.from(value1.item2)..addAll(value2.item2);
+      teams_batting = List.from(value1.item2)..addAll(value2.item2);
 
       for (var i in teams_batting) {
         if (i.toString().contains('-')) {
-          i[i.indexWhere((element) => element.contains('-'))] = '0.0';
+          if (i.indexWhere((element) => element.contains('-')) !=
+              10) //except the player link
+          {
+            i[i.indexWhere((element) => element.contains('-'))] = '0.0';
+          }
         }
       }
       print('teams_batting $teams_batting');
@@ -549,7 +553,7 @@ class _AnalysisState extends State<Analysis> {
             i[6].trim(),
             i[7].trim(),
             i[8].trim(),
-            i[9]));
+            i[9].trim()));
       }
     }
 //PARTNERSHIPS*******************************************************

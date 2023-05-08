@@ -213,16 +213,17 @@ class _widgetbattingState extends State<widgetbatting> {
                       columnWidthMode: ColumnWidthMode.auto,
                       selectionMode: SelectionMode.multiple,
                       onCellTap: (details) {
-                        print(BattingDataSource(
+                        print(snapshot.item1.item2.first.player_link);
+                        for (var i in BattingDataSource(
                                 batData: snapshot.item1.item2
                                     .where((element) =>
                                         element.team == i &&
                                         element.ground == globals.ground)
                                     .toList())
                             .rows[details.rowColumnIndex.rowIndex - 1]
-                            .getCells()
-                            .last
-                            .value);
+                            .getCells()) {
+                          print('${i.columnName} ${i.value}');
+                        }
                       },
                       columns: snapshot.item1.item1.map(
                         (headings) {
