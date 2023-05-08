@@ -1,23 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:datascrap/notificationview.dart';
-import 'package:datascrap/recent_stats_testing.dart';
 import 'package:datascrap/skeleton.dart';
 import 'package:datascrap/splashscreen.dart';
-import 'package:datascrap/typeofstats.dart';
 import 'package:datascrap/views/fantasy_players_UI.dart';
 import 'package:datascrap/webscrap.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'package:lottie/lottie.dart';
-import 'package:page_transition/page_transition.dart';
 import 'globals.dart' as globals;
-import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:skeletons/skeletons.dart';
 
 void main() {

@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:datascrap/models/batting_class.dart';
 import 'package:datascrap/models/bowling_class.dart';
 import 'package:datascrap/models/partnership_class.dart';
 import 'package:datascrap/services/exportcsv.dart';
+import 'package:datascrap/services/get_player_pic.dart';
 import 'package:datascrap/views/previous_clashes_UI.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -43,9 +45,13 @@ class _AnalysisState extends State<Analysis> {
   @override
   void initState() {
     getData().then((value) {
-      setState(() {
-        snapshot = value;
-      });
+      if (value == null) {
+        snapshot = null;
+      } else {
+        setState(() {
+          snapshot = value;
+        });
+      }
     });
     _isButtonDisabled = true;
     super.initState();
@@ -60,14 +66,15 @@ class _AnalysisState extends State<Analysis> {
     'previous clashes'
   ];
 
-  String root_logo =
-      'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
-
   List<String> teamnames = [globals.team1_name, globals.team2_name];
   List<String> teamlogos = [globals.team1logo, globals.team2logo];
   int _currentSlide = 0;
   final CarouselController _controller = CarouselController();
   List<String> matchstatetitle = ['Batting', 'Bowling', 'Head to Head'];
+  List<List<String>> topBatters = [];
+  int topbat = 0;
+  List<List<String>> topBowlers = [];
+  int topbowl = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +106,7 @@ class _AnalysisState extends State<Analysis> {
                   exportcsv.getcsv().then((value) => null);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        duration: Duration(seconds: 3),
+                        duration: const Duration(seconds: 3),
                         behavior: SnackBarBehavior.floating,
                         content: Row(children: [
                           Image.asset(
@@ -153,12 +160,86 @@ class _AnalysisState extends State<Analysis> {
           snapshot: snapshot,
         )
       ];
+      Map<String, List<String>> playerRuns = {};
+
+      for (var i in snapshot.item1.item2) {
+        if (i.ground == globals.ground && topbat < 4) {
+          List<String> batters = [];
+          batters.add(i.player);
+          batters.add(i.runs.toString());
+          batters.add(i.balls.toString());
+          batters.add(i.sr.toString());
+          batters.add(i.player_link);
+          topBatters.add(batters);
+          topBatters.forEach((item) {
+            if (!playerRuns.containsKey(item[0])) {
+              topbat += 1;
+              playerRuns[item[0]] = item;
+            } else {
+              if (int.parse(item[1]) > int.parse(playerRuns[item[0]][1])) {
+                playerRuns[item[0]] = item;
+              }
+            }
+          });
+          topBatters = playerRuns.values.toList();
+        }
+      }
+      Map<String, List<String>> playerWickets = {};
+      for (var i in snapshot.item2.item2) {
+        if (i.ground == globals.ground && topbowl < 4) {
+          List<String> bowlers = [];
+          bowlers.add(i.player);
+          bowlers.add(i.runs.toString());
+          bowlers.add(i.wickets.toString());
+          bowlers.add(i.econ.toString());
+          bowlers.add(i.player_link);
+          topBowlers.add(bowlers);
+          topBowlers.forEach((item) {
+            if (!playerWickets.containsKey(item[0])) {
+              topbowl += 1;
+              playerWickets[item[0]] = item;
+            } else {
+              if (double.parse(item[3]) >
+                  double.parse(playerWickets[item[0]][3])) {
+                playerWickets[item[0]] = item;
+              }
+            }
+          });
+          topBowlers = playerWickets.values.toList();
+        }
+      }
+      get_players_pics(topBowlers).then((value) {
+        setState(() {
+          topBowlers = value;
+        });
+      });
+      get_players_pics(topBatters).then((value) {
+        setState(() {
+          topBatters = value;
+        });
+      });
+      print('stop $topBowlers $topBatters');
+
       List<Widget> list = categories
           .map(
             (e) => Column(
               children: [
                 const SizedBox(
-                  height: 60,
+                  height: 70,
+                ),
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey.shade700,
+                    ),
+                    child: Text('Top Performers at this Venue',
+                        textAlign: TextAlign.center, style: globals.noble)),
+                player_pic(
+                  categories: categories,
+                  e: e,
+                  topBatters: topBatters,
+                  topBowlers: topBowlers,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -182,7 +263,7 @@ class _AnalysisState extends State<Analysis> {
                       child: Column(
                         children: [
                           categories.indexOf(e) == 2
-                              ? previous_clashes_header()
+                              ? const previous_clashes_header()
                               : Container(
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20.0),
@@ -291,12 +372,12 @@ class _AnalysisState extends State<Analysis> {
             SingleChildScrollView(
               child: Container(
                   color: const Color(0xff2B2B28),
-                  height: MediaQuery.of(context).size.height * 1.5,
+                  height: MediaQuery.of(context).size.height * 2,
                   child: CarouselSlider(
                     carouselController: _controller,
                     options: CarouselOptions(
                       aspectRatio: 2,
-                      height: MediaQuery.of(context).size.height * 1.5,
+                      height: MediaQuery.of(context).size.height * 2,
                       viewportFraction: 1.0,
                       enlargeCenterPage: false,
                       // autoPlay: false,
@@ -615,7 +696,7 @@ class _AnalysisState extends State<Analysis> {
     // overall_data = Tuple3(
     //     battingdataheadings, bowlingdataheadings, partnershipsdataheadings);
     overall_data =
-        Tuple3(battingdataheadings, bowlingdataheadings, Tuple2([], []));
+        Tuple3(battingdataheadings, bowlingdataheadings, const Tuple2([], []));
 
     return overall_data; //((batting_headers_table,batting_players),(bowling_headers_table,bowling_players))
   }
