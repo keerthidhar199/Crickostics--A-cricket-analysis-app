@@ -22,10 +22,10 @@ class Batting_player {
       this.fours,
       this.sixes,
       this.sr,
+      this.team,
       this.opposition,
       this.ground,
       this.match_date,
-      this.team,
       this.player_link);
 
   final String player;
@@ -54,12 +54,12 @@ class BattingDataSource extends DataGridSource {
               DataGridCell<int>(columnName: 'fours', value: e.fours),
               DataGridCell<int>(columnName: 'sixes', value: e.sixes),
               DataGridCell<double>(columnName: 'sr', value: e.sr),
+              DataGridCell<String>(columnName: 'team', value: e.team),
               DataGridCell<String>(
                   columnName: 'opposition', value: e.opposition),
               DataGridCell<String>(columnName: 'ground', value: e.ground),
               DataGridCell<String>(
                   columnName: 'match date', value: e.match_date),
-              DataGridCell<String>(columnName: 'team', value: e.team),
               DataGridCell<String>(
                   columnName: 'player link', value: e.player_link),
             ]))
@@ -109,7 +109,7 @@ batting_teams_info(var team1Info, String team1Name) async {
       headings.add(titles1[i].text.toString().trim());
     }
   }
-  headings.insert(headings.length, "Team");
+  // headings.insert(headings.length, "Team");
   headings.insert(headings.length, 'Player Link');
   var element = document1.querySelectorAll('table>tbody')[0];
   var data = element.querySelectorAll('tr');
@@ -125,7 +125,11 @@ batting_teams_info(var team1Info, String team1Name) async {
     // playerwise.removeAt(9);
     // playerwise.join(',');
 
-    playerwise.add(team1Name);
+    playerwise.removeAt(headings.indexOf('Team'));
+    playerwise.insert(
+      headings.indexOf('Team'),
+      team1Name,
+    );
     playerwise.add(data[i].getElementsByTagName('a')[0].attributes['href']);
     allplayers.add(playerwise);
     allplayers.sort((a, b) => int.parse(b[1].replaceAll('*', ''))

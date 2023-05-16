@@ -51,8 +51,72 @@ class _AnalysisState extends State<Analysis> {
         setState(() {
           snapshot = value;
         });
+        Map<String, List<String>> playerRuns = {};
+
+        for (var i in snapshot.item1.item2) {
+          print('batters ${i.ground} ${globals.ground}');
+
+          if (i.ground == globals.ground && topbat < 4) {
+            List<String> batters = [];
+            batters.add(i.player);
+            batters.add(i.runs.toString());
+            batters.add(i.balls.toString());
+            batters.add(i.sr.toString());
+            batters.add(i.player_link);
+            print('batters $batters');
+            topBatters.add(batters);
+            topBatters.forEach((item) {
+              if (!playerRuns.containsKey(item[0])) {
+                topbat += 1;
+                playerRuns[item[0]] = item;
+              } else {
+                if (int.parse(item[1]) > int.parse(playerRuns[item[0]][1])) {
+                  playerRuns[item[0]] = item;
+                }
+              }
+            });
+            topBatters = playerRuns.values.toList();
+          }
+        }
+        Map<String, List<String>> playerWickets = {};
+        for (var i in snapshot.item2.item2) {
+          print('bowlers ${i.ground} ${globals.ground}');
+
+          if (i.ground == globals.ground && topbowl < 4) {
+            List<String> bowlers = [];
+            bowlers.add(i.player);
+            bowlers.add(i.runs.toString());
+            bowlers.add(i.wickets.toString());
+            bowlers.add(i.econ.toString());
+            bowlers.add(i.player_link);
+            topBowlers.add(bowlers);
+            topBowlers.forEach((item) {
+              if (!playerWickets.containsKey(item[0])) {
+                topbowl += 1;
+                playerWickets[item[0]] = item;
+              } else {
+                if (double.parse(item[3]) >
+                    double.parse(playerWickets[item[0]][3])) {
+                  playerWickets[item[0]] = item;
+                }
+              }
+            });
+            topBowlers = playerWickets.values.toList();
+          }
+        }
+        get_players_pics(topBowlers).then((value) {
+          setState(() {
+            topBowlers = value;
+          });
+        });
+        get_players_pics(topBatters).then((value) {
+          setState(() {
+            topBatters = value;
+          });
+        });
       }
     });
+
     _isButtonDisabled = true;
     super.initState();
   }
@@ -160,64 +224,7 @@ class _AnalysisState extends State<Analysis> {
           snapshot: snapshot,
         )
       ];
-      Map<String, List<String>> playerRuns = {};
 
-      for (var i in snapshot.item1.item2) {
-        if (i.ground == globals.ground && topbat < 4) {
-          List<String> batters = [];
-          batters.add(i.player);
-          batters.add(i.runs.toString());
-          batters.add(i.balls.toString());
-          batters.add(i.sr.toString());
-          batters.add(i.player_link);
-          topBatters.add(batters);
-          topBatters.forEach((item) {
-            if (!playerRuns.containsKey(item[0])) {
-              topbat += 1;
-              playerRuns[item[0]] = item;
-            } else {
-              if (int.parse(item[1]) > int.parse(playerRuns[item[0]][1])) {
-                playerRuns[item[0]] = item;
-              }
-            }
-          });
-          topBatters = playerRuns.values.toList();
-        }
-      }
-      Map<String, List<String>> playerWickets = {};
-      for (var i in snapshot.item2.item2) {
-        if (i.ground == globals.ground && topbowl < 4) {
-          List<String> bowlers = [];
-          bowlers.add(i.player);
-          bowlers.add(i.runs.toString());
-          bowlers.add(i.wickets.toString());
-          bowlers.add(i.econ.toString());
-          bowlers.add(i.player_link);
-          topBowlers.add(bowlers);
-          topBowlers.forEach((item) {
-            if (!playerWickets.containsKey(item[0])) {
-              topbowl += 1;
-              playerWickets[item[0]] = item;
-            } else {
-              if (double.parse(item[3]) >
-                  double.parse(playerWickets[item[0]][3])) {
-                playerWickets[item[0]] = item;
-              }
-            }
-          });
-          topBowlers = playerWickets.values.toList();
-        }
-      }
-      get_players_pics(topBowlers).then((value) {
-        setState(() {
-          topBowlers = value;
-        });
-      });
-      get_players_pics(topBatters).then((value) {
-        setState(() {
-          topBatters = value;
-        });
-      });
       print('stop $topBowlers $topBatters');
 
       List<Widget> list = categories
@@ -227,20 +234,27 @@ class _AnalysisState extends State<Analysis> {
                 const SizedBox(
                   height: 70,
                 ),
-                Container(
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey.shade700,
-                    ),
-                    child: Text('Top Performers at this Venue',
-                        textAlign: TextAlign.center, style: globals.noble)),
-                player_pic(
-                  categories: categories,
-                  e: e,
-                  topBatters: topBatters,
-                  topBowlers: topBowlers,
-                ),
+                (topBatters.isEmpty && topBowlers.isEmpty)
+                    ? Container()
+                    : Column(
+                        children: [
+                          Container(
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey.shade700,
+                              ),
+                              child: Text('Top Performers at this Venue',
+                                  textAlign: TextAlign.center,
+                                  style: globals.noble)),
+                          player_pic(
+                            categories: categories,
+                            e: e,
+                            topBatters: topBatters,
+                            topBowlers: topBowlers,
+                          ),
+                        ],
+                      ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
@@ -587,8 +601,12 @@ class _AnalysisState extends State<Analysis> {
               i[0].trim(),
               int.parse(i[1].trim()),
               int.parse(i[2].trim()),
-              i[3].trim() == '0.0' ? 0 : int.parse(i[3].trim()),
-              i[4].trim() == '0.0' ? 0 : int.parse(i[4].trim()),
+              i[3].trim() == '0.0' || i[3].trim() == '-'
+                  ? 0
+                  : int.parse(i[3].trim()),
+              i[4].trim() == '0.0' || i[4].trim() == '-'
+                  ? 0
+                  : int.parse(i[4].trim()),
               double.parse(i[5].trim()),
               i[6].trim(),
               i[7].trim(),

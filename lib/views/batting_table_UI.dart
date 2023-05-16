@@ -40,9 +40,10 @@ class _widgetbattingState extends State<widgetbatting> {
     'Team',
     'Player Link'
   ];
-
   @override
   Widget build(BuildContext context) {
+    print('snapsot ${snapshot.item1.item2.first.ground}');
+
     DataGridController dataGridController = DataGridController();
     DataGridController dataGridController1 = DataGridController();
     return Column(

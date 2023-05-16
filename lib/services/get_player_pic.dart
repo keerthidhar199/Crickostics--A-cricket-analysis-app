@@ -75,9 +75,37 @@ class _player_picState extends State<player_pic> {
                                 size: 80,
                                 color: Colors.black45,
                               )
-                            : CachedNetworkImage(
-                                imageUrl: player[4],
+                            : Image.network(
+                                player[4],
                                 width: 100,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  }
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress
+                                                  .expectedTotalBytes !=
+                                              null
+                                          ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                              loadingProgress.expectedTotalBytes
+                                          : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace stackTrace) {
+                                  return Container(
+                                    width: 100,
+                                    height: 100,
+                                    child: const CircularProgressIndicator(
+                                      color: Colors.redAccent,
+                                    ),
+                                  );
+                                },
                               ),
                       ),
                     ),
