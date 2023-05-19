@@ -6,9 +6,6 @@ import 'package:datascrap/analysis.dart';
 import 'package:datascrap/skeleton.dart';
 import 'package:datascrap/typeofstats.dart';
 import 'package:flutter/material.dart';
-
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 import 'package:get/get_navigation/src/routes/default_transitions.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
@@ -46,37 +43,45 @@ class _datascrapState extends State<datascrap> {
   bool tableshow = false;
   String formattedDate(String s) {
     // Parse the input date string into a DateTime object
-    print('sed $s');
     DateTime inputDate = DateTime.parse(s);
 
     // Format the date in 'MM DD, YYYY' format
     String formattedDate = DateFormat('MMMM dd, yyyy').format(inputDate);
 
-    String formattedTime = DateFormat('HH:mm a').format(inputDate);
-
-    print(formattedDate); // Output: 05, 19 2023
-    print(formattedTime); // Output: 02:00 PM
-
     return (formattedDate); // Output: May
   }
 
   UTCtoLocal(String s) {
-    tz.initializeTimeZones();
+    var a = s.split(RegExp(r'[0-9]')).first;
+    s = s.replaceAll(a, '');
 
-    String inputDateString = s;
-    DateTime inputDate = DateTime.parse(inputDateString);
+    DateFormat inputFormat = DateFormat('HH:mm a');
 
-    // Get the current time zone
-    tz.Location currentLocation = tz.getLocation('Asia/Kolkata');
+    s = s.contains('pm')
+        ? s.replaceAll('pm', 'PM')
+        : s.replaceAll('am', 'AM').trim();
 
-    // Convert the input date to the current time zone
-    tz.TZDateTime convertedDateTime =
-        tz.TZDateTime.from(inputDate, currentLocation);
+    var dateValue = DateFormat("hh:mm a").parseUTC(s).toLocal();
+    // String amPm = dateValue.hour < 12 ? 'AM' : 'PM';
+    // dateValue = DateFormat("HH:mm a")
+    //     .parse('${dateValue.hour}:${dateValue.minute} $amPm')
+    //     .toLocal();
+    // String formattedTime =
+    //     '${dateValue.hour.toString().padLeft(2, '0')}:${dateValue.minute.toString().padLeft(2, '0')}';
 
-    // Format the converted date in "HH:mm a" format
-    String formattedTime = DateFormat('h:mm a').format(convertedDateTime);
+    // print('formattedDate = ' + formattedTime.toString());
 
-    return formattedTime;
+    String formattedDate = DateFormat('hh:mm a').format(dateValue);
+    String nowTime = DateFormat('hh:mm a').format(DateTime.now());
+    DateTime dateTime1 = inputFormat.parse(formattedDate);
+    DateTime dateTime2 = inputFormat.parse(nowTime);
+    print('formattedDate = ' + formattedDate.toString() + nowTime);
+
+// Calculate the difference between the two DateTime objects
+    Duration difference = dateTime1.difference(dateTime2).abs();
+    formattedDate =
+        "In ${difference.inHours} hrs, ${difference.inMinutes.remainder(60)} mins";
+    return formattedDate;
   }
 
   GlobalKey<RefreshIndicatorState> _refreshIndicator =
@@ -101,203 +106,25 @@ class _datascrapState extends State<datascrap> {
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
     dom.Document document = parser.parse(response.body);
+
     List matchesdata =
         json.decode(document.getElementById('__NEXT_DATA__').text)['props']
             ['editionDetails']['trendingMatches']['matches'];
-    List matcheslink =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-            ['editionDetails']['navigation']['links'];
-    List<Map<String, String>> matcheso = []; //
+
+    Map<String, String> iplmatcho = {};
 
     for (var i in matchesdata) {
-      Map<String, String> iplmatcho = {};
-
       if (i['series']['name'] == league) {
-        print('iplmatcho ${i['ground']['smallName']}');
-
         iplmatcho['Details'] = i['title'] +
             ' (' +
             i['floodlit'].toString()[0].toUpperCase() +
-            '), ' +
+            ') ' +
             i['ground']['smallName'] +
-            ', ' +
-            formattedDate(i['startTime']) +
-            ', ' +
-            i['series']['name'];
-        for (var team in i['teams']) {
-          iplmatcho['Team' + (i['teams'].indexOf(team) + 1).toString()] =
-              team['team']['longName'];
-          iplmatcho['Team' +
-              (i['teams'].indexOf(team) + 1).toString() +
-              '_short'] = team['team']['name'];
-          var teamscore;
-          if (team['scoreinfo'] == null && team['score'] == null) {
-            teamscore = '';
-          }
-          if (team['scoreinfo'] == null && team['score'] != null) {
-            teamscore = team['score'];
-          }
-          if (team['scoreinfo'] != null && team['score'] != null) {
-            teamscore = (team['scoreInfo'] + team['score']);
-          }
-
-          iplmatcho['team' +
-              (i['teams'].indexOf(team) + 1).toString() +
-              '_score'] = teamscore;
-          iplmatcho['team' +
-              (i['teams'].indexOf(team) + 1).toString() +
-              'logo'] = team['team']['imageUrl'];
-        }
-
-        String pointstable = 'series/' +
-            i['series']['slug'] +
-            '-' +
-            i['series']['objectId'].toString() +
-            '/points-table-standings';
-        var response = await http.Client()
-            .get(Uri.parse('https://www.espncricinfo.com/' + pointstable));
-        print(('https://www.espncricinfo.com/' + pointstable));
-        dom.Document pointsdoc = parser.parse(response.body);
-
-        print(pointsdoc.getElementsByClassName('ds-grow').first.text);
-        if (!pointsdoc
-            .getElementsByClassName('ds-grow')
-            .first
-            .text
-            .contains('Table')) {
-          setState(() {
-            tableshow = false;
-          });
-        } else {
-          setState(() {
-            tableshow = true;
-            globals.league_page_address =
-                'https://www.espncricinfo.com/' + pointstable;
-          });
-        }
-        iplmatcho['Ground'] = i['ground']['smallName'];
-        iplmatcho['MatchStarts'] =
-            i['statusText'].toString().contains('starts') ||
-                    i['statusText'].toString().contains('yet to begin')
-                ? 'Match starts at ' + UTCtoLocal(i['startTime'])
-                : i['statusText'];
-        var changedroot = '/records/tournament/';
-        var link1update = changedroot +
-            i['series']['slug'] +
-            '-' +
-            i['series']['id'].toString();
-
-        var teamstats = await http.Client()
-            .get(Uri.parse('https://www.espncricinfo.com' + link1update));
-
-        // ('assa1 ' + link3.toList()[0].attributes["href"].toString());
-        dom.Document teamstatsdoc = parser.parse(teamstats.body);
-
-        var recordsbyteam = teamstatsdoc
-            .getElementsByClassName(
-                'ds-flex ds-items-center ds-cursor-pointer ds-px-4 ds-py-3')
-            .where((element) => element.text == 'Records by team');
-        if (recordsbyteam.isNotEmpty) {
-          var teamrec1 = recordsbyteam.first.parentNode.children.last
-              .getElementsByTagName('li')
-              .where((element) => (element.text == iplmatcho["Team1"] ||
-                  element.text == iplmatcho["Team1_short"]));
-          var teamrec2 = recordsbyteam.first.parentNode.children.last
-              .getElementsByTagName('li')
-              .where((element) => (element.text == iplmatcho["Team2"] ||
-                  element.text == iplmatcho["Team2_short"]));
-          print('rec1 $teamrec1 rec2 $teamrec2');
-          if (teamrec1.isNotEmpty && teamrec2.isNotEmpty) {
-            iplmatcho['team1_stats_link'] =
-                teamrec1.first.getElementsByTagName('a')[0].attributes['href'];
-            // print('rec1 ${rec1.first.attributes["href"]}');
-            iplmatcho['team2_stats_link'] =
-                teamrec2.first.getElementsByTagName('a')[0].attributes['href'];
-            matcheso.add(iplmatcho);
-            print(
-                'rec11 ${teamrec1.first.text} ${teamrec1.first.getElementsByTagName('a')[0].attributes['href']} ');
-            print(
-                'rec22 ${teamrec2.first.text} ${teamrec2.first.getElementsByTagName('a')[0].attributes['href']}');
-          }
-        } else if (recordsbyteam.isEmpty) {
-          iplmatcho['team1_stats_link'] = link1update;
-          iplmatcho['team2_stats_link'] = link1update;
-          matcheso.add(iplmatcho);
-        }
+            formattedDate(i['startDate']);
       }
-      // var forlink3 = await http.Client()
-      //     .get(Uri.parse('https://www.espncricinfo.com' + link1update));
-      // dom.Document link3doc = parser.parse(forlink3.body);
-
-      // var link3 = link3doc
-      //     .getElementsByClassName('ds-px-3 ds-py-2')
-      //     .where((element) => element.text == 'Stats');
-      // print('link3 ${link3.toList()[0].attributes['href']}');
-
-      // if (link3.toList().isNotEmpty) {
-      //   var teamstats = await http.Client().get(Uri.parse(
-      //       'https://www.espncricinfo.com' +
-      //           link3.toList()[0].attributes["href"].toString()));
-      //   dom.Document viewstatsdoc = parser.parse(teamstats.body);
-      //   var viewstats = viewstatsdoc
-      //       .getElementsByClassName('ds-flex')
-      //       .where((element) => element.text == 'View all stats');
-      //   if (viewstats.last.attributes['href']
-      //       .toString()
-      //       .startsWith('https')) {
-      //     teamstats = await http.Client()
-      //         .get(Uri.parse(viewstats.last.attributes['href'].toString()));
-      //   } else {
-      //     teamstats = await http.Client().get(Uri.parse(
-      //         'https://www.espncricinfo.com' +
-      //             viewstats.last.attributes['href'].toString()));
-      //     print('viewstast ${viewstats.last.attributes['href'].toString()}');
-      //   }
-      //   // ('assa1 ' + link3.toList()[0].attributes["href"].toString());
-      //   dom.Document teamstatsdoc = parser.parse(teamstats.body);
-
-      //   var recordsbyteam = teamstatsdoc
-      //       .getElementsByClassName(
-      //           'ds-flex ds-items-center ds-cursor-pointer ds-px-4 ds-py-3')
-      //       .where((element) => element.text == 'Records by team');
-      //   if (recordsbyteam.isNotEmpty) {
-      //     var teamrec1 = recordsbyteam.first.parentNode.children.last
-      //         .getElementsByTagName('li')
-      //         .where((element) => (element.text == iplmatcho["Team1"] ||
-      //             element.text == iplmatcho["Team1_short"]));
-      //     var teamrec2 = recordsbyteam.first.parentNode.children.last
-      //         .getElementsByTagName('li')
-      //         .where((element) => (element.text == iplmatcho["Team2"] ||
-      //             element.text == iplmatcho["Team2_short"]));
-      //     print('rec1 $teamrec1 rec2 $teamrec2');
-      //     if (teamrec1.isNotEmpty && teamrec2.isNotEmpty) {
-      //       iplmatcho['team1_stats_link'] = teamrec1.first
-      //           .getElementsByTagName('a')[0]
-      //           .attributes['href'];
-      //       // print('rec1 ${rec1.first.attributes["href"]}');
-      //       iplmatcho['team2_stats_link'] = teamrec2.first
-      //           .getElementsByTagName('a')[0]
-      //           .attributes['href'];
-      //       matcheso.add(iplmatcho);
-      //       print(
-      //           'rec11 ${teamrec1.first.text} ${teamrec1.first.getElementsByTagName('a')[0].attributes['href']} ');
-      //       print(
-      //           'rec22 ${teamrec2.first.text} ${teamrec2.first.getElementsByTagName('a')[0].attributes['href']}');
-      //     }
-      //   } else if (recordsbyteam.isEmpty) {
-      //     iplmatcho['team1_stats_link'] =
-      //         link3.toList()[0].attributes["href"].toString();
-      //     iplmatcho['team2_stats_link'] =
-      //         link3.toList()[0].attributes["href"].toString();
-      //     matcheso.add(iplmatcho);
-      //   }
-      // }
     }
+    print("iplmatcho $iplmatcho");
 
-    print('iplmatcho ${matcheso.toSet().toList()}');
-    return matcheso.toSet().toList();
-
-    print("iplmatcho $matcheso");
     // print(document
     //     .querySelectorAll('table.engineTable>tbody')[1]
     //     .text
@@ -316,6 +143,8 @@ class _datascrapState extends State<datascrap> {
         var link1 = matchdetails.querySelectorAll('a')[0];
 
         var link1update = link1.attributes["href"].toString();
+        print("iplmatcho");
+
         print('link1update1.0 ${link1update}');
 
         var matchaddress = 'https://www.espncricinfo.com' + link1update;
@@ -453,7 +282,7 @@ class _datascrapState extends State<datascrap> {
             // //print('hero teamscore: ${teamscore[1].text}');
             //print('hero stauts: ${stauts.text}');
 
-            // iplmatch['Time'] = matchDet.text;
+            iplmatch['Time'] = matchDet.text;
             iplmatch['Match_name'] = matchDet1.text.split(',').last;
 
             iplmatch['MatchStarts'] = stauts;
@@ -566,7 +395,7 @@ class _datascrapState extends State<datascrap> {
   Widget build(BuildContext context) {
     List<String> matchstatetitle =
         (tableshow == true) ? ['Matches', 'Points table'] : ['Matches'];
-    print('matchstatetitle $matchstatetitle');
+
     double screenheight = MediaQuery.of(context).size.height;
 
     // UTCtoLocal('Today, 3:15 am');

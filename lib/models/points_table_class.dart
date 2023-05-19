@@ -105,15 +105,7 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
 
   List<PointsTable> pointstableinfo = [];
   List<String> pointstablehead = [];
-  if (!league_address.contains('points-table-standings')) {
-    league_address = league_address + 'points-table-standings';
-  }
-  if (!league_address.split('/').last.contains('points-table-standings')) {
-    league_address = league_address + 'points-table-standings';
-  }
-
-  league_address = league_address.replaceAll(
-      league_address.split('/').last, 'points-table-standings');
+  print(league_address);
   var forlink2 = await http.Client().get(Uri.parse(league_address));
   dom.Document document1 = parser.parse(forlink2.body);
   // print(document
@@ -157,8 +149,11 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
   }
 
   for (var i in allplayers) {
-    pointstableinfo
-        .add(PointsTable(i[0], int.parse(i[1]), double.parse(i[2]), i[3]));
+    var a = i[1].trim() == '-' ? 0 : int.parse(i[1]);
+    var b = i[2].trim() == '-' ? 0.0 : double.parse(i[2]);
+    var c;
+    c = i.contains('-') ? '' : i[3];
+    pointstableinfo.add(PointsTable(i[0], a, b, c));
   }
   pointstablehead = headings;
 
