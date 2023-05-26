@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
+import 'package:http/http.dart' as http;
 import 'package:datascrap/globals.dart' as globals;
 
 /// Custom business object class which contains properties to hold the detailed
@@ -15,9 +18,10 @@ class Result {
   final String team1;
   final String team2;
   final String winner;
+  final String margin;
+
   final String ground;
   final String match_date;
-  final String margin;
   final String scorecard;
 }
 
@@ -56,29 +60,23 @@ class HistoryDataSource extends DataGridSource {
   DataGridRowAdapter buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
-      print('naasas' +
-          globals.team2_name
-              .contains(row.getCells()[2].value.toString())
-              .toString());
+      print('naasas' + row.getCells()[0].value.toString());
 
-      if (globals.team2_name.contains(row.getCells()[2].value)) {
+      if (globals.ground == row.getCells()[0].value) {
         return Container(
+            alignment: Alignment.center,
+            color: Colors.greenAccent,
             child: Text(
-          e.value,
-          style: TextStyle(
-              color: globals.team2_name.contains(e.value)
-                  ? Colors.green
-                  : Colors.red),
-        ));
+              e.value,
+              style: globals.Litsans,
+            ));
       } else {
         return Container(
           alignment: Alignment.center,
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Text(
             e.value.toString(),
-            style: TextStyle(
-              color: Colors.black,
-            ),
+            style: globals.Litsans,
           ),
         );
       }
@@ -130,24 +128,20 @@ class TeamResultsDataSource extends DataGridSource {
         return Container(
           color: Colors.greenAccent,
           alignment: Alignment.center,
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Text(
             e.value.toString(),
-            style: TextStyle(
-              color: Colors.black,
-            ),
+            style: globals.Litsans,
           ),
         );
       } else {
         return Container(
           color: Colors.white,
           alignment: Alignment.center,
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Text(
             e.value.toString(),
-            style: TextStyle(
-              color: Colors.black,
-            ),
+            style: globals.Litsans,
           ),
         );
       }
@@ -155,41 +149,78 @@ class TeamResultsDataSource extends DataGridSource {
   }
 }
 
-teams_results_info(var team1_info, String team1_name) async {
-  List<List<String>> allplayers = [];
+teams_results_info() async {
+  List<List<String>> teamresultsdatalist = [];
   List<String> headings = [];
-  dom.Document document1 = parser.parse(team1_info.body);
+  var category = 'team-match-results';
+  var root = 'https://www.espncricinfo.com';
+  //"/records/tournament/indian-premier-league-2023-15129?team=4344"  globals.team1_stats_link
+
+  String originalUrl = globals.team1_stats_link;
+
+  Uri parsedUri = Uri.parse(originalUrl);
+  String path = parsedUri.path;
+  String newPath = path.replaceFirst("/tournament/", "/tournament/$category/");
+
+  Uri modifiedUri =
+      parsedUri.replace(path: newPath, query: null, fragment: null);
+  String modifiedUrl = modifiedUri.removeFragment().toString();
+
+  var webpage = (root + modifiedUrl.split('?').first);
+  print('webpage $webpage');
+  var response = await http.Client().get(Uri.parse(webpage));
+  dom.Document document = parser.parse(response.body);
+  var teamresultsdata =
+      json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+          ['appPageProps']['data']['content']['tables'];
+  List<String> headers = [];
+  for (var i in teamresultsdata[0]['headers']) {
+    headers.add(i['label']);
+  }
+
+  for (var players in teamresultsdata[0]['rows']) {
+    List<String> playerteamresultsdata = [];
+
+    for (var player in players['items']) {
+      playerteamresultsdata.add(player['value'].toString());
+    }
+
+    teamresultsdatalist.add(playerteamresultsdata);
+  }
+
+  print('elaneel $headers');
+  print('elaneel $teamresultsdatalist');
   // print(document
   //     .querySelectorAll('table.engineTable>tbody')[1]
   //     .text
   //     .contains('Records'));
-  print(document1.text.toString());
-  var headers1 = document1.querySelectorAll('table.engineTable>thead>tr')[0];
-  var titles1 = headers1.querySelectorAll('th');
-  titles1.removeWhere((element) => element.text.length == 0);
-  for (int i = 0; i < titles1.length; i++) {
-    headings.add(titles1[i].text.toString().trim());
-  }
+  // print(document1.text.toString());
+  // var headers1 = document1.querySelectorAll('table>thead>tr')[0];
+  // var titles1 = headers1.querySelectorAll('th');
+  // titles1.removeWhere((element) => element.text.isEmpty);
+  // for (int i = 0; i < titles1.length; i++) {
+  //   headings.add(titles1[i].text.toString().trim());
+  // }
 
-  var element = document1.querySelectorAll('table.engineTable>tbody')[0];
-  var data = element.querySelectorAll('tr');
-  data.removeWhere((element) => element.text.length == 0);
-  for (int i = 0; i < data.length; i++) {
-    List<String> playerwise = [];
-    for (int j = 0; j < data[i].children.length; j++) {
-      if (data[i].children[j].text.length != 0 ||
-          data[i].children[j].text != null) {
-        playerwise.add(data[i].children[j].text.toString().trim());
-      }
-    }
+  // var element = document1.querySelectorAll('table>tbody')[0];
+  // var data = element.querySelectorAll('tr');
+  // data.removeWhere((element) => element.text.isEmpty);
+  // for (int i = 0; i < data.length; i++) {
+  //   List<String> playerwise = [];
+  //   for (int j = 0; j < data[i].children.length; j++) {
+  //     if (data[i].children[j].text.isNotEmpty ||
+  //         data[i].children[j].text != null) {
+  //       playerwise.add(data[i].children[j].text.toString().trim());
+  //     }
+  //   }
 
-    allplayers.add(playerwise);
-  }
+  //   allplayers.add(playerwise);
+  // }
 
-  print(headings);
-  print(allplayers);
-  print(allplayers[0].length);
-  print(headings.length);
+  // print(headings);
+  // print(allplayers);
+  // print(allplayers[0].length);
+  // print(headings.length);
 
-  return Tuple2(headings, allplayers);
+  return Tuple2(headers, teamresultsdatalist);
 }

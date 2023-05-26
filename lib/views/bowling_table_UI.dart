@@ -25,7 +25,11 @@ class _widgetbowlingState extends State<widgetbowling> {
       Tuple2<List<String>, List<Partnership>>> snapshot;
   final DataGridController dataGridController = DataGridController();
   final DataGridController dataGridController1 = DataGridController();
-  List<String> teamnames = [globals.team1_name, globals.team2_name];
+  List<String> short_teamnames = [
+    globals.team1__short_name,
+    globals.team2__short_name
+  ];
+  List<String> long_teamnames = [globals.team1_name, globals.team2_name];
   List<String> teamlogos = [globals.team1logo, globals.team2logo];
   List<String> hiddenColumns = [
     'Opposition',
@@ -42,10 +46,10 @@ class _widgetbowlingState extends State<widgetbowling> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        for (var i in teamnames)
+        for (var i in short_teamnames)
           Column(
             children: [
-              teamnames.indexOf(i) == 0
+              short_teamnames.indexOf(i) == 0
                   ? TextButton(
                       onPressed: () {
                         print('assa11end1 ${dataGridController.selectedRows}');
@@ -138,16 +142,17 @@ class _widgetbowlingState extends State<widgetbowling> {
                 )),
                 child: Row(
                   children: [
-                    teamlogos[teamnames.indexOf(i)] != null
+                    teamlogos[short_teamnames.indexOf(i)] != null
                         ? Image.network(
                             root_logo +
-                                teamlogos[teamnames.indexOf(i)].toString(),
+                                teamlogos[short_teamnames.indexOf(i)]
+                                    .toString(),
                             width: 32,
                             height: 32,
                           )
                         : IconButton(
                             icon: Image.asset('logos/team' +
-                                (teamnames.indexOf(i) + 1).toString() +
+                                (short_teamnames.indexOf(i) + 1).toString() +
                                 '.png'),
                             onPressed: null),
                     GestureDetector(
@@ -164,7 +169,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                         child: Padding(
                           padding: const EdgeInsets.all(6.0),
                           child: Text(
-                            '${i}',
+                            '${long_teamnames[short_teamnames.indexOf(i)]}',
                             textAlign: TextAlign.left,
                             style: const TextStyle(
                               fontFamily: 'Cocosharp',
@@ -192,7 +197,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                       showCheckboxColumn: true,
                       sortingGestureType: SortingGestureType.tap,
                       allowSorting: true,
-                      controller: teamnames.indexOf(i) == 0
+                      controller: short_teamnames.indexOf(i) == 0
                           ? dataGridController
                           : dataGridController1,
                       checkboxColumnSettings:

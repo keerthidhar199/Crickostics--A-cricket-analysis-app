@@ -42,6 +42,20 @@ class _AnalysisState extends State<Analysis> {
       Tuple2<List<String>, List<Batting_player>>,
       Tuple2<List<String>, List<Player>>,
       Tuple2<List<String>, List<Partnership>>> snapshot;
+  List<List<String>> topBatters = [];
+  int topbat = 0;
+  int tophthbat = 0;
+  int tophthbowl = 0;
+
+  List<List<String>> topBowlers = [];
+
+  List<List<String>> topheadtoheadbatters = [];
+  List<List<String>> topheadtoheadbowlers = [];
+
+  List<List<String>> headtoheadbolwers = [];
+  int topbowl = 0;
+  int topheadtohead = 0;
+
   @override
   void initState() {
     getData().then((value) {
@@ -52,10 +66,41 @@ class _AnalysisState extends State<Analysis> {
           snapshot = value;
         });
         Map<String, List<String>> playerRuns = {};
+        Map<String, List<String>> playerRunshth = {};
 
         for (var i in snapshot.item1.item2) {
           print('batters ${i.ground} ${globals.ground}');
-
+          if (((globals.team1_name.contains(i.team)) &&
+                  ((globals.team2_name)
+                          .contains(i.opposition.replaceAll('v', '').trim()) ||
+                      globals.team2__short_name.contains(
+                          i.opposition.replaceAll('v', '').trim()))) ||
+              (globals.team2_name.contains(i.team) &&
+                      (globals.team1_name.contains(
+                              i.opposition.replaceAll('v', '').trim()) ||
+                          globals.team1__short_name.contains(
+                              i.opposition.replaceAll('v', '').trim()))) &&
+                  tophthbat < 4) {
+            List<String> headtoheadbatters = [];
+            headtoheadbatters.add(i.player);
+            headtoheadbatters.add(i.runs.toString());
+            headtoheadbatters.add(i.balls.toString());
+            headtoheadbatters.add(i.sr.toString());
+            headtoheadbatters.add(i.player_link);
+            print('headtoheadbatters $headtoheadbatters');
+            topheadtoheadbatters.add(headtoheadbatters);
+            for (var item in topheadtoheadbatters) {
+              if (!playerRunshth.containsKey(item[0])) {
+                tophthbat += 1;
+                playerRunshth[item[0]] = item;
+              } else {
+                if (int.parse(item[1]) > int.parse(playerRunshth[item[0]][1])) {
+                  playerRunshth[item[0]] = item;
+                }
+              }
+            }
+            topheadtoheadbatters = playerRunshth.values.toList();
+          }
           if (i.ground == globals.ground && topbat < 4) {
             List<String> batters = [];
             batters.add(i.player);
@@ -78,8 +123,43 @@ class _AnalysisState extends State<Analysis> {
             topBatters = playerRuns.values.toList();
           }
         }
+        Map<String, List<String>> playerWicketshth = {};
         Map<String, List<String>> playerWickets = {};
+
         for (var i in snapshot.item2.item2) {
+          if (((globals.team1_name.contains(i.team)) &&
+                  ((globals.team2_name)
+                          .contains(i.opposition.replaceAll('v', '').trim()) ||
+                      globals.team2__short_name.contains(
+                          i.opposition.replaceAll('v', '').trim()))) ||
+              (globals.team2_name.contains(i.team) &&
+                      (globals.team1_name.contains(
+                              i.opposition.replaceAll('v', '').trim()) ||
+                          globals.team1__short_name.contains(
+                              i.opposition.replaceAll('v', '').trim()))) &&
+                  tophthbowl < 4) {
+            List<String> headtoheadbowlers = [];
+            headtoheadbowlers.add(i.player);
+            headtoheadbowlers.add(i.runs.toString());
+            headtoheadbowlers.add(i.wickets.toString());
+            headtoheadbowlers.add(i.econ.toString());
+            headtoheadbowlers.add(i.player_link);
+            topheadtoheadbowlers.add(headtoheadbowlers);
+            topheadtoheadbowlers.forEach((item) {
+              if (!playerWicketshth.containsKey(item[0])) {
+                tophthbowl += 1;
+                playerWicketshth[item[0]] = item;
+              } else {
+                if (double.parse(item[3]) >
+                    double.parse(playerWicketshth[item[0]][3])) {
+                  playerWicketshth[item[0]] = item;
+                }
+              }
+            });
+            topheadtoheadbowlers = playerWicketshth.values.toList();
+          }
+          print('topheadtoheadbowlers $topheadtoheadbowlers');
+
           print('bowlers ${i.ground} ${globals.ground}');
 
           if (i.ground == globals.ground && topbowl < 4) {
@@ -104,6 +184,7 @@ class _AnalysisState extends State<Analysis> {
             topBowlers = playerWickets.values.toList();
           }
         }
+
         get_players_pics(topBowlers).then((value) {
           setState(() {
             topBowlers = value;
@@ -113,6 +194,13 @@ class _AnalysisState extends State<Analysis> {
           setState(() {
             topBatters = value;
           });
+        });
+        get_players_pics(topheadtoheadbatters).then((value) {
+          topheadtoheadbatters = value;
+        });
+
+        get_players_pics(topheadtoheadbowlers).then((value) {
+          topheadtoheadbowlers = value;
         });
       }
     });
@@ -135,10 +223,6 @@ class _AnalysisState extends State<Analysis> {
   int _currentSlide = 0;
   final CarouselController _controller = CarouselController();
   List<String> matchstatetitle = ['Batting', 'Bowling', 'Head to Head'];
-  List<List<String>> topBatters = [];
-  int topbat = 0;
-  List<List<String>> topBowlers = [];
-  int topbowl = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -252,6 +336,8 @@ class _AnalysisState extends State<Analysis> {
                             e: e,
                             topBatters: topBatters,
                             topBowlers: topBowlers,
+                            topheadtoheadbatters: topheadtoheadbatters,
+                            topheadtoheadbowlers: topheadtoheadbowlers,
                           ),
                         ],
                       ),
@@ -386,12 +472,12 @@ class _AnalysisState extends State<Analysis> {
             SingleChildScrollView(
               child: Container(
                   color: const Color(0xff2B2B28),
-                  height: MediaQuery.of(context).size.height * 2,
+                  height: MediaQuery.of(context).size.height * 3,
                   child: CarouselSlider(
                     carouselController: _controller,
                     options: CarouselOptions(
                       aspectRatio: 2,
-                      height: MediaQuery.of(context).size.height * 2,
+                      height: MediaQuery.of(context).size.height * 3,
                       viewportFraction: 1.0,
                       enlargeCenterPage: false,
                       // autoPlay: false,
@@ -575,7 +661,7 @@ class _AnalysisState extends State<Analysis> {
       for (var i in teams_batting) {
         if (i.toString().contains('-')) {
           if (i.indexWhere((element) => element.contains('-')) !=
-              10) //except the player link
+              11) //except the player link
           {
             i[i.indexWhere((element) => element.contains('-'))] = '0.0';
           }
@@ -595,7 +681,8 @@ class _AnalysisState extends State<Analysis> {
               i[7].trim(),
               i[8].trim(),
               i[9].trim(),
-              i[10].trim()));
+              i[10].trim(),
+              i[11].toString()));
         } else {
           batting_playersdata1.add(Batting_player(
               i[0].trim(),
@@ -612,10 +699,26 @@ class _AnalysisState extends State<Analysis> {
               i[7].trim(),
               i[8].trim(),
               i[9].trim(),
-              i[10].trim()));
+              i[10].trim(),
+              i[11].trim()));
         }
       }
-      print('playersdata $batting_playersdata1');
+      // batting_playersdata1.forEach((element) {
+      //   print('playersdata ${element.player}');
+      //   print('playersdata ${element.runs}');
+
+      //   print('playersdata ${element.balls}');
+      //   print('playersdata ${element.fours}');
+      //   print('playersdata ${element.sixes}');
+      //   print('playersdata ${element.sr}');
+      //   print('playersdata ${element.team}');
+      //   print('playersdata ${element.opposition}');
+      //   print('playersdata ${element.ground}');
+      //   print('playersdata ${element.match_date}');
+      //   print('playersdata ${element.score_card}');
+      //   print('playersdata ${element.player_link}');
+      // });
+
       // return Tuple2(teams_batting_headings, batting_playersdata1);
     }
 
@@ -640,7 +743,7 @@ class _AnalysisState extends State<Analysis> {
       print('Reppa ${value3.item1}');
       bowling_playersdata1 = null;
     } else {
-      teams_bowling = new List.from(value3.item2)..addAll(value4.item2);
+      teams_bowling = List.from(value3.item2)..addAll(value4.item2);
       for (var i in teams_bowling) {
         bowling_playersdata1.add(Player(
             i[0].trim(),
@@ -652,9 +755,23 @@ class _AnalysisState extends State<Analysis> {
             i[6].trim(),
             i[7].trim(),
             i[8].trim(),
-            i[9].trim()));
+            i[9].trim(),
+            i[10].trim()));
       }
+      bowling_playersdata1.forEach((element) {
+        print('playersdata ${element.player}');
+        print('playersdata ${element.wickets}');
+
+        print('playersdata ${element.econ}');
+        print('playersdata ${element.team}');
+        print('playersdata ${element.opposition}');
+        print('playersdata ${element.ground}');
+        print('playersdata ${element.match_date}');
+        print('playersdata ${element.score_card}');
+        print('playersdata ${element.player_link}');
+      });
     }
+
 //PARTNERSHIPS*******************************************************
     // var team1_info_partnerships = await http.Client().get(Uri.parse(root +
     //     team1_partnership_table.first

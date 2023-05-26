@@ -104,9 +104,7 @@ class _datascrapState extends State<datascrap> {
     List matchesdata =
         json.decode(document.getElementById('__NEXT_DATA__').text)['props']
             ['editionDetails']['trendingMatches']['matches'];
-    List matcheslink =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-            ['editionDetails']['navigation']['links'];
+
     List<Map<String, String>> matcheso = []; //
 
     for (var i in matchesdata) {

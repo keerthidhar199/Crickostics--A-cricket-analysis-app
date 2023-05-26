@@ -18,9 +18,17 @@ class player_pic extends StatefulWidget {
   final categories;
   final topBatters;
   final topBowlers;
+  final topheadtoheadbowlers;
+  final topheadtoheadbatters;
   final e;
   const player_pic(
-      {Key key, this.categories, this.topBatters, this.topBowlers, this.e})
+      {Key key,
+      this.categories,
+      this.topBatters,
+      this.topBowlers,
+      this.e,
+      this.topheadtoheadbatters,
+      this.topheadtoheadbowlers})
       : super(key: key);
 
   @override
@@ -37,14 +45,25 @@ class _player_picState extends State<player_pic> {
 
   @override
   Widget build(BuildContext context) {
+    List<List<dynamic>> headtohead = [
+      ...widget.topheadtoheadbatters,
+      ...widget.topheadtoheadbowlers
+    ];
+
+    print('headtohead $headtohead');
+
     return CarouselSlider.builder(
       itemCount: widget.categories.indexOf(widget.e) == 0
           ? widget.topBatters.length
-          : widget.topBowlers.length,
+          : widget.categories.indexOf(widget.e) == 1
+              ? widget.topBowlers.length
+              : headtohead.length,
       itemBuilder: (BuildContext context, int index, int realIndex) {
         final player = widget.categories.indexOf(widget.e) == 0
             ? widget.topBatters[index]
-            : widget.topBowlers[index];
+            : widget.categories.indexOf(widget.e) == 1
+                ? widget.topBowlers[index]
+                : headtohead[index];
         final color = cardColors[index % cardColors.length];
 
         return Stack(
@@ -120,24 +139,57 @@ class _player_picState extends State<player_pic> {
                           style: globals.Litsanswhite,
                         ),
                         const SizedBox(height: 8),
-                        widget.categories.indexOf(widget.e) == 0
-                            ? Text(
+                        if (widget.categories.indexOf(widget.e) == 0)
+                          Column(
+                            children: [
+                              Text(
                                 '${player[1]}' ' (${player[2]})',
                                 style: globals.Litsanswhite,
-                              )
-                            : Text(
-                                '${player[2]}-' '${player[1]}',
-                                style: globals.Litsanswhite,
                               ),
-                        widget.categories.indexOf(widget.e) == 0
-                            ? Text(
+                              Text(
                                 'Strike rate: ${player[3]}',
                                 style: globals.Litsanswhite,
                               )
-                            : Text(
+                            ],
+                          )
+                        else if (widget.categories.indexOf(widget.e) == 1)
+                          Column(
+                            children: [
+                              Text(
+                                '${player[2]}-' '${player[1]}',
+                                style: globals.Litsanswhite,
+                              ),
+                              Text(
                                 'Economy: ${player[3]}',
                                 style: globals.Litsanswhite,
                               ),
+                            ],
+                          )
+                        else if (widget.categories.indexOf(widget.e) == 2)
+                          Column(
+                            children: [
+                              Text(
+                                '${player[2]}-' '${player[1]}',
+                                style: globals.Litsanswhite,
+                              ),
+                              Text(
+                                'Economy: ${player[3]}',
+                                style: globals.Litsanswhite,
+                              ),
+                            ],
+                          )
+                        // Column(
+                        //   children: [
+                        //     Text(
+                        //       '${player[1]}' ' (${player[2]})',
+                        //       style: globals.Litsanswhite,
+                        //     ),
+                        //     Text(
+                        //       'Strike rate: ${player[3]}',
+                        //       style: globals.Litsanswhite,
+                        //     )
+                        //   ],
+                        // )
                       ],
                     ),
                   ),

@@ -24,7 +24,11 @@ class _widgetbattingState extends State<widgetbatting> {
       Tuple2<List<String>, List<Batting_player>>,
       Tuple2<List<String>, List<Player>>,
       Tuple2<List<String>, List<Partnership>>> snapshot;
-  List<String> teamnames = [globals.team1_name, globals.team2_name];
+  List<String> short_teamnames = [
+    globals.team1__short_name,
+    globals.team2__short_name
+  ];
+  List<String> long_teamnames = [globals.team1_name, globals.team2_name];
   List<String> teamlogos = [globals.team1logo, globals.team2logo];
 
   String root_logo =
@@ -42,16 +46,18 @@ class _widgetbattingState extends State<widgetbatting> {
   ];
   @override
   Widget build(BuildContext context) {
-    print('snapsot ${snapshot.item1.item2.first.ground}');
+    for (var i in snapshot.item1.item2) {
+      print('snapsot ${i.score_card}');
+    }
 
     DataGridController dataGridController = DataGridController();
     DataGridController dataGridController1 = DataGridController();
     return Column(
       children: [
-        for (var i in teamnames)
+        for (var i in short_teamnames)
           Column(
             children: [
-              teamnames.indexOf(i) == 0
+              short_teamnames.indexOf(i) == 0
                   ? TextButton(
                       onPressed: () {
                         setState(() {
@@ -145,16 +151,17 @@ class _widgetbattingState extends State<widgetbatting> {
                 )),
                 child: Row(
                   children: [
-                    teamlogos[teamnames.indexOf(i)] != null
+                    teamlogos[short_teamnames.indexOf(i)] != null
                         ? Image.network(
                             root_logo +
-                                teamlogos[teamnames.indexOf(i)].toString(),
+                                teamlogos[short_teamnames.indexOf(i)]
+                                    .toString(),
                             width: 32,
                             height: 32,
                           )
                         : IconButton(
                             icon: Image.asset('logos/team' +
-                                (teamnames.indexOf(i) + 1).toString() +
+                                (short_teamnames.indexOf(i) + 1).toString() +
                                 '.png'),
                             onPressed: null),
                     GestureDetector(
@@ -171,7 +178,7 @@ class _widgetbattingState extends State<widgetbatting> {
                         child: Padding(
                           padding: const EdgeInsets.all(6.0),
                           child: Text(
-                            '${i}',
+                            '${long_teamnames[short_teamnames.indexOf(i)]}',
                             textAlign: TextAlign.left,
                             style: const TextStyle(
                               fontFamily: 'Cocosharp',
@@ -197,7 +204,7 @@ class _widgetbattingState extends State<widgetbatting> {
                       showCheckboxColumn: true,
                       rowHeight: 35.0,
                       shrinkWrapRows: true,
-                      controller: teamnames.indexOf(i) == 0
+                      controller: short_teamnames.indexOf(i) == 0
                           ? dataGridController
                           : dataGridController1,
                       sortingGestureType: SortingGestureType.tap,

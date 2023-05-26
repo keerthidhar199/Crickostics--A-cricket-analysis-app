@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:datascrap/models/result_class.dart';
@@ -34,15 +36,15 @@ class _team_resultsState extends State<team_results> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-            backgroundColor: Color(0xffFFB72B),
+            backgroundColor: const Color(0xffFFB72B),
             leading: IconButton(
                 color: Colors.black,
-                icon: Icon(Icons.keyboard_arrow_left),
+                icon: const Icon(Icons.keyboard_arrow_left),
                 onPressed: () {
                   Navigator.pop(context);
                 })),
         body: Container(
-          color: Color(0xff2B2B28),
+          color: const Color(0xff2B2B28),
           height: MediaQuery.of(context).size.height,
           child: FutureBuilder<Tuple2<List<String>, List<Result>>>(
             future: getData(), // async work
@@ -50,7 +52,7 @@ class _team_resultsState extends State<team_results> {
                 AsyncSnapshot<Tuple2<List<String>, List<Result>>> snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 default:
@@ -144,7 +146,7 @@ class _team_resultsState extends State<team_results> {
                       Widget bowling = Column(
                         children: [
                           Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -174,7 +176,7 @@ class _team_resultsState extends State<team_results> {
                                       child: Text(
                                         '${thetwoteams[k]}',
                                         textAlign: TextAlign.left,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontFamily: 'Cocosharp',
                                           fontSize: 20.0,
                                           color: Colors.white,
@@ -189,7 +191,7 @@ class _team_resultsState extends State<team_results> {
                           ),
                           SfDataGrid(
                               verticalScrollPhysics:
-                                  NeverScrollableScrollPhysics(),
+                                  const NeverScrollableScrollPhysics(),
                               rowHeight: 35.0,
                               shrinkWrapRows: true,
                               allowSorting: true,
@@ -206,7 +208,7 @@ class _team_resultsState extends State<team_results> {
                                 return GridColumn(
                                     columnName: headings.toLowerCase(),
                                     label: Container(
-                                        padding: EdgeInsets.all(16.0),
+                                        padding: const EdgeInsets.all(16.0),
                                         alignment: Alignment.center,
                                         child: Text(
                                           headings.trim()[0].toUpperCase() +
@@ -227,7 +229,7 @@ class _team_resultsState extends State<team_results> {
                                 children: [
                                   Container(
                                     width: MediaQuery.of(context).size.width,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                         gradient: LinearGradient(
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
@@ -242,7 +244,7 @@ class _team_resultsState extends State<team_results> {
                                         child: Text(
                                           '${headings[i]}',
                                           textAlign: TextAlign.left,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontFamily: 'Cocosharp',
                                             fontSize: 20.0,
                                             color: Colors.white,
@@ -254,7 +256,7 @@ class _team_resultsState extends State<team_results> {
                                   ),
                                   SfDataGrid(
                                     verticalScrollPhysics:
-                                        NeverScrollableScrollPhysics(),
+                                        const NeverScrollableScrollPhysics(),
                                     rowHeight: 35.0,
                                     shrinkWrapRows: true,
                                     allowSorting: true,
@@ -266,21 +268,24 @@ class _team_resultsState extends State<team_results> {
                                       GridColumn(
                                           columnName: 'ground',
                                           label: Container(
-                                              padding: EdgeInsets.all(16.0),
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
                                               alignment: Alignment.center,
-                                              child: Text('Ground'))),
+                                              child: const Text('Ground'))),
                                       GridColumn(
                                           columnName: 'matches_won',
                                           label: Container(
-                                              padding: EdgeInsets.all(16.0),
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
                                               alignment: Alignment.center,
                                               child: Text(coltitles[i]))),
                                       GridColumn(
                                           columnName: 'opposition',
                                           label: Container(
-                                              padding: EdgeInsets.all(16.0),
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
                                               alignment: Alignment.center,
-                                              child: Text('Opposition'))),
+                                              child: const Text('Opposition'))),
                                     ],
                                   )
                                 ],
@@ -294,7 +299,7 @@ class _team_resultsState extends State<team_results> {
                         child: Card(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
-                              side: BorderSide(
+                              side: const BorderSide(
                                 color: Colors.black,
                                 width: 2.0,
                               )),
@@ -306,7 +311,7 @@ class _team_resultsState extends State<team_results> {
                             child: Column(
                               children: [
                                 Container(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                       gradient: LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
@@ -321,8 +326,8 @@ class _team_resultsState extends State<team_results> {
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.4,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(10.0),
                                           child: Text(
                                             'Team History ',
                                             textAlign: TextAlign.left,
@@ -383,27 +388,19 @@ class _team_resultsState extends State<team_results> {
     List<List<String>> teams_results = [];
     List<String> team_results_headings = [];
     // return Tuple2(teams_batting_headings, batting_playersdata1);
-    var root = 'https://stats.espncricinfo.com';
-    var edit_name = globals.team1_stats_link.split(';');
-    var webpage =
-        (root + edit_name[0].toString() + ';' + edit_name[2]).toString();
-    print('webpage $webpage');
-    var response = await http.Client().get(Uri.parse(webpage));
-    dom.Document document = parser.parse(response.body);
-    var league_page = document.getElementsByClassName("RecordLinks").where(
-        (element) => element.attributes['href'].contains('match_results'));
-    print('league_page $league_page');
-    if (league_page.length != 0) {
-      print('lqeu');
-      print('league1 ${league_page.first.attributes["href"]}');
-      var team_result_info = await http.Client()
-          .get(Uri.parse(root + league_page.first.attributes["href"]));
-      var value3 =
-          await teams_results_info(team_result_info, globals.team1_name);
 
-      teams_results = value3.item2;
-      team_results_headings = value3.item1;
-    }
+    // var league_page = document.getElementsByClassName("RecordLinks").where(
+    //     (element) => element.attributes['href'].contains('match_results'));
+    // print('league_page $league_page');
+    // if (league_page.length != 0) {
+    //   print('lqeu');
+    //   print('league1 ${league_page.first.attributes["href"]}');
+    //   var team_result_info = await http.Client()
+    //       .get(Uri.parse(root + league_page.first.attributes["href"]));
+    var value3 = await teams_results_info();
+
+    teams_results = value3.item2;
+    team_results_headings = value3.item1;
 
     List<Result> team_results = [];
     print('teams_results $teams_results');
@@ -445,7 +442,7 @@ class _team_resultsState extends State<team_results> {
     }
     Tuple2<List<String>, List<Result>> hun =
         Tuple2(team_results_headings, team_results); //bowling data overall
-    print(hun);
+    print('hun $hun');
 
     return hun; //((batting_headers_table,batting_players),(bowling_headers_table,bowling_players))
   }
