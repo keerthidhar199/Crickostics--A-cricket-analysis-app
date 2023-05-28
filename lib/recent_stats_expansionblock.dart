@@ -109,8 +109,8 @@ class _expansionTileState extends State<expansionTile> {
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.white54),
-                                borderRadius: new BorderRadius.all(
-                                    new Radius.circular(10.0)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
@@ -420,7 +420,8 @@ class _expansionTileState extends State<expansionTile> {
                                                 ],
                                               ),
                                               e['winsloss'][0]
-                                                  .split(',')
+                                                  .toString()
+                                                  .characters
                                                   .map((character) {
                                                 return Padding(
                                                   padding:
@@ -434,8 +435,7 @@ class _expansionTileState extends State<expansionTile> {
                                                         color: Colors.black,
                                                       ),
                                                     ),
-                                                    decoration:
-                                                        new BoxDecoration(
+                                                    decoration: BoxDecoration(
                                                       shape: BoxShape.circle,
                                                       color: character == 'W'
                                                           ? Colors.green
@@ -443,8 +443,7 @@ class _expansionTileState extends State<expansionTile> {
                                                               ? Colors.red
                                                               : Colors.grey,
                                                     ),
-                                                    padding:
-                                                        new EdgeInsets.all(10),
+                                                    padding: EdgeInsets.all(10),
                                                   ),
                                                 );
                                               }).toList()[i]

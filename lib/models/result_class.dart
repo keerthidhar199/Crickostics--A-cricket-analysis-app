@@ -172,7 +172,7 @@ teams_results_info() async {
   dom.Document document = parser.parse(response.body);
   var teamresultsdata =
       json.decode(document.getElementById('__NEXT_DATA__').text)['props']
-          ['appPageProps']['data']['content']['tables'];
+          ['appPageProps']['data']['data']['content']['tables'];
   List<String> headers = [];
   for (var i in teamresultsdata[0]['headers']) {
     headers.add(i['label']);

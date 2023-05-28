@@ -51,160 +51,200 @@ class _recentmatchdataState extends State<recentmatchdata> {
 
   Future<List<Map<String, List<dynamic>>>> getrecentstats() async {
     List<Map<String, List<dynamic>>> bothteams = [];
-    Map<String, List<dynamic>> team1 = {};
     Map<String, List<dynamic>> team2 = {};
     dom.Document link2doc;
-    var link2address = globals.ontap;
+    var link2address = globals.league_page_address;
+    var team1names = [globals.team1_name, globals.team2_name];
     // var link2address =
     //     'https://www.espncricinfo.com/series/england-in-bangladesh-2022-23-1351394/bangladesh-vs-england-2nd-odi-1351398/match-preview';
-    if (link2address.toString().split('/').last != 'live-cricket-score') {
-      link2address.toString().replaceAll(
-          link2address.toString().split('/').last, 'live-cricket-score');
-      var forlink2 = await http.Client().get(Uri.parse(link2address));
-      print('object $link2address');
 
-      link2doc = parser.parse(forlink2.body);
-    } else {
-      print('object $link2address');
+    link2address.toString().replaceAll(
+        link2address.toString().split('/').last, 'points-table-standings');
+    var forlink2 = await http.Client().get(Uri.parse(link2address));
+    print('object $link2address');
+    link2doc = parser.parse(forlink2.body);
+    for (var i in team1names) {
+      Map<String, List<dynamic>> team1 = {};
 
-      var forlink2 = await http.Client().get(Uri.parse(link2address));
+      var team1past = link2doc
+          .querySelector('table')
+          .getElementsByTagName('tbody>tr')
+          .where((element) => element.text.contains(i));
+      int team1index = link2doc
+          .querySelector('table')
+          .getElementsByTagName('tbody>tr')
+          .indexWhere((element) => element.text.contains(i));
+      var team1pastname = (team1past.first.children.where((element) =>
+          ((element.text.contains('W')) || (element.text.contains('L')))));
+      team1['Name'] = [i];
+      team1['winsloss'] = [team1pastname.first.text];
+      team1['matches_details'] = team1past.first.parent
+          .querySelectorAll(
+              'div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium')
+          .toList()
+          .sublist(0, 5)
+          .map((e) => e.text)
+          .toList();
+      team1['match_winner'] = team1past.first.parent
+          .querySelectorAll(
+              'div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-typo-mid3.ds-text-left')
+          .toList()
+          .sublist(0, 5)
+          .map((e) => e.text)
+          .toList();
+      team1['scoreboard_for_matches_links'] = team1past
+          .first.parent.children[team1index + 1]
+          .getElementsByTagName('a')
+          .map((e) => e.attributes['href'])
+          .toList()
+          .sublist(0, 5);
 
-      link2doc = parser.parse(forlink2.body);
+      team1['listofallrecentplayers'] = await gettingplayers().getplayersinForm(
+          team1['scoreboard_for_matches_links'], team1['Name'], i);
+
+      //   team1['listofallrecentplayers'] = await gettingplayers()
+      //       .getplayersinForm(
+      //           matches_played_links1, team1_recentname, globals.team1_name);
+
+      bothteams.add(team1);
     }
+    print('team1pastname ${bothteams}');
+
+    link2doc = parser.parse(forlink2.body);
 
     // print('link11 ${link_correction}');
 
-    if (link2doc
-        .getElementsByClassName(
-            'ds-flex ds-px-4 ds-border-b ds-border-line ds-py-3')
-        .toList()
-        .isNotEmpty) {
-      var recent_perform =
-          link2doc.getElementsByClassName('ds-p-0')[1].querySelector('table');
+    // if (link2doc
+    //     .getElementsByClassName(
+    //         'ds-flex ds-px-4 ds-border-b ds-border-line ds-py-3')
+    //     .toList()
+    //     .isNotEmpty) {
+    //   var recent_perform =
+    //       link2doc.getElementsByClassName('ds-p-0')[1].querySelector('table');
 
-      // recent_perform.querySelectorAll('tbody')[1].clone(true);
+    //   // recent_perform.querySelectorAll('tbody')[1].clone(true);
 
-      var team1_recent = recent_perform.querySelectorAll('tbody>tr')[0];
-      var team1_recentname = team1_recent
-          .querySelector(
-              'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
-          .text;
-      print('team1_recentname $team1_recentname');  
+    //   var team1_recent = recent_perform.querySelectorAll('tbody>tr')[0];
+    //   var team1_recentname = team1_recent
+    //       .querySelector(
+    //           'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
+    //       .text;
+    //   print('team1_recentname $team1_recentname');
 
-      print('asa11 ${team1_recentname}');
-      var team1_recentform = team1_recent.querySelectorAll(
-          'td>div > div.ReactCollapse--collapse > div > div > a');
-      var winsloss1 = team1_recent
-          .querySelector(
-              'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
-          .children;
+    //   print('asa11 ${team1_recentname}');
+    //   var team1_recentform = team1_recent.querySelectorAll(
+    //       'td>div > div.ReactCollapse--collapse > div > div > a');
+    //   var winsloss1 = team1_recent
+    //       .querySelector(
+    //           'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
+    //       .children;
 
-      List team1_winsloss = [];
-      String d = '';
-      for (var i = 0; i < winsloss1.length; i++) {
-        team1_winsloss.add(winsloss1[i].text.trim());
-      }
-      var team2_recent = recent_perform.querySelectorAll('tbody>tr')[1];
-      var team2_recentname = team2_recent
-          .querySelector(
-              'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
-          .text;
-      print('asa12 ${team2_recentname}');
+    //   List team1_winsloss = [];
+    //   String d = '';
+    //   for (var i = 0; i < winsloss1.length; i++) {
+    //     team1_winsloss.add(winsloss1[i].text.trim());
+    //   }
+    //   var team2_recent = recent_perform.querySelectorAll('tbody>tr')[1];
+    //   var team2_recentname = team2_recent
+    //       .querySelector(
+    //           'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
+    //       .text;
+    //   print('asa12 ${team2_recentname}');
 
-      var team2_recentform = team2_recent.querySelectorAll(
-          'td>div > div.ReactCollapse--collapse > div > div > a');
-      var winsloss2 = team2_recent
-          .querySelector(
-              'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
-          .children;
+    //   var team2_recentform = team2_recent.querySelectorAll(
+    //       'td>div > div.ReactCollapse--collapse > div > div > a');
+    //   var winsloss2 = team2_recent
+    //       .querySelector(
+    //           'td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
+    //       .children;
 
-      print('winlloss $winsloss1 $winsloss2');
-      List team2_winsloss = [];
-      for (var i = 0; i < winsloss2.length; i++) {
-        team2_winsloss.add(winsloss2[i].text.trim());
-      }
-      if (team1_recentname != null && team2_recentname != null) {
-        List<String> matches_played_details1 = [];
-        List<String> matches_played_links1 = [];
-        List<String> match_winner1 = [];
-        List<String> matches_played_details2 = [];
-        List<String> matches_played_links2 = [];
-        List<String> match_winner2 = [];
-        print('nuiv ${globals.team1_name} ${globals.team2_name}');
-        team1['Name'] = [team1_recentname];
-        team1['winsloss'] = [
-          team1_winsloss
-              .toString()
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .replaceAll(' ', '')
-        ];
-        team2['Name'] = [team2_recentname];
-        team2['winsloss'] = [
-          team2_winsloss
-              .toString()
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .replaceAll(' ', '')
-        ];
+    //   print('winlloss $winsloss1 $winsloss2');
+    //   List team2_winsloss = [];
+    //   for (var i = 0; i < winsloss2.length; i++) {
+    //     team2_winsloss.add(winsloss2[i].text.trim());
+    //   }
+    //   if (team1_recentname != null && team2_recentname != null) {
+    //     List<String> matches_played_details1 = [];
+    //     List<String> matches_played_links1 = [];
+    //     List<String> match_winner1 = [];
+    //     List<String> matches_played_details2 = [];
+    //     List<String> matches_played_links2 = [];
+    //     List<String> match_winner2 = [];
+    //     print('nuiv ${globals.team1_name} ${globals.team2_name}');
+    //     team1['Name'] = [team1_recentname];
+    //     team1['winsloss'] = [
+    //       team1_winsloss
+    //           .toString()
+    //           .replaceAll('[', '')
+    //           .replaceAll(']', '')
+    //           .replaceAll(' ', '')
+    //     ];
+    //     team2['Name'] = [team2_recentname];
+    //     team2['winsloss'] = [
+    //       team2_winsloss
+    //           .toString()
+    //           .replaceAll('[', '')
+    //           .replaceAll(']', '')
+    //           .replaceAll(' ', '')
+    //     ];
 
-        for (int i = 0; i < team1_recentform.length; i++) {
-          var justanothevar = team1_recentform[i].querySelector(
-              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
-          var justanothevar1 = team1_recentform[i].querySelector(
-              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-typo-mid3.ds-text-left");
+    //     for (int i = 0; i < team1_recentform.length; i++) {
+    //       var justanothevar = team1_recentform[i].querySelector(
+    //           "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
+    //       var justanothevar1 = team1_recentform[i].querySelector(
+    //           "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-typo-mid3.ds-text-left");
 
-          matches_played_details1.add(justanothevar.text.split(',').last +
-              ', ' +
-              justanothevar.text
-                  .replaceAll((justanothevar.text.split(',').last), ''));
+    //       matches_played_details1.add(justanothevar.text.split(',').last +
+    //           ', ' +
+    //           justanothevar.text
+    //               .replaceAll((justanothevar.text.split(',').last), ''));
 
-          match_winner1.add(justanothevar1.text);
+    //       match_winner1.add(justanothevar1.text);
 
-          matches_played_links1.add(team1_recentform[i].attributes['href']);
-        }
-        team1['matches_details'] = matches_played_details1;
-        team1['scoreboard_for_matches_links'] = matches_played_links1;
+    //       matches_played_links1.add(team1_recentform[i].attributes['href']);
+    //     }
+    //     team1['matches_details'] = matches_played_details1;
+    //     team1['scoreboard_for_matches_links'] = matches_played_links1;
 
-        team1['listofallrecentplayers'] = await gettingplayers()
-            .getplayersinForm(
-                matches_played_links1, team1_recentname, globals.team1_name);
+    //     team1['listofallrecentplayers'] = await gettingplayers()
+    //         .getplayersinForm(
+    //             matches_played_links1, team1_recentname, globals.team1_name);
 
-        team1['match_winner'] = match_winner1;
+    //     team1['match_winner'] = match_winner1;
 
-        for (int i = 0; i < team2_recentform.length; i++) {
-          var justanothevar = team2_recentform[i].querySelector(
-              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
-          var justanothevar1 = team2_recentform[i]
-              .getElementsByClassName(
-                  'ds-text-compact-xs ds-text-typo-mid3 ds-text-left')[0]
-              .text;
-          print('justanothevar1 $justanothevar1');
-          matches_played_details2.add(justanothevar.text.split(',').last +
-              ', ' +
-              justanothevar.text
-                  .replaceAll((justanothevar.text.split(',').last), ''));
+    //     for (int i = 0; i < team2_recentform.length; i++) {
+    //       var justanothevar = team2_recentform[i].querySelector(
+    //           "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
+    //       var justanothevar1 = team2_recentform[i]
+    //           .getElementsByClassName(
+    //               'ds-text-compact-xs ds-text-typo-mid3 ds-text-left')[0]
+    //           .text;
+    //       print('justanothevar1 $justanothevar1');
+    //       matches_played_details2.add(justanothevar.text.split(',').last +
+    //           ', ' +
+    //           justanothevar.text
+    //               .replaceAll((justanothevar.text.split(',').last), ''));
 
-          match_winner2.add(justanothevar1);
-          matches_played_links2.add(team2_recentform[i].attributes['href']);
-        }
-        team2['matches_details'] = matches_played_details2;
-        team2['scoreboard_for_matches_links'] = matches_played_links2;
+    //       match_winner2.add(justanothevar1);
+    //       matches_played_links2.add(team2_recentform[i].attributes['href']);
+    //     }
+    //     team2['matches_details'] = matches_played_details2;
+    //     team2['scoreboard_for_matches_links'] = matches_played_links2;
 
-        team2['listofallrecentplayers'] = await gettingplayers()
-            .getplayersinForm(
-                matches_played_links2, team2_recentname, globals.team2_name);
+    //     team2['listofallrecentplayers'] = await gettingplayers()
+    //         .getplayersinForm(
+    //             matches_played_links2, team2_recentname, globals.team2_name);
 
-        team2['match_winner'] = match_winner2;
-      }
-    }
+    //     team2['match_winner'] = match_winner2;
+    //   }
+    // }
 
-    print('asa11tap ${globals.ontap}');
-    bothteams.add(team1);
-    bothteams.add(team2);
-    print(
-        'asa11 ${team1['listofallrecentplayers'][0]['Match1']} ${team1['listofallrecentplayers'][0]['Match1'].runtimeType} '); //teamname
-    print('asa11 ${team2}'); //LWLLL
+    // print('asa11tap ${globals.ontap}');
+    // bothteams.add(team1);
+    // bothteams.add(team2);
+    // print(
+    //     'asa11 ${team1['listofallrecentplayers'][0]['Match1']} ${team1['listofallrecentplayers'][0]['Match1'].runtimeType} '); //teamname
+    // print('asa11 ${team2}'); //LWLLL
     return bothteams;
   }
 

@@ -267,6 +267,10 @@ class _team_resultsState extends State<team_results> {
                                     columns: [
                                       GridColumn(
                                           columnName: 'ground',
+                                          width: (MediaQuery.of(context)
+                                                  .size
+                                                  .width) /
+                                              3,
                                           label: Container(
                                               padding:
                                                   const EdgeInsets.all(16.0),
@@ -274,12 +278,20 @@ class _team_resultsState extends State<team_results> {
                                               child: const Text('Ground'))),
                                       GridColumn(
                                           columnName: 'matches_won',
+                                          width: (MediaQuery.of(context)
+                                                  .size
+                                                  .width) /
+                                              3,
                                           label: Container(
                                               padding:
                                                   const EdgeInsets.all(16.0),
                                               alignment: Alignment.center,
                                               child: Text(coltitles[i]))),
                                       GridColumn(
+                                          width: (MediaQuery.of(context)
+                                                  .size
+                                                  .width) /
+                                              3,
                                           columnName: 'opposition',
                                           label: Container(
                                               padding:

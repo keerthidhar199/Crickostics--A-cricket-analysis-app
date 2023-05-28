@@ -211,17 +211,6 @@ class _widgetbowlingState extends State<widgetbowling> {
                               .toList()),
                       columnWidthMode: ColumnWidthMode.auto,
                       selectionMode: SelectionMode.multiple,
-                      onCellTap: (details) {
-                        print(bowlingDataSource(
-                                bowlingData: snapshot.item2.item2
-                                    .where((element) =>
-                                        element.team == i &&
-                                        element.ground == globals.ground)
-                                    .toList())
-                            .rows[details.rowColumnIndex.rowIndex - 1]
-                            .getCells()[9]
-                            .value);
-                      },
                       columns: snapshot.item2.item1.map((headings) {
                         return GridColumn(
                             columnName: headings.toLowerCase(),
