@@ -74,7 +74,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           ))),
                       child: const Text('+Add to Fantasy',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           ))),
                       child: const Text('+Add to Fantasy',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -159,7 +159,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                             i,
                             textAlign: TextAlign.left,
                             style: const TextStyle(
-                              fontFamily: 'Montserrat-Black',
+                              fontFamily: 'Cocosharp',
                               fontSize: 20.0,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -205,7 +205,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                                 child: Text(
                                   globals.capitalize(headings),
                                   style: const TextStyle(
-                                      fontFamily: 'Montserrat-Black'),
+                                      fontFamily: 'Cocosharp'),
                                 )));
                       }).toList()),
               const SizedBox(

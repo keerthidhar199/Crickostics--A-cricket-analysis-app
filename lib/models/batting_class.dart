@@ -84,7 +84,7 @@ class BattingDataSource extends DataGridSource {
         child: Text(
           e.value.toString(),
           style: const TextStyle(
-              color: Colors.black87, fontFamily: 'Montserrat-Black'),
+              color: Colors.black87, fontFamily: 'Cocosharp'),
         ),
       );
     }).toList());

@@ -47,7 +47,7 @@ class pointsTableUI extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 20,
                           color: Colors.white,
-                          fontFamily: 'Montserrat-Black',
+                          fontFamily: 'Cocosharp',
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -78,7 +78,7 @@ class pointsTableUI extends StatelessWidget {
                                     letterSpacing: 0.5,
                                     fontSize: 15,
                                     color: Colors.white,
-                                    fontFamily: 'Montserrat-Black',
+                                    fontFamily: 'Cocosharp',
                                   ),
                                 ),
                               ),

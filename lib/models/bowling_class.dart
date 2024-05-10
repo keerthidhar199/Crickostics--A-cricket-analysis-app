@@ -77,7 +77,7 @@ class bowlingDataSource extends DataGridSource {
         padding: const EdgeInsets.all(8.0),
         child: Text(
           e.value.toString(),
-          style: const TextStyle(fontFamily: 'Montserrat-Black'),
+          style: const TextStyle(fontFamily: 'Cocosharp'),
         ),
       );
     }).toList());

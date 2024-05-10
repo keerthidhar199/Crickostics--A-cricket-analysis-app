@@ -24,7 +24,7 @@ class FantasyAnalysis extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Fantasy Analysis',
             style: TextStyle(
-              fontFamily: 'Montserrat-Black',
+              fontFamily: 'Cocosharp',
               fontSize: 20.0,
               color: Colors.black,
             )),

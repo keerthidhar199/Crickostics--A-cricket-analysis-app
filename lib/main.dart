@@ -135,7 +135,7 @@ class _HomepageState extends State<Homepage> {
           title: const Text(
             'Playing Leagues',
             style: TextStyle(
-                fontFamily: 'Montserrat-Black', color: Colors.black87),
+                fontFamily: 'Cocosharp', color: Colors.black87),
           ),
           actions: [
             TextButton(
@@ -156,7 +156,7 @@ class _HomepageState extends State<Homepage> {
                     const Text(
                       'Your Fantasy',
                       style: TextStyle(
-                          fontFamily: 'Montserrat-Black', color: Colors.white),
+                          fontFamily: 'Cocosharp', color: Colors.white),
                     ),
                     const SizedBox(
                       width: 5,
@@ -213,7 +213,7 @@ class _HomepageState extends State<Homepage> {
                                         children: [
                                           const Text('  Oh My CrickOh! ',
                                               style: TextStyle(
-                                                fontFamily: 'Montserrat-Black',
+                                                fontFamily: 'Cocosharp',
                                                 fontSize: 20.0,
                                                 color: Colors.white,
                                               )),
@@ -232,7 +232,7 @@ class _HomepageState extends State<Homepage> {
                                                     'No Scheduled matches as of now. Matches appear before 10-12hr of the match start time.',
                                                     style: TextStyle(
                                                       fontFamily:
-                                                          'Montserrat-Black',
+                                                          'Cocosharp',
                                                       fontSize: 17.0,
                                                       color: Colors.white,
                                                     )),
@@ -254,7 +254,7 @@ class _HomepageState extends State<Homepage> {
                                               'Choose your league',
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
-                                                fontFamily: 'Montserrat-Black',
+                                                fontFamily: 'Cocosharp',
                                                 fontSize: 20.0,
                                                 color: Colors.white,
                                               ),
@@ -312,7 +312,7 @@ class _HomepageState extends State<Homepage> {
                                                               TextAlign.left,
                                                           style: TextStyle(
                                                             fontFamily:
-                                                                'Montserrat-Black',
+                                                                'Cocosharp',
                                                             fontSize: 15.0,
                                                             color: Colors
                                                                 .grey.shade700,
@@ -419,7 +419,7 @@ class _HomepageState extends State<Homepage> {
                                                                           style:
                                                                               const TextStyle(
                                                                             fontFamily:
-                                                                                'Montserrat-Black',
+                                                                                'Cocosharp',
                                                                             fontSize:
                                                                                 20.0,
                                                                             color:

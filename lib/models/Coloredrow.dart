@@ -24,7 +24,7 @@ class ColoredRow extends StatelessWidget {
                 char,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontFamily: 'Montserrat-Black',
+                  fontFamily: 'Cocosharp',
                 ),
               ),
             ),
@@ -44,7 +44,7 @@ class ColoredRow extends StatelessWidget {
                 char,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontFamily: 'Montserrat-Black',
+                  fontFamily: 'Cocosharp',
                 ),
               ),
             ),
@@ -63,7 +63,7 @@ class ColoredRow extends StatelessWidget {
                 'NR',
                 style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'Montserrat-Black',
+                  fontFamily: 'Cocosharp',
                 ),
               ),
             ),

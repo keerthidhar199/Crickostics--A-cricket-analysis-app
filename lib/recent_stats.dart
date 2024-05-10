@@ -150,7 +150,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
         title: const Text(
           'Recent stats',
           style:
-              TextStyle(fontFamily: 'Montserrat-Black', color: Colors.black87),
+              TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
         ),
         leading: IconButton(
             color: Colors.black,
@@ -210,7 +210,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                       children: [
                         const Text('  Oh My CrickOh! ',
                             style: TextStyle(
-                              fontFamily: 'Montserrat-Black',
+                              fontFamily: 'Cocosharp',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
@@ -219,7 +219,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                         ),
                         const Text('Stats not available.',
                             style: TextStyle(
-                              fontFamily: 'Montserrat-Black',
+                              fontFamily: 'Cocosharp',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
@@ -237,7 +237,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                               child: Text(
                                   'The league might have started recently due to which enough data is not found.',
                                   style: TextStyle(
-                                    fontFamily: 'Montserrat-Black',
+                                    fontFamily: 'Cocosharp',
                                     fontSize: 15.0,
                                     color: Colors.white,
                                   )),
@@ -307,7 +307,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                               textAlign: TextAlign.left,
                                               style: const TextStyle(
                                                 fontSize: 20.0,
-                                                fontFamily: 'Montserrat-Black',
+                                                fontFamily: 'Cocosharp',
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -342,7 +342,7 @@ class _recentmatchdataState extends State<recentmatchdata> {
                                                       character,
                                                       style: const TextStyle(
                                                         fontFamily:
-                                                            'Montserrat-Black',
+                                                            'Cocosharp',
                                                         fontSize: 20.0,
                                                         color: Colors.black,
                                                       ),

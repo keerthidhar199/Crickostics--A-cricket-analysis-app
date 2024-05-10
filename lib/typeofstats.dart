@@ -24,7 +24,7 @@ class _typeofstatsState extends State<typeofstats> {
           title: const Text(
             'Type of Stats',
             style: TextStyle(
-                fontFamily: 'Montserrat-Black', color: Colors.black87),
+                fontFamily: 'Cocosharp', color: Colors.black87),
           ),
           leading: IconButton(
               color: Colors.black,
@@ -61,7 +61,7 @@ class _typeofstatsState extends State<typeofstats> {
                         title: Text(
                           'Stats by Pitch',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15.0,
                             color: Colors.white,
                           ),
@@ -69,7 +69,7 @@ class _typeofstatsState extends State<typeofstats> {
                         subtitle: Text(
                           '\nGives you an analysis of matches based on the venue played.',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15.0,
                             color: Colors.grey,
                           ),
@@ -130,7 +130,7 @@ class _typeofstatsState extends State<typeofstats> {
                         title: Text(
                           'Stats by Recent matches',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15.0,
                             color: Colors.white,
                           ),
@@ -138,7 +138,7 @@ class _typeofstatsState extends State<typeofstats> {
                         subtitle: Text(
                           '\nGives you an analysis of report based upon the last five matches played by the each team.',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15.0,
                             color: Colors.grey,
                           ),
@@ -171,7 +171,7 @@ class _typeofstatsState extends State<typeofstats> {
                               style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
-                                  fontFamily: 'Montserrat-Black'),
+                                  fontFamily: 'Cocosharp'),
                             ),
                           ));
                         } else {

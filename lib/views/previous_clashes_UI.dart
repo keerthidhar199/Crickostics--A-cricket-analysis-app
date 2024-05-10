@@ -71,7 +71,7 @@ class _pastmatchesState extends State<pastmatches> {
                       'Batting',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        fontFamily: 'Montserrat-Black',
+                        fontFamily: 'Cocosharp',
                         fontSize: 20.0,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -110,7 +110,7 @@ class _pastmatchesState extends State<pastmatches> {
                           ))),
                       child: const Text('+Add to Fantasy',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -191,7 +191,7 @@ class _pastmatchesState extends State<pastmatches> {
                       'Bowling',
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                        fontFamily: 'Montserrat-Black',
+                        fontFamily: 'Cocosharp',
                         fontSize: 20.0,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -231,7 +231,7 @@ class _pastmatchesState extends State<pastmatches> {
                           ))),
                       child: const Text('+Add to Fantasy',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -310,7 +310,7 @@ class _pastmatchesState extends State<pastmatches> {
           //             'Partnerships',
           //             textAlign: TextAlign.left,
           //             style: TextStyle(
-          //               fontFamily: 'Montserrat-Black',
+          //               fontFamily: 'Cocosharp',
           //               fontSize: 20.0,
           //               color: Colors.white,
           //               fontWeight: FontWeight.bold,
@@ -354,7 +354,7 @@ class _pastmatchesState extends State<pastmatches> {
           //                 ))),
           //             child: const Text('+Add to Fantasy',
           //                 style: TextStyle(
-          //                   fontFamily: 'Montserrat-Black',
+          //                   fontFamily: 'Cocosharp',
           //                   fontSize: 15,
           //                   color: Colors.white,
           //                   fontWeight: FontWeight.bold,
@@ -443,7 +443,7 @@ class _previous_clashes_headerState extends State<previous_clashes_header> {
                 const Text(
                   'Previous',
                   style: TextStyle(
-                    fontFamily: 'Montserrat-Black',
+                    fontFamily: 'Cocosharp',
                     fontSize: 20.0,
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -470,7 +470,7 @@ class _previous_clashes_headerState extends State<previous_clashes_header> {
                 ),
                 const Text('VS',
                     style: TextStyle(
-                      fontFamily: 'Montserrat-Black',
+                      fontFamily: 'Cocosharp',
                       fontSize: 20.0,
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
@@ -482,7 +482,7 @@ class _previous_clashes_headerState extends State<previous_clashes_header> {
                 const Text(
                   'Clashes',
                   style: TextStyle(
-                    fontFamily: 'Montserrat-Black',
+                    fontFamily: 'Cocosharp',
                     fontSize: 20.0,
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

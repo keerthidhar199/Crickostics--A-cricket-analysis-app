@@ -381,6 +381,8 @@ class _expansionTileState extends State<expansionTile> {
                                                           fontSize: 12,
                                                           fontFamily: 'Litsans',
                                                           color: Colors.teal,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                           fontStyle:
                                                               FontStyle.italic),
                                                     ),

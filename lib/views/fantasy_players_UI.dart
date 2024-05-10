@@ -131,7 +131,7 @@ class _fantasyteamState extends State<fantasyteam> {
           appBar: AppBar(
             title: const Text('Fantasy',
                 style: TextStyle(
-                  fontFamily: 'Montserrat-Black',
+                  fontFamily: 'Cocosharp',
                   fontSize: 20.0,
                   color: Colors.black,
                 )),
@@ -150,7 +150,7 @@ class _fantasyteamState extends State<fantasyteam> {
               children: [
                 const Text('  Oh My CrickOh! ',
                     style: TextStyle(
-                      fontFamily: 'Montserrat-Black',
+                      fontFamily: 'Cocosharp',
                       fontSize: 20.0,
                       color: Colors.white,
                     )),
@@ -159,7 +159,7 @@ class _fantasyteamState extends State<fantasyteam> {
                 ),
                 const Text('No Fantasy players added !',
                     style: TextStyle(
-                      fontFamily: 'Montserrat-Black',
+                      fontFamily: 'Cocosharp',
                       fontSize: 20.0,
                       color: Colors.white,
                     )),
@@ -177,7 +177,7 @@ class _fantasyteamState extends State<fantasyteam> {
                       child: Text(
                           'Select your players and click on +Add to fantasy to add players in the Fantasy Lot.',
                           style: TextStyle(
-                            fontFamily: 'Montserrat-Black',
+                            fontFamily: 'Cocosharp',
                             fontSize: 15.0,
                             color: Colors.white,
                           )),
@@ -206,7 +206,7 @@ class _fantasyteamState extends State<fantasyteam> {
           appBar: AppBar(
             title: const Text('Fantasy',
                 style: TextStyle(
-                  fontFamily: 'Montserrat-Black',
+                  fontFamily: 'Cocosharp',
                   fontSize: 20.0,
                   color: Colors.black,
                 )),
@@ -326,7 +326,7 @@ class _fantasyteamState extends State<fantasyteam> {
                                 child: Text(
                                   vs,
                                   style: const TextStyle(
-                                      fontFamily: 'Montserrat-Black',
+                                      fontFamily: 'Cocosharp',
                                       fontSize: 20,
                                       color: Colors.white),
                                 ),

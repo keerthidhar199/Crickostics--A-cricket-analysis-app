@@ -168,7 +168,7 @@ class _team_resultsState extends State<team_results> {
                                         thetwoteams[k],
                                         textAlign: TextAlign.left,
                                         style: const TextStyle(
-                                          fontFamily: 'Montserrat-Black',
+                                          fontFamily: 'Cocosharp',
                                           fontSize: 20.0,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -236,7 +236,7 @@ class _team_resultsState extends State<team_results> {
                                           headings[i],
                                           textAlign: TextAlign.left,
                                           style: const TextStyle(
-                                            fontFamily: 'Montserrat-Black',
+                                            fontFamily: 'Cocosharp',
                                             fontSize: 20.0,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -335,7 +335,7 @@ class _team_resultsState extends State<team_results> {
                                             'Team History ',
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
-                                              fontFamily: 'Montserrat-Black',
+                                              fontFamily: 'Cocosharp',
                                               fontSize: 20.0,
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold,

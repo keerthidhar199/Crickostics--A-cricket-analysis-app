@@ -158,7 +158,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
         title: const Text(
           'Recent stats',
           style:
-              TextStyle(fontFamily: 'Montserrat-Black', color: Colors.black87),
+              TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
         ),
         leading: IconButton(
             color: Colors.black,
@@ -218,7 +218,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                       children: [
                         const Text('  Oh My CrickOh! ',
                             style: TextStyle(
-                              fontFamily: 'Montserrat-Black',
+                              fontFamily: 'Cocosharp',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
@@ -227,7 +227,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                         ),
                         const Text('Stats not available.',
                             style: TextStyle(
-                              fontFamily: 'Montserrat-Black',
+                              fontFamily: 'Cocosharp',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
@@ -245,7 +245,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                               child: Text(
                                   'The league might have started recently due to which enough data is not found.',
                                   style: TextStyle(
-                                    fontFamily: 'Montserrat-Black',
+                                    fontFamily: 'Cocosharp',
                                     fontSize: 15.0,
                                     color: Colors.white,
                                   )),
@@ -314,7 +314,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                               textAlign: TextAlign.left,
                                               style: const TextStyle(
                                                 fontSize: 20.0,
-                                                fontFamily: 'Montserrat-Black',
+                                                fontFamily: 'Cocosharp',
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -350,7 +350,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                                       character,
                                                       style: const TextStyle(
                                                         fontFamily:
-                                                            'Montserrat-Black',
+                                                            'Cocosharp',
                                                         fontSize: 20.0,
                                                         color: Colors.black,
                                                       ),
@@ -378,7 +378,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                               // ),
                               title: Text("More 1details",
                                   style: TextStyle(
-                                    fontFamily: 'Montserrat-Black',
+                                    fontFamily: 'Cocosharp',
                                     color: Colors.yellow.shade300,
                                   )),
                               children: [
@@ -414,7 +414,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                                     style: const TextStyle(
                                                       fontSize: 15.0,
                                                       fontFamily:
-                                                          'Montserrat-Black',
+                                                          'Cocosharp',
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -491,7 +491,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                                   character,
                                                   style: const TextStyle(
                                                     fontFamily:
-                                                        'Montserrat-Black',
+                                                        'Cocosharp',
                                                     fontSize: 20.0,
                                                     color: Colors.black,
                                                   ),

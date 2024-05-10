@@ -92,7 +92,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                             ))),
                         child: const Text('+Add to Fantasy',
                             style: TextStyle(
-                              fontFamily: 'Montserrat-Black',
+                              fontFamily: 'Cocosharp',
                               fontSize: 15,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -127,7 +127,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                             ))),
                         child: const Text('+Add to Fantasy',
                             style: TextStyle(
-                              fontFamily: 'Montserrat-Black',
+                              fontFamily: 'Cocosharp',
                               fontSize: 15,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -175,7 +175,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                               long_teamnames[short_teamnames.indexOf(i)],
                               textAlign: TextAlign.left,
                               style: const TextStyle(
-                                fontFamily: 'Montserrat-Black',
+                                fontFamily: 'Cocosharp',
                                 fontSize: 20.0,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -228,7 +228,7 @@ class _widgetbowlingState extends State<widgetbowling> {
                                             .substring(1)
                                             .toLowerCase(),
                                     style: const TextStyle(
-                                        fontFamily: 'Montserrat-Black'),
+                                        fontFamily: 'Cocosharp'),
                                   )),
                               visible: !hiddenColumns.contains(headings));
                         }).toList()),
