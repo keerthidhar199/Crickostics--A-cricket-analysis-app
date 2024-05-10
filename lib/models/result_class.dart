@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:convert';
 
 import 'package:tuple/tuple.dart';
@@ -39,8 +41,8 @@ class Won {
 
 class HistoryDataSource extends DataGridSource {
   /// Creates the history data source class with required details.
-  HistoryDataSource({List<Won> historyDataSource}) {
-    _historyData = historyDataSource
+  HistoryDataSource({List<Won>? historyDataSource}) {
+    _historyData = historyDataSource!
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<String>(
                   columnName: 'matches_won', value: e.matches_won),
@@ -60,7 +62,7 @@ class HistoryDataSource extends DataGridSource {
   DataGridRowAdapter buildRow(DataGridRow row) {
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((e) {
-      print('naasas' + row.getCells()[0].value.toString());
+      print('naasas${row.getCells()[0].value}');
 
       if (globals.ground == row.getCells()[0].value) {
         return Container(
@@ -86,8 +88,8 @@ class HistoryDataSource extends DataGridSource {
 
 class TeamResultsDataSource extends DataGridSource {
   /// Creates the employee data source class with required details.
-  TeamResultsDataSource({List<Result> teamResultsDataSource}) {
-    _teamResultsDataSource = teamResultsDataSource
+  TeamResultsDataSource({List<Result>? teamResultsDataSource}) {
+    _teamResultsDataSource = teamResultsDataSource!
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<String>(columnName: 'team1', value: e.team1),
               DataGridCell<String>(columnName: 'team2', value: e.team2),
@@ -171,7 +173,7 @@ teams_results_info() async {
   var response = await http.Client().get(Uri.parse(webpage));
   dom.Document document = parser.parse(response.body);
   var teamresultsdata =
-      json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+      json.decode(document.getElementById('__NEXT_DATA__')!.text)['props']
           ['appPageProps']['data']['data']['content']['tables'];
   List<String> headers = [];
   for (var i in teamresultsdata[0]['headers']) {

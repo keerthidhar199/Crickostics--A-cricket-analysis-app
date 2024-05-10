@@ -1,15 +1,12 @@
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:datascrap/models/Coloredrow.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:tuple/tuple.dart';
-import 'package:datascrap/globals.dart' as globals;
 
 /// Custom business object class which contains properties to hold the detailed
 /// information about the employee which will be rendered in datagrid.
@@ -28,8 +25,8 @@ class PointsTable {
 /// is used to map the employee data to the datagrid widget.
 class PointsTableSource extends DataGridSource {
   /// Creates the employee data source class with required details.
-  PointsTableSource({List<PointsTable> pointsData}) {
-    _pointsData = pointsData
+  PointsTableSource({List<PointsTable>? pointsData}) {
+    _pointsData = pointsData!
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<String>(columnName: 'Team', value: e.teamname),
               DataGridCell<int>(columnName: 'Points', value: e.points),
@@ -42,16 +39,16 @@ class PointsTableSource extends DataGridSource {
 
   List<DataGridRow> _pointsData = [];
   Future<String> getlogos(String leaguename) async {
-    String root_logo =
+    String rootLogo =
         'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
     var response = await http.Client()
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
     dom.Document document = parser.parse(response.body);
     List imglogosdata =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+        json.decode(document.getElementById('__NEXT_DATA__')!.text)['props']
             ['editionDetails']['trendingMatches']['matches'];
     List imglogosdata1 =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+        json.decode(document.getElementById('__NEXT_DATA__')!.text)['props']
             ['appPageProps']['data']['content']['matches'];
     List takethisimglogosdata = List.from(imglogosdata)..addAll(imglogosdata1);
     String seriesname = '';
@@ -64,7 +61,7 @@ class PointsTableSource extends DataGridSource {
       }
     }
     //print('imglogosdata12 $seriesname');
-    return root_logo + seriesname;
+    return rootLogo + seriesname;
   }
 
   @override
@@ -82,14 +79,14 @@ class PointsTableSource extends DataGridSource {
             ? ColoredRow(
                 string: e.value,
               )
-            : Container(
+            : SizedBox(
                 width: double.infinity * 0.1,
                 child: Text(
                   e.value.toString(),
                   softWrap: true,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontFamily: 'Litsans',
+                    fontFamily: 'Montserrat-Black',
                   ),
                 ),
               ),
@@ -99,14 +96,14 @@ class PointsTableSource extends DataGridSource {
 }
 
 Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
-    String league_address) async {
+    String leagueAddress) async {
   List<List<String>> allplayers = [];
   List<String> headings = [];
 
   List<PointsTable> pointstableinfo = [];
   List<String> pointstablehead = [];
-  print(league_address);
-  var forlink2 = await http.Client().get(Uri.parse(league_address));
+  print(leagueAddress);
+  var forlink2 = await http.Client().get(Uri.parse(leagueAddress));
   dom.Document document1 = parser.parse(forlink2.body);
   // print(document
   //     .querySelectorAll('table.engineTable>tbody')[1]
@@ -151,7 +148,7 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
   for (var i in allplayers) {
     var a = i[1].trim() == '-' ? 0 : int.parse(i[1]);
     var b = i[2].trim() == '-' ? 0.0 : double.parse(i[2]);
-    var c;
+    String c;
     c = i.contains('-') ? '' : i[3];
     pointstableinfo.add(PointsTable(i[0], a, b, c));
   }
@@ -182,7 +179,7 @@ Future<Tuple2<List<String>, List<PointsTable>>> point_teams_info(
 //                               softWrap: true,
 //                               style: const TextStyle(
 //                                   color: Colors.white,
-//                                   fontFamily: 'Litsans'),
+//                                   fontFamily: 'Montserrat-Black'),
 //                             ),
 //                           )
 //                         ],

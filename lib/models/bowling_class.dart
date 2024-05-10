@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:datascrap/dream11_team%20copy.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 import 'package:html/dom.dart' as dom;
@@ -34,14 +34,15 @@ class Player {
   final String score_card;
 
   final String player_link;
+
 }
 
 /// An object to set the employee collection data source to the datagrid. This
 /// is used to map the employee data to the datagrid widget.
 class bowlingDataSource extends DataGridSource {
   /// Creates the employee data source class with required details.
-  bowlingDataSource({List<Player> bowlingData}) {
-    _bowlingData = bowlingData
+  bowlingDataSource({List<Player>? bowlingData}) {
+    _bowlingData = bowlingData!
         .map<DataGridRow>((e) => DataGridRow(cells: [
               DataGridCell<String>(columnName: 'player', value: e.player),
               DataGridCell<double>(columnName: 'overs', value: e.overs),
@@ -73,23 +74,23 @@ class bowlingDataSource extends DataGridSource {
         cells: row.getCells().map<Widget>((e) {
       return Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Text(
           e.value.toString(),
-          style: const TextStyle(fontFamily: 'Litsans'),
+          style: const TextStyle(fontFamily: 'Montserrat-Black'),
         ),
       );
     }).toList());
   }
 }
 
-bowling_teams_info(var team1_info, String team1_name) async {
+bowling_teams_info(var team1Info, String team1Name) async {
   List<List<String>> allplayers = [];
   List<String> headings = [];
-  List<List<String>> ground_based = [];
+  List<List<String>> groundBased = [];
   List<List<String>> allplayersscript = [];
 
-  dom.Document document1 = parser.parse(team1_info.body);
+  dom.Document document1 = parser.parse(team1Info.body);
   // print(document
   //     .querySelectorAll('table.engineTable>tbody')[1]
   //     .text
@@ -98,7 +99,7 @@ bowling_teams_info(var team1_info, String team1_name) async {
   // var headers1 = document1.querySelectorAll('table>thead>tr')[0];
   // var titles1 = headers1.querySelectorAll('td');
   var bowlingdata =
-      json.decode(document1.getElementById('__NEXT_DATA__').text)['props']
+      json.decode(document1.getElementById('__NEXT_DATA__')!.text)['props']
           ['appPageProps']['data']['data']['content']['tables'];
   // print(document
   //     .querySelectorAll('table.engineTable>tbody')[1]

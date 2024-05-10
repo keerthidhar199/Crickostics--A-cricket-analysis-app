@@ -1,17 +1,13 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:datascrap/skeleton.dart';
-import 'package:datascrap/splashscreen.dart';
-import 'package:datascrap/views/fantasy_players_UI.dart';
-import 'package:datascrap/webscrap.dart';
+import 'package:datascrap/services/rankemblem.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'package:skeletons/skeletons.dart';
 import 'package:datascrap/globals.dart' as globals;
 
 class player_pic extends StatefulWidget {
@@ -22,7 +18,7 @@ class player_pic extends StatefulWidget {
   final topheadtoheadbatters;
   final e;
   const player_pic(
-      {Key key,
+      {Key? key,
       this.categories,
       this.topBatters,
       this.topBowlers,
@@ -88,7 +84,7 @@ class _player_picState extends State<player_pic> {
                         ),
                       ),
                       child: ClipOval(
-                        child: player[4] == null
+                        child: player[4].toString().isEmpty
                             ? const Icon(
                                 Icons.person,
                                 size: 80,
@@ -97,35 +93,34 @@ class _player_picState extends State<player_pic> {
                             : Image.network(
                                 player[4],
                                 width: 100,
-                                loadingBuilder: (BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    return child;
-                                  }
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      value: loadingProgress
-                                                  .expectedTotalBytes !=
-                                              null
-                                          ? loadingProgress
-                                                  .cumulativeBytesLoaded /
-                                              loadingProgress.expectedTotalBytes
-                                          : null,
-                                    ),
-                                  );
-                                },
+                                // loadingBuilder: (BuildContext context,
+                                //     Widget child,
+                                //     ImageChunkEvent? loadingProgress) {
+                                //   return Center(
+                                //     child: CircularProgressIndicator(
+                                //       value:
+                                //           loadingProgress?.expectedTotalBytes !=
+                                //                   null
+                                //               ? loadingProgress!
+                                //                       .cumulativeBytesLoaded /
+                                //                   loadingProgress
+                                //                       .expectedTotalBytes!
+                                //               : null,
+                                //     ),
+                                //   );
+                                // },
                                 errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace stackTrace) {
-                                  return Container(
+                                    Object error, StackTrace? stackTrace) {
+                                  return SizedBox(
                                     width: 100,
                                     height: 100,
-                                    child: const CircularProgressIndicator(
+                                    child: CircularProgressIndicator(
                                       color: Colors.redAccent,
                                     ),
                                   );
                                 },
                               ),
+
                       ),
                     ),
                   ),
@@ -196,11 +191,13 @@ class _player_picState extends State<player_pic> {
                 ],
               ),
             ),
-            Image.asset(
-              'logos/Rank' + (index + 1).toString() + '.png',
-              width: 60,
-              height: 60,
-            ),
+            
+            RankEmblem(rank: index + 1)
+            // Image.asset(
+            //   'logos/Rank${index + 1}.png',
+            //   width: 60,
+            //   height: 60,
+            // ),
           ],
         );
       },
@@ -238,16 +235,16 @@ Future<List<List<String>>> get_players_pics(
     response = await http.Client().get(Uri.parse(root + i));
 
     dom.Document document = parser.parse(response.body);
-    if (json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+    if (json.decode(document.getElementById('__NEXT_DATA__')!.text)['props']
             ['appPageProps']['data']['player']['headshotImage'] !=
         null) {
       imgsdata.add(imgroot +
           json
-              .decode(document.getElementById('__NEXT_DATA__').text)['props']
+              .decode(document.getElementById('__NEXT_DATA__')!.text)['props']
                   ['appPageProps']['data']['player']['headshotImage']['url']
               .toString());
     } else {
-      imgsdata.add(null);
+      imgsdata.add('');
     }
   }
   for (var i in playersinfo) {

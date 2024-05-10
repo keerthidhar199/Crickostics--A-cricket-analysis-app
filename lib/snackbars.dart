@@ -24,7 +24,7 @@
 //           width: 50,
 //           height: 50,
 //         ),
-//         Text("\n Player(s) Selected !!\n", style: globals.smallnobleblack),
+//         Text("\n Player(s) Selected !!\n", style: globals.smallcocosharpblack),
 //       ]),
 //     ),
 //     backgroundColor: Color(0xffFFB72B),

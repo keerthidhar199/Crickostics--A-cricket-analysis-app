@@ -1,4 +1,4 @@
-import 'dart:convert';
+// ignore_for_file: camel_case_types, library_private_types_in_public_api
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -6,22 +6,19 @@ import 'package:datascrap/models/result_class.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:html/dom.dart' as dom;
-import 'package:html/parser.dart' as parser;
 import 'globals.dart' as globals;
 
 class team_results extends StatefulWidget {
   /// Creates the home page.
-  team_results({Key key}) : super(key: key);
+  const team_results({Key? key}) : super(key: key);
 
   @override
   _team_resultsState createState() => _team_resultsState();
 }
 
 class _team_resultsState extends State<team_results> {
-  TeamResultsDataSource teamResultsDataSource;
-  HistoryDataSource historyDataSource;
+  late TeamResultsDataSource teamResultsDataSource;
+  late HistoryDataSource historyDataSource;
   getAbbreviation(String s) {
     var l = s.split(' ');
     String res = '';
@@ -63,11 +60,7 @@ class _team_resultsState extends State<team_results> {
                       globals.team1__short_name,
                       globals.team2__short_name,
                     ];
-                    List<String> thetwoteams_short = [
-                      globals.team1__short_name,
-                      globals.team2__short_name,
-                    ];
-                    String root_logo =
+                    String rootLogo =
                         'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
                     List<String> teamlogos = [
                       globals.team1logo,
@@ -83,11 +76,11 @@ class _team_resultsState extends State<team_results> {
                       // Bombarding the original list into those which are won and lost by the globals.team1 and globals.team2
                       // (which are taken from the homepage card )
                       List<Result> winning =
-                          snapshot.data.item2.where((element) {
+                          snapshot.data!.item2.where((element) {
                         return thetwoteams[k].contains(element.winner);
                       }).toList(); // winning list
                       List<Result> losing =
-                          snapshot.data.item2.where((element) {
+                          snapshot.data!.item2.where((element) {
                         return (thetwoteams[k].contains(element.team1) ||
                                 thetwoteams[k].contains(element.team2)) &&
                             (!thetwoteams[k].contains(element.winner));
@@ -98,27 +91,25 @@ class _team_resultsState extends State<team_results> {
                         String which = (thetwoteams[k].contains(element.team2)
                             ? element.team1
                             : element.team2);
-                        ;
                         if (!won.containsKey(element.ground)) {
                           won[element.ground] = [1];
 
-                          won[element.ground].add(which);
+                          won[element.ground]!.add(which);
                         } else {
-                          won[element.ground][0] += 1;
-                          won[element.ground][1] += ', ' + (which);
+                          won[element.ground]![0] += 1;
+                          won[element.ground]![1] += ', $which';
                         }
                       } // won={Brabourne: [2, Super Kings, Mumbai], DY Patil: [2, Sunrisers, Capitals]}
                       for (var element in losing) {
                         String which = (thetwoteams[k].contains(element.team2)
                             ? element.team1
                             : element.team2);
-                        ;
                         if (!lost.containsKey(element.ground)) {
                           lost[element.ground] = [1];
-                          lost[element.ground].add(which);
+                          lost[element.ground]!.add(which);
                         } else {
-                          lost[element.ground][0] += 1;
-                          lost[element.ground][1] += ', ' + (which);
+                          lost[element.ground]![0] += 1;
+                          lost[element.ground]![1] += ', $which';
                         }
                       } // lost {Wankhede: [2, Titans, Royals]}
 
@@ -159,7 +150,7 @@ class _team_resultsState extends State<team_results> {
                               children: [
                                 IconButton(
                                     icon: CachedNetworkImage(
-                                      imageUrl: root_logo + teamlogos[k],
+                                      imageUrl: rootLogo + teamlogos[k],
                                     ),
                                     onPressed: null),
                                 GestureDetector(
@@ -174,10 +165,10 @@ class _team_resultsState extends State<team_results> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(6.0),
                                       child: Text(
-                                        '${thetwoteams[k]}',
+                                        thetwoteams[k],
                                         textAlign: TextAlign.left,
                                         style: const TextStyle(
-                                          fontFamily: 'Cocosharp',
+                                          fontFamily: 'Montserrat-Black',
                                           fontSize: 20.0,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -197,14 +188,14 @@ class _team_resultsState extends State<team_results> {
                               allowSorting: true,
                               source: TeamResultsDataSource(
                                   teamResultsDataSource:
-                                      snapshot.data.item2.where((element) {
+                                      snapshot.data!.item2.where((element) {
                                 return (thetwoteams[k]
                                         .contains(element.team1) ||
                                     thetwoteams[k].contains(element.team2));
                               }).toList()),
                               columnWidthMode: ColumnWidthMode.auto,
                               selectionMode: SelectionMode.multiple,
-                              columns: snapshot.data.item1.map((headings) {
+                              columns: snapshot.data!.item1.map((headings) {
                                 return GridColumn(
                                     columnName: headings.toLowerCase(),
                                     label: Container(
@@ -242,10 +233,10 @@ class _team_resultsState extends State<team_results> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(6.0),
                                         child: Text(
-                                          '${headings[i]}',
+                                          headings[i],
                                           textAlign: TextAlign.left,
                                           style: const TextStyle(
-                                            fontFamily: 'Cocosharp',
+                                            fontFamily: 'Montserrat-Black',
                                             fontSize: 20.0,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
@@ -306,7 +297,7 @@ class _team_resultsState extends State<team_results> {
                         ),
                       );
                       //table details of the team1
-                      category.add(Container(
+                      category.add(SizedBox(
                         width: MediaQuery.of(context).size.width - 15,
                         child: Card(
                           shape: RoundedRectangleBorder(
@@ -344,7 +335,7 @@ class _team_resultsState extends State<team_results> {
                                             'Team History ',
                                             textAlign: TextAlign.left,
                                             style: TextStyle(
-                                              fontFamily: 'Cocosharp',
+                                              fontFamily: 'Montserrat-Black',
                                               fontSize: 20.0,
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold,
@@ -397,8 +388,8 @@ class _team_resultsState extends State<team_results> {
 
 //Loading the above data to Future function
   Future<Tuple2<List<String>, List<Result>>> getData() async {
-    List<List<String>> teams_results = [];
-    List<String> team_results_headings = [];
+    List<List<String>> teamsResults = [];
+    List<String> teamResultsHeadings = [];
     // return Tuple2(teams_batting_headings, batting_playersdata1);
 
     // var league_page = document.getElementsByClassName("RecordLinks").where(
@@ -411,15 +402,15 @@ class _team_resultsState extends State<team_results> {
     //       .get(Uri.parse(root + league_page.first.attributes["href"]));
     var value3 = await teams_results_info();
 
-    teams_results = value3.item2;
-    team_results_headings = value3.item1;
+    teamsResults = value3.item2;
+    teamResultsHeadings = value3.item1;
 
-    List<Result> team_results = [];
-    print('teams_results $teams_results');
-    for (var i in teams_results) {
+    List<Result> teamResults = [];
+    print('teams_results $teamsResults');
+    for (var i in teamsResults) {
       print(i);
       if (i[2].toString().contains('-')) {
-        team_results.add(Result(
+        teamResults.add(Result(
           i[0].toString().trim(),
           i[1].toString().trim(),
           'Ongoing',
@@ -431,7 +422,7 @@ class _team_resultsState extends State<team_results> {
       }
       if (i[2].toString().contains('no result') ||
           i[2].toString().contains('abandoned')) {
-        team_results.add(Result(
+        teamResults.add(Result(
           i[0].toString().trim(),
           i[1].toString().trim(),
           'No Result (or Abandoned)',
@@ -441,7 +432,7 @@ class _team_resultsState extends State<team_results> {
           i[5].toString().trim(),
         ));
       } else {
-        team_results.add(Result(
+        teamResults.add(Result(
           i[0].toString().trim(),
           i[1].toString().trim(),
           i[2].toString().trim(),
@@ -453,7 +444,7 @@ class _team_resultsState extends State<team_results> {
       }
     }
     Tuple2<List<String>, List<Result>> hun =
-        Tuple2(team_results_headings, team_results); //bowling data overall
+        Tuple2(teamResultsHeadings, teamResults); //bowling data overall
     print('hun $hun');
 
     return hun; //((batting_headers_table,batting_players),(bowling_headers_table,bowling_players))

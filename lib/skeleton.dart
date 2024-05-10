@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:skeletons/skeletons.dart';
 
 class NewsCardSkelton extends StatelessWidget {
+  const NewsCardSkelton({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -18,8 +20,8 @@ class NewsCardSkelton extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xff1A3263),
-                  Color(0xff1A3263).withOpacity(0.8),
+                  const Color(0xff1A3263),
+                  const Color(0xff1A3263).withOpacity(0.8),
                 ],
               )),
           child: SkeletonItem(
@@ -41,18 +43,18 @@ class NewsCardSkelton extends StatelessWidget {
                   ))
                 ],
               ),
-              Divider(
+              const Divider(
                 thickness: 2,
                 color: Colors.black,
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Row(
                 children: [
-                  SkeletonAvatar(
+                  const SkeletonAvatar(
                     style: SkeletonAvatarStyle(
                         shape: BoxShape.circle, width: 40, height: 40),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: SkeletonParagraph(
                       style: SkeletonParagraphStyle(
@@ -67,14 +69,14 @@ class NewsCardSkelton extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Row(
                 children: [
-                  SkeletonAvatar(
+                  const SkeletonAvatar(
                     style: SkeletonAvatarStyle(
                         shape: BoxShape.circle, width: 40, height: 40),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: SkeletonParagraph(
                       style: SkeletonParagraphStyle(
@@ -109,6 +111,8 @@ class NewsCardSkelton extends StatelessWidget {
 }
 
 class PlayingLeaguesSkelton extends StatelessWidget {
+  const PlayingLeaguesSkelton({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -125,8 +129,8 @@ class PlayingLeaguesSkelton extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Color(0xff1A3263),
-                  Color(0xff1A3263).withOpacity(0.8),
+                  const Color(0xff1A3263),
+                  const Color(0xff1A3263).withOpacity(0.8),
                 ],
               )),
           child: SkeletonItem(
@@ -134,11 +138,11 @@ class PlayingLeaguesSkelton extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  SkeletonAvatar(
+                  const SkeletonAvatar(
                     style: SkeletonAvatarStyle(
                         shape: BoxShape.circle, width: 40, height: 40),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: SkeletonParagraph(
                       style: SkeletonParagraphStyle(

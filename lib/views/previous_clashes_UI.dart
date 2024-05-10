@@ -10,10 +10,10 @@ import '../analysis.dart';
 
 class pastmatches extends StatefulWidget {
   final snapshot;
-  const pastmatches({Key key, this.snapshot}) : super(key: key);
+  const pastmatches({Key? key, this.snapshot}) : super(key: key);
 
   @override
-  State<pastmatches> createState() => _pastmatchesState(this.snapshot);
+  State<pastmatches> createState() => _pastmatchesState(snapshot);
 }
 
 class _pastmatchesState extends State<pastmatches> {
@@ -45,379 +45,380 @@ class _pastmatchesState extends State<pastmatches> {
 
   @override
   Widget build(BuildContext context) {
-    Widget previous_clashes = Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xff19388A),
-              Color(0xff4F91CD),
-            ],
-          )),
-          child: Row(
-            children: [
-              SizedBox(
-                height: 40.0,
-                width: MediaQuery.of(context).size.width * 0.6,
-                child: const Padding(
-                  padding: EdgeInsets.all(6.0),
-                  child: Text(
-                    'Batting',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: 'Cocosharp',
-                      fontSize: 20.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+    Widget previousClashes = Container(
+      color: Colors.white,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xff19388A),
+                Color(0xff4F91CD),
+              ],
+            )),
+            child: Row(
+              children: [
+                SizedBox(
+                  height: 40.0,
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: const Padding(
+                    padding: EdgeInsets.all(6.0),
+                    child: Text(
+                      'Batting',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat-Black',
+                        fontSize: 20.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        (snapshot == null ||
-                snapshot.item1 == null ||
-                snapshot.item1.item2 == null)
-            ? const Text('Not yet batted')
-            : Column(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        List previousmatchfantasy = [];
-                        for (var k in dataGridController.selectedRows) {
-                          var acc = k.getCells();
-                          previousmatchfantasy.add(
-                              '${acc[0].value} ${acc[1].value} ${acc[5].value}');
-                        }
-                        Analysis.previousmatchmap[globals.league_page +
-                            '_' +
-                            globals.team1_name +
-                            'vs' +
-                            globals.team2_name +
-                            '_headtohead_batting'] = previousmatchfantasy;
-                      });
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.deepOrange),
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ))),
-                    child: const Text('+Add to Fantasy',
-                        style: TextStyle(
-                          fontFamily: 'Cocosharp',
-                          fontSize: 15,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        )),
-                  ),
-                  SfDataGrid(
-                      verticalScrollPhysics:
-                          const NeverScrollableScrollPhysics(),
-                      rowHeight: 35.0,
-                      shrinkWrapRows: true,
-                      checkboxColumnSettings:
-                          const DataGridCheckboxColumnSettings(
-                              showCheckboxOnHeader: false),
-                      showCheckboxColumn: true,
-                      allowSorting: true,
-                      controller: dataGridController,
-                      source: BattingDataSource(
-                          batData: snapshot.item1.item2.where((element) {
-                        //Just having a check with both the name and the abbreviation of the team.
-                        // For example, both 'United States of America' and 'U.S.A'
-                        return (((globals.team1_name.contains(element.team)) &&
-                                ((globals.team2_name).contains(element
-                                        .opposition
-                                        .replaceAll('v', '')
-                                        .trim()) ||
-                                    globals.team2__short_name.contains(element
-                                        .opposition
-                                        .replaceAll('v', '')
-                                        .trim()))) ||
-                            (globals.team2_name.contains(element.team) &&
-                                (globals.team1_name.contains(element.opposition
-                                        .replaceAll('v', '')
-                                        .trim()) ||
-                                    globals.team1__short_name.contains(element
-                                        .opposition
-                                        .replaceAll('v', '')
-                                        .trim()))));
-                      }).toList()),
-                      columnWidthMode: ColumnWidthMode.fitByCellValue,
-                      selectionMode: SelectionMode.multiple,
-                      columns: snapshot.item1.item1.map((headings) {
-                        return GridColumn(
-                            columnName: headings.toLowerCase(),
-                            label: Container(
-                                padding: const EdgeInsets.all(16.0),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  headings.trim()[0].toUpperCase() +
-                                      headings
-                                          .trim()
-                                          .substring(1)
-                                          .toLowerCase(),
-                                )),
-                            visible: !battinghiddenColumns.contains(headings));
-                      }).toList()),
-                ],
-              ),
-        Container(
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xff19388A),
-              Color(0xff4F91CD),
-            ],
-          )),
-          child: Row(
-            children: [
-              SizedBox(
-                height: 40.0,
-                width: MediaQuery.of(context).size.width * 0.6,
-                child: const Padding(
-                  padding: EdgeInsets.all(6.0),
-                  child: Text(
-                    'Bowling',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: 'Cocosharp',
-                      fontSize: 20.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+          (snapshot.item1 == null)
+              ? const Text('Not yet batted')
+              : Column(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          List previousmatchfantasy = [];
+                          for (var k in dataGridController.selectedRows) {
+                            var acc = k.getCells();
+                            previousmatchfantasy.add(
+                                '${acc[0].value} ${acc[1].value} ${acc[5].value}');
+                          }
+                          Analysis.previousmatchmap[
+                                  '${'${globals.league_page +
+                              '_' +
+                              globals.team1_name}vs' + globals.team2_name}_headtohead_batting'] =
+                              previousmatchfantasy;
+                        });
+                      },
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.deepOrange),
+                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ))),
+                      child: const Text('+Add to Fantasy',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat-Black',
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    SfDataGrid(
+                        verticalScrollPhysics:
+                            const NeverScrollableScrollPhysics(),
+                        rowHeight: 35.0,
+                        shrinkWrapRows: true,
+                        checkboxColumnSettings:
+                            const DataGridCheckboxColumnSettings(
+                                showCheckboxOnHeader: false),
+                        showCheckboxColumn: true,
+                        allowSorting: true,
+                        controller: dataGridController,
+                        source: BattingDataSource(
+                            batData: snapshot.item1.item2.where((element) {
+                          //Just having a check with both the name and the abbreviation of the team.
+                          // For example, both 'United States of America' and 'U.S.A'
+                          return ((((globals.team1_name.contains(element.team)) ||
+                      globals.team1__short_name.contains(element.team)) &&
+                                  ((globals.team2_name).contains(element
+                                          .opposition
+                                          .replaceAll('v', '')
+                                          .trim()) ||
+                                      globals.team2__short_name.contains(element
+                                          .opposition
+                                          .replaceAll('v', '')
+                                          .trim()))) ||
+                              ((globals.team2_name.contains(element.team)) ||
+                      globals.team2__short_name.contains(element.team) &&
+                                  (globals.team1_name.contains(element.opposition
+                                          .replaceAll('v', '')
+                                          .trim()) ||
+                                      globals.team1__short_name.contains(element
+                                          .opposition
+                                          .replaceAll('v', '')
+                                          .trim()))));
+                        }).toList()),
+                        columnWidthMode: ColumnWidthMode.fitByCellValue,
+                        selectionMode: SelectionMode.multiple,
+                        columns: snapshot.item1.item1.map((headings) {
+                          return GridColumn(
+                              columnName: headings.toLowerCase(),
+                              label: Container(
+                                  padding: const EdgeInsets.all(16.0),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    headings.trim()[0].toUpperCase() +
+                                        headings
+                                            .trim()
+                                            .substring(1)
+                                            .toLowerCase(),
+                                  )),
+                              visible: !battinghiddenColumns.contains(headings));
+                        }).toList()),
+                  ],
+                ),
+          Container(
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xff19388A),
+                Color(0xff4F91CD),
+              ],
+            )),
+            child: Row(
+              children: [
+                SizedBox(
+                  height: 40.0,
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: const Padding(
+                    padding: EdgeInsets.all(6.0),
+                    child: Text(
+                      'Bowling',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontFamily: 'Montserrat-Black',
+                        fontSize: 20.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        (snapshot == null ||
-                snapshot.item2 == null ||
-                snapshot.item2.item2 == null)
-            ? const Text('Not yet bowled')
-            : Column(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        List previousmatchfantasy = [];
-
-                        for (var k in dataGridController1.selectedRows) {
-                          var acc = k.getCells();
-                          previousmatchfantasy.add(
-                              '${acc[0].value} ${acc[1].value} ${acc[3].value} ${acc[4].value}');
-                        }
-                        Analysis.previousmatchmap[globals.league_page +
-                            '_' +
-                            globals.team1_name +
-                            'vs' +
-                            globals.team2_name +
-                            '_headtohead_bowling'] = previousmatchfantasy;
-                      });
-                    },
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.deepOrange),
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ))),
-                    child: const Text('+Add to Fantasy',
-                        style: TextStyle(
-                          fontFamily: 'Cocosharp',
-                          fontSize: 15,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        )),
-                  ),
-                  SfDataGrid(
-                      verticalScrollPhysics:
-                          const NeverScrollableScrollPhysics(),
-                      rowHeight: 35.0,
-                      shrinkWrapRows: true,
-                      checkboxColumnSettings:
-                          const DataGridCheckboxColumnSettings(
-                              showCheckboxOnHeader: false),
-                      showCheckboxColumn: true,
-                      controller: dataGridController1,
-                      allowSorting: true,
-                      source: bowlingDataSource(
-                          bowlingData: snapshot.item2.item2.where((element) {
-                        return (((globals.team1_name.contains(element.team)) &&
-                                ((globals.team2_name).contains(element
-                                        .opposition
-                                        .replaceAll('v', '')
-                                        .trim()) ||
-                                    globals.team2__short_name.contains(element
-                                        .opposition
-                                        .replaceAll('v', '')
-                                        .trim()))) ||
-                            (globals.team2_name.contains(element.team) &&
-                                (globals.team1_name.contains(element.opposition
-                                        .replaceAll('v', '')
-                                        .trim()) ||
-                                    globals.team1__short_name.contains(element
-                                        .opposition
-                                        .replaceAll('v', '')
-                                        .trim()))));
-                      }).toList()),
-                      columnWidthMode: ColumnWidthMode.fitByCellValue,
-                      selectionMode: SelectionMode.multiple,
-                      columns: snapshot.item2.item1.map((headings) {
-                        return GridColumn(
-                            columnName: headings.toLowerCase(),
-                            label: Container(
-                                padding: const EdgeInsets.all(16.0),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  headings.trim()[0].toUpperCase() +
-                                      headings
-                                          .trim()
-                                          .substring(1)
-                                          .toLowerCase(),
-                                )),
-                            visible: !bowlinghiddenColumns.contains(headings));
-                      }).toList()),
-                ],
-              ),
-        // Container(
-        //   decoration: const BoxDecoration(
-        //       gradient: LinearGradient(
-        //     begin: Alignment.topLeft,
-        //     end: Alignment.bottomRight,
-        //     colors: [
-        //       Color(0xff19388A),
-        //       Color(0xff4F91CD),
-        //     ],
-        //   )),
-        //   child: Row(
-        //     children: [
-        //       SizedBox(
-        //         height: 40.0,
-        //         width: MediaQuery.of(context).size.width * 0.6,
-        //         child: const Padding(
-        //           padding: EdgeInsets.all(6.0),
-        //           child: Text(
-        //             'Partnerships',
-        //             textAlign: TextAlign.left,
-        //             style: TextStyle(
-        //               fontFamily: 'Cocosharp',
-        //               fontSize: 20.0,
-        //               color: Colors.white,
-        //               fontWeight: FontWeight.bold,
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // (snapshot == null ||
-        //         snapshot.item3 == null ||
-        //         snapshot.item3.item2 == null)
-        //     ? const Text('No partnerships so far')
-        //     : Column(
-        //         children: [
-        //           TextButton(
-        //             onPressed: () {
-        //               setState(() {
-        //                 List previousmatchfantasy = [];
-
-        //                 for (var k in dataGridController2.selectedRows) {
-        //                   var acc = k.getCells();
-        //                   previousmatchfantasy
-        //                       .add('${acc[0].value} &${acc[1].value}');
-        //                 }
-        //                 Analysis.previousmatchmap[globals.league_page +
-        //                     '_' +
-        //                     globals.team1_name +
-        //                     'vs' +
-        //                     globals.team2_name +
-        //                     '_headtohead_partnership'] = previousmatchfantasy;
-        //               });
-        //               print('Previous clashes ${Analysis.previousmatchmap}');
-        //             },
-        //             style: ButtonStyle(
-        //                 backgroundColor:
-        //                     MaterialStateProperty.all(Colors.deepOrange),
-        //                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
-        //                   borderRadius: BorderRadius.circular(20.0),
-        //                 ))),
-        //             child: const Text('+Add to Fantasy',
-        //                 style: TextStyle(
-        //                   fontFamily: 'Cocosharp',
-        //                   fontSize: 15,
-        //                   color: Colors.white,
-        //                   fontWeight: FontWeight.bold,
-        //                 )),
-        //           ),
-        //           SfDataGrid(
-        //               verticalScrollPhysics:
-        //                   const NeverScrollableScrollPhysics(),
-        //               rowHeight: 35.0,
-        //               shrinkWrapRows: true,
-        //               showCheckboxColumn: true,
-        //               checkboxColumnSettings:
-        //                   const DataGridCheckboxColumnSettings(
-        //                       showCheckboxOnHeader: false),
-        //               allowSorting: true,
-        //               controller: dataGridController2,
-        //               source: PartnershipDataSource(
-        //                   Data: snapshot.item3.item2.where((element) {
-        //                 return (((globals.team1_name.contains(element.team)) &&
-        //                         ((globals.team2_name).contains(element
-        //                                 .opposition
-        //                                 .replaceAll('v', '')
-        //                                 .trim()) ||
-        //                             globals.team2__short_name.contains(element
-        //                                 .opposition
-        //                                 .replaceAll('v', '')
-        //                                 .trim()))) ||
-        //                     (globals.team2_name.contains(element.team) &&
-        //                         (globals.team1_name.contains(element.opposition
-        //                                 .replaceAll('v', '')
-        //                                 .trim()) ||
-        //                             globals.team1__short_name.contains(element
-        //                                 .opposition
-        //                                 .replaceAll('v', '')
-        //                                 .trim()))));
-        //               }).toList()),
-        //               columnWidthMode: ColumnWidthMode.auto,
-        //               selectionMode: SelectionMode.multiple,
-        //               columns: snapshot.item3.item1.map((headings) {
-        //                 return GridColumn(
-        //                     columnName: headings.toLowerCase(),
-        //                     label: Container(
-        //                         padding: const EdgeInsets.all(16.0),
-        //                         alignment: Alignment.center,
-        //                         child: Text(
-        //                           headings.trim()[0].toUpperCase() +
-        //                               headings
-        //                                   .trim()
-        //                                   .substring(1)
-        //                                   .toLowerCase(),
-        //                         )));
-        //               }).toList()),
-        //         ],
-        //       ),
-      ],
+          (snapshot.item2 == null)
+              ? const Text('Not yet bowled')
+              : Column(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          List previousmatchfantasy = [];
+      
+                          for (var k in dataGridController1.selectedRows) {
+                            var acc = k.getCells();
+                            previousmatchfantasy.add(
+                                '${acc[0].value} ${acc[1].value} ${acc[3].value} ${acc[4].value}');
+                          }
+                          Analysis.previousmatchmap[
+                                  '${'${globals.league_page +
+                              '_' +
+                              globals.team1_name}vs' + globals.team2_name}_headtohead_bowling'] =
+                              previousmatchfantasy;
+                        });
+                      },
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.deepOrange),
+                          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ))),
+                      child: const Text('+Add to Fantasy',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat-Black',
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    SfDataGrid(
+                        verticalScrollPhysics:
+                            const NeverScrollableScrollPhysics(),
+                        rowHeight: 35.0,
+                        shrinkWrapRows: true,
+                        checkboxColumnSettings:
+                            const DataGridCheckboxColumnSettings(
+                                showCheckboxOnHeader: false),
+                        showCheckboxColumn: true,
+                        controller: dataGridController1,
+                        allowSorting: true,
+                        source: bowlingDataSource(
+                            bowlingData: snapshot.item2.item2.where((element) {
+                          return ((((globals.team1_name.contains(element.team)) ||
+                      globals.team1__short_name.contains(element.team))&&
+                                  ((globals.team2_name).contains(element
+                                          .opposition
+                                          .replaceAll('v', '')
+                                          .trim()) ||
+                                      globals.team2__short_name.contains(element
+                                          .opposition
+                                          .replaceAll('v', '')
+                                          .trim()))) ||
+                            ((globals.team2_name.contains(element.team)) ||
+                      globals.team2__short_name.contains(element.team) &&
+                                  (globals.team1_name.contains(element.opposition
+                                          .replaceAll('v', '')
+                                          .trim()) ||
+                                      globals.team1__short_name.contains(element
+                                          .opposition
+                                          .replaceAll('v', '')
+                                          .trim()))));
+                        }).toList()),
+                        columnWidthMode: ColumnWidthMode.fitByCellValue,
+                        selectionMode: SelectionMode.multiple,
+                        columns: snapshot.item2.item1.map((headings) {
+                          return GridColumn(
+                              columnName: headings.toLowerCase(),
+                              label: Container(
+                                  padding: const EdgeInsets.all(16.0),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    headings.trim()[0].toUpperCase() +
+                                        headings
+                                            .trim()
+                                            .substring(1)
+                                            .toLowerCase(),
+                                  )),
+                              visible: !bowlinghiddenColumns.contains(headings));
+                        }).toList()),
+                  ],
+                ),
+          // Container(
+          //   decoration: const BoxDecoration(
+          //       gradient: LinearGradient(
+          //     begin: Alignment.topLeft,
+          //     end: Alignment.bottomRight,
+          //     colors: [
+          //       Color(0xff19388A),
+          //       Color(0xff4F91CD),
+          //     ],
+          //   )),
+          //   child: Row(
+          //     children: [
+          //       SizedBox(
+          //         height: 40.0,
+          //         width: MediaQuery.of(context).size.width * 0.6,
+          //         child: const Padding(
+          //           padding: EdgeInsets.all(6.0),
+          //           child: Text(
+          //             'Partnerships',
+          //             textAlign: TextAlign.left,
+          //             style: TextStyle(
+          //               fontFamily: 'Montserrat-Black',
+          //               fontSize: 20.0,
+          //               color: Colors.white,
+          //               fontWeight: FontWeight.bold,
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // (snapshot == null ||
+          //         snapshot.item3 == null ||
+          //         snapshot.item3.item2 == null)
+          //     ? const Text('No partnerships so far')
+          //     : Column(
+          //         children: [
+          //           TextButton(
+          //             onPressed: () {
+          //               setState(() {
+          //                 List previousmatchfantasy = [];
+      
+          //                 for (var k in dataGridController2.selectedRows) {
+          //                   var acc = k.getCells();
+          //                   previousmatchfantasy
+          //                       .add('${acc[0].value} &${acc[1].value}');
+          //                 }
+          //                 Analysis.previousmatchmap[globals.league_page +
+          //                     '_' +
+          //                     globals.team1_name +
+          //                     'vs' +
+          //                     globals.team2_name +
+          //                     '_headtohead_partnership'] = previousmatchfantasy;
+          //               });
+          //               print('Previous clashes ${Analysis.previousmatchmap}');
+          //             },
+          //             style: ButtonStyle(
+          //                 backgroundColor:
+          //                     MaterialStateProperty.all(Colors.deepOrange),
+          //                 shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          //                   borderRadius: BorderRadius.circular(20.0),
+          //                 ))),
+          //             child: const Text('+Add to Fantasy',
+          //                 style: TextStyle(
+          //                   fontFamily: 'Montserrat-Black',
+          //                   fontSize: 15,
+          //                   color: Colors.white,
+          //                   fontWeight: FontWeight.bold,
+          //                 )),
+          //           ),
+          //           SfDataGrid(
+          //               verticalScrollPhysics:
+          //                   const NeverScrollableScrollPhysics(),
+          //               rowHeight: 35.0,
+          //               shrinkWrapRows: true,
+          //               showCheckboxColumn: true,
+          //               checkboxColumnSettings:
+          //                   const DataGridCheckboxColumnSettings(
+          //                       showCheckboxOnHeader: false),
+          //               allowSorting: true,
+          //               controller: dataGridController2,
+          //               source: PartnershipDataSource(
+          //                   Data: snapshot.item3.item2.where((element) {
+          //                 return (((globals.team1_name.contains(element.team)) &&
+          //                         ((globals.team2_name).contains(element
+          //                                 .opposition
+          //                                 .replaceAll('v', '')
+          //                                 .trim()) ||
+          //                             globals.team2__short_name.contains(element
+          //                                 .opposition
+          //                                 .replaceAll('v', '')
+          //                                 .trim()))) ||
+          //                     (globals.team2_name.contains(element.team) &&
+          //                         (globals.team1_name.contains(element.opposition
+          //                                 .replaceAll('v', '')
+          //                                 .trim()) ||
+          //                             globals.team1__short_name.contains(element
+          //                                 .opposition
+          //                                 .replaceAll('v', '')
+          //                                 .trim()))));
+          //               }).toList()),
+          //               columnWidthMode: ColumnWidthMode.auto,
+          //               selectionMode: SelectionMode.multiple,
+          //               columns: snapshot.item3.item1.map((headings) {
+          //                 return GridColumn(
+          //                     columnName: headings.toLowerCase(),
+          //                     label: Container(
+          //                         padding: const EdgeInsets.all(16.0),
+          //                         alignment: Alignment.center,
+          //                         child: Text(
+          //                           headings.trim()[0].toUpperCase() +
+          //                               headings
+          //                                   .trim()
+          //                                   .substring(1)
+          //                                   .toLowerCase(),
+          //                         )));
+          //               }).toList()),
+          //         ],
+          //       ),
+        ],
+      ),
     );
 
-    return previous_clashes;
+    return previousClashes;
   }
 }
 
 class previous_clashes_header extends StatefulWidget {
-  const previous_clashes_header({Key key}) : super(key: key);
+  const previous_clashes_header({Key? key}) : super(key: key);
 
   @override
   State<previous_clashes_header> createState() =>
@@ -432,7 +433,7 @@ class _previous_clashes_headerState extends State<previous_clashes_header> {
 
   @override
   Widget build(BuildContext context) {
-    Widget previous_clashes_header = Column(
+    Widget previousClashesHeader = Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -442,7 +443,7 @@ class _previous_clashes_headerState extends State<previous_clashes_header> {
                 const Text(
                   'Previous',
                   style: TextStyle(
-                    fontFamily: 'Cocosharp',
+                    fontFamily: 'Montserrat-Black',
                     fontSize: 20.0,
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -469,7 +470,7 @@ class _previous_clashes_headerState extends State<previous_clashes_header> {
                 ),
                 const Text('VS',
                     style: TextStyle(
-                      fontFamily: 'Cocosharp',
+                      fontFamily: 'Montserrat-Black',
                       fontSize: 20.0,
                       color: Colors.red,
                       fontWeight: FontWeight.bold,
@@ -481,7 +482,7 @@ class _previous_clashes_headerState extends State<previous_clashes_header> {
                 const Text(
                   'Clashes',
                   style: TextStyle(
-                    fontFamily: 'Cocosharp',
+                    fontFamily: 'Montserrat-Black',
                     fontSize: 20.0,
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -502,6 +503,6 @@ class _previous_clashes_headerState extends State<previous_clashes_header> {
       ],
     );
 
-    return previous_clashes_header;
+    return previousClashesHeader;
   }
 }

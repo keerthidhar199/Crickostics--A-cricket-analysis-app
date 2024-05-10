@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ColoredRow extends StatelessWidget {
   final String string;
 
-  const ColoredRow({Key key, this.string}) : super(key: key);
+  const ColoredRow({Key? key, required this.string}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,9 @@ class ColoredRow extends StatelessWidget {
             child: Center(
               child: Text(
                 char,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
-                  fontFamily: 'Litsans',
+                  fontFamily: 'Montserrat-Black',
                 ),
               ),
             ),
@@ -44,7 +44,7 @@ class ColoredRow extends StatelessWidget {
                 char,
                 style: const TextStyle(
                   color: Colors.white,
-                  fontFamily: 'Litsans',
+                  fontFamily: 'Montserrat-Black',
                 ),
               ),
             ),
@@ -63,7 +63,7 @@ class ColoredRow extends StatelessWidget {
                 'NR',
                 style: TextStyle(
                   color: Colors.white,
-                  fontFamily: 'Litsans',
+                  fontFamily: 'Montserrat-Black',
                 ),
               ),
             ),

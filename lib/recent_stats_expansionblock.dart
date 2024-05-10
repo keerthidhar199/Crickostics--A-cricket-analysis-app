@@ -1,32 +1,26 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:datascrap/recentplayersform.dart';
-import 'package:datascrap/skeleton.dart';
+// ignore_for_file: camel_case_types, prefer_typing_uninitialized_variables
+
 import 'package:flip_card/flip_card_controller.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:http/http.dart' as http;
-import 'package:html/dom.dart' as dom;
-import 'package:html/parser.dart' as parser;
 import 'globals.dart' as globals;
-import 'package:skeletons/skeletons.dart';
 import 'package:flip_card/flip_card.dart';
 
 class expansionTile extends StatefulWidget {
   final e;
   final countofPlayers;
-  const expansionTile({Key key, this.e, this.countofPlayers}) : super(key: key);
+  const expansionTile({Key? key, this.e, this.countofPlayers})
+      : super(key: key);
 
   @override
-  State<expansionTile> createState() =>
-      _expansionTileState(this.e, this.countofPlayers);
+  State<expansionTile> createState() => _expansionTileState(e, countofPlayers);
 }
 
 class _expansionTileState extends State<expansionTile> {
   _expansionTileState(e, snapshot);
-  List<FlipCardController> _controller = List.filled(5, FlipCardController());
+  final List<FlipCardController> _controller =
+      List.filled(5, FlipCardController());
   List<GlobalKey<FlipCardState>> cardKeys = List.generate(
     5,
     (index) => GlobalKey<FlipCardState>(),
@@ -46,7 +40,7 @@ class _expansionTileState extends State<expansionTile> {
   List<String> filterplayer = [];
   _onClick(String string) {
     setState(() {
-      this.filterplayer.add(string.toString().split('-').first.trim());
+      filterplayer.add(string.toString().split('-').first.trim());
     });
     // print('$filterplayer');
   }
@@ -57,7 +51,7 @@ class _expansionTileState extends State<expansionTile> {
         isBack = true; //shows back of the card
         for (int i = 0; i < 5; i++) {
           // _controller[i].toggleCard();
-          cardKeys[i].currentState.toggleCard();
+          cardKeys[i].currentState!.toggleCard();
         }
       });
       print('Card showing Front');
@@ -66,7 +60,7 @@ class _expansionTileState extends State<expansionTile> {
         isBack = false; //shows front of the card
         for (int i = 0; i < 5; i++) {
           // _controller[i].toggleCard();
-          cardKeys[i].currentState.toggleCard();
+          cardKeys[i].currentState!.toggleCard();
         }
       });
       print('Card showing Back');
@@ -78,7 +72,7 @@ class _expansionTileState extends State<expansionTile> {
     Map<String, List<dynamic>> e = widget.e;
     Map<String, int> countofplayer = widget.countofPlayers;
 
-    for (int i = 0; i < e['matches_details'].length; i++) {
+    for (int i = 0; i < e['matches_details']!.length; i++) {
       _controller[i] = FlipCardController();
     }
 
@@ -103,109 +97,106 @@ class _expansionTileState extends State<expansionTile> {
               spacing: 5,
               runSpacing: 5,
               children: [
-                ...countofplayer.entries
-                    .map((player) => GestureDetector(
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.white54),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
-                                    onPlayerclicked[countofplayer.keys
-                                        .toList()
-                                        .indexOf(player
-                                            .key)], //change color when clicked on that player
-                                    const Color(0xff1C819E),
+                ...countofplayer.entries.map((player) => GestureDetector(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white54),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10.0)),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                onPlayerclicked[countofplayer.keys
+                                    .toList()
+                                    .indexOf(player
+                                        .key)], //change color when clicked on that player
+                                const Color(0xff1C819E),
 
-                                    // Colors.white38,
-                                  ],
-                                )),
-                            child: Wrap(
-                              children: [
-                                Text(player.key, style: globals.Litsans),
-                                tapon[countofplayer.keys
-                                            .toList()
-                                            .indexOf(player.key)] ==
-                                        true
-                                    ? const Icon(
-                                        Icons.cancel_rounded,
-                                        color: Colors.white,
-                                        size: 15,
-                                      )
-                                    : const Icon(
-                                        null,
-                                        size: 5,
-                                      )
+                                // Colors.white38,
                               ],
-                            ),
-                          ),
-                          onTap: () {
-                            int topplayer =
-                                countofplayer.keys.toList().indexOf(player.key);
-                            //open the expansion tile to show more details
-                            for (int i = 0; i < 5; i++) {
-                              if (expandTile == true) {
-                                //if expand tille is open
-                                if (cardKeys[i].currentState.isFront == true) {
-                                  //card(s) are front faced
-                                  setState(() {
-                                    tapon[topplayer] = true;
-                                    onPlayerclicked[topplayer] = Colors.green;
-                                    filterplayer.add(player.key.trim());
-                                    isBack = true;
-                                    cardKeys[i]
-                                        .currentState
-                                        .toggleCard(); //toggle all the cards to back
-                                  }); //and turn the switch as well and show the player details
-                                } else {
-                                  //if tile is open and the player is clicked again close the expansion tile
-                                  if (tapon[topplayer] == true) {
-                                    setState(() {
-                                      tapon[topplayer] = false;
-                                      filterplayer.removeWhere((element) =>
-                                          element == player.key.trim());
-                                      onPlayerclicked[topplayer] =
-                                          const Color(0xff005874);
-                                    });
-                                    //if tile is open and all the cards are back faced, just assign the player value
-                                  } else {
-                                    setState(() {
-                                      tapon[topplayer] = true;
-                                      onPlayerclicked[topplayer] = Colors.green;
-                                      filterplayer.add(player.key.trim());
-                                    });
-                                  }
-                                }
+                            )),
+                        child: Wrap(
+                          children: [
+                            Text(player.key, style: globals.Litsans),
+                            tapon[countofplayer.keys
+                                        .toList()
+                                        .indexOf(player.key)] ==
+                                    true
+                                ? const Icon(
+                                    Icons.cancel_rounded,
+                                    color: Colors.white,
+                                    size: 15,
+                                  )
+                                : const Icon(
+                                    null,
+                                    size: 5,
+                                  )
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        int topplayer =
+                            countofplayer.keys.toList().indexOf(player.key);
+                        //open the expansion tile to show more details
+                        for (int i = 0; i < 5; i++) {
+                          if (expandTile == true) {
+                            //if expand tille is open
+                            if (cardKeys[i].currentState!.isFront == true) {
+                              //card(s) are front faced
+                              setState(() {
+                                tapon[topplayer] = true;
+                                onPlayerclicked[topplayer] = Colors.green;
+                                filterplayer.add(player.key.trim());
+                                isBack = true;
+                                cardKeys[i]
+                                    .currentState!
+                                    .toggleCard(); //toggle all the cards to back
+                              }); //and turn the switch as well and show the player details
+                            } else {
+                              //if tile is open and the player is clicked again close the expansion tile
+                              if (tapon[topplayer] == true) {
+                                setState(() {
+                                  tapon[topplayer] = false;
+                                  filterplayer.removeWhere((element) =>
+                                      element == player.key.trim());
+                                  onPlayerclicked[topplayer] =
+                                      const Color(0xff005874);
+                                });
+                                //if tile is open and all the cards are back faced, just assign the player value
                               } else {
                                 setState(() {
-                                  tapon[topplayer] =
-                                      true; //tap to expand the tile
-                                  expandTile = true;
-                                  isBack = true;
+                                  tapon[topplayer] = true;
                                   onPlayerclicked[topplayer] = Colors.green;
-
                                   filterplayer.add(player.key.trim());
                                 });
                               }
                             }
+                          } else {
                             setState(() {
-                              filterplayer = filterplayer.toSet().toList();
+                              tapon[topplayer] = true; //tap to expand the tile
+                              expandTile = true;
+                              isBack = true;
+                              onPlayerclicked[topplayer] = Colors.green;
+
+                              filterplayer.add(player.key.trim());
                             });
-                            print('$filterplayer  $tapon');
-                            // print(isBack);
-                          },
-                        ))
-                    .toList(),
+                          }
+                        }
+                        setState(() {
+                          filterplayer = filterplayer.toSet().toList();
+                        });
+                        print('$filterplayer  $tapon');
+                        // print(isBack);
+                      },
+                    )),
                 filterplayer.isNotEmpty
                     ? GestureDetector(
                         child: Container(
                           padding: const EdgeInsets.all(8),
-                          child: Text('Clear', style: globals.Litsanswhite),
                           decoration: globals.recentStatePage_Decoration,
+                          child: Text('Clear', style: globals.Litsanswhite),
                         ),
                         onTap: () {
                           setState(() {
@@ -223,7 +214,7 @@ class _expansionTileState extends State<expansionTile> {
         ExpansionTile(
           initiallyExpanded: true,
           tilePadding: const EdgeInsets.all(0.0),
-          // trailing: const SizedBox(),
+          trailing: const SizedBox(),
           title: GestureDetector(
             onTap: () {
               setState(() {
@@ -251,32 +242,23 @@ class _expansionTileState extends State<expansionTile> {
                 }
               });
             },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 25),
-              decoration: BoxDecoration(
-                  // borderRadius: BorderRadius.all(Radius.circular(20)),
-                  border: Border.all(color: Colors.teal.shade300, width: 2)),
-              width: double.infinity,
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Text("More details",
-                        style: TextStyle(
-                          fontFamily: 'Cocosharp',
-                          color: Colors.yellow.shade300,
-                        )),
-                  ),
-                  Icon(
-                    Icons.arrow_drop_down_circle,
-                    color: Colors.yellow.shade300,
-                    size: 25,
-                  )
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text("More details",
+                    style: TextStyle(
+                      fontFamily: 'Cocosharp',
+                      color: Colors.yellow.shade300,
+                    )),
+                Icon(
+                  Icons.arrow_drop_down_circle,
+                  color: Colors.yellow.shade300,
+                  size: 25,
+                )
+              ],
             ),
           ),
-          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+          expandedCrossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Visibility(
               visible: expandTile,
@@ -291,7 +273,7 @@ class _expansionTileState extends State<expansionTile> {
                 value: isBack,
               ),
             ),
-            for (var i = 0; i < e['listofallrecentplayers'].length; i++)
+            for (var i = 0; i < e['listofallrecentplayers']!.length; i++)
               Visibility(
                 visible: expandTile,
                 child: AnimationLimiter(
@@ -302,7 +284,7 @@ class _expansionTileState extends State<expansionTile> {
                       child: SlideAnimation(
                         child: Column(
                           children: [
-                            Container(
+                            SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 3.5 / 16,
                               child: FlipCard(
@@ -348,14 +330,14 @@ class _expansionTileState extends State<expansionTile> {
                                                         const EdgeInsets.all(8),
                                                     padding:
                                                         const EdgeInsets.all(8),
-                                                    decoration: BoxDecoration(
+                                                    decoration: const BoxDecoration(
                                                         borderRadius:
                                                             BorderRadius.all(
                                                                 Radius.circular(
                                                                     10.0)),
                                                         color: Colors.white60),
                                                     child: Text(
-                                                      e['matches_details'][i]
+                                                      e['vs']![i]
                                                           .toString()
                                                           .split(',')
                                                           .first,
@@ -373,7 +355,7 @@ class _expansionTileState extends State<expansionTile> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     child: Text(
-                                                      "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').substring(1).trim()}",
+                                                      "${e['matches_details']![i]}}",
                                                       style: const TextStyle(
                                                         fontFamily: 'Litsans',
                                                         color: Colors.white70,
@@ -392,7 +374,7 @@ class _expansionTileState extends State<expansionTile> {
                                                         const EdgeInsets.all(
                                                             10.0),
                                                     child: Text(
-                                                      e['match_winner'][i]
+                                                      e['match_winner']![i]
                                                           .toString(),
                                                       softWrap: true,
                                                       style: const TextStyle(
@@ -419,7 +401,7 @@ class _expansionTileState extends State<expansionTile> {
                                                   )
                                                 ],
                                               ),
-                                              e['winsloss'][0]
+                                              e['winsloss']![0]
                                                   .toString()
                                                   .characters
                                                   .map((character) {
@@ -427,14 +409,6 @@ class _expansionTileState extends State<expansionTile> {
                                                   padding:
                                                       const EdgeInsets.all(8.0),
                                                   child: Container(
-                                                    child: Text(
-                                                      '${character}',
-                                                      style: const TextStyle(
-                                                        fontFamily: 'Cocosharp',
-                                                        fontSize: 20.0,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
                                                     decoration: BoxDecoration(
                                                       shape: BoxShape.circle,
                                                       color: character == 'W'
@@ -443,7 +417,17 @@ class _expansionTileState extends State<expansionTile> {
                                                               ? Colors.red
                                                               : Colors.grey,
                                                     ),
-                                                    padding: EdgeInsets.all(10),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: Text(
+                                                      character,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Cocosharp',
+                                                        fontSize: 20.0,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
                                                   ),
                                                 );
                                               }).toList()[i]
@@ -492,11 +476,9 @@ class _expansionTileState extends State<expansionTile> {
                                                     //batters
                                                     //if the element in the array dont have a / mark they are batters
                                                     Column(
-                                                      children: e['listofallrecentplayers']
-                                                                  [i][
-                                                              'Batters' +
-                                                                  (i + 1)
-                                                                      .toString()]
+                                                      children: e['listofallrecentplayers']![
+                                                                  i][
+                                                              'Batters${i + 1}']
                                                           .map<Widget>(
                                                               (recentplayer) =>
                                                                   TextButton(
@@ -533,11 +515,9 @@ class _expansionTileState extends State<expansionTile> {
                                                     //bowlers
                                                     //if the element in the array  have a / mark they are bowlers
                                                     Column(
-                                                      children: e['listofallrecentplayers']
-                                                                  [i][
-                                                              'Bowlers' +
-                                                                  (i + 1)
-                                                                      .toString()]
+                                                      children: e['listofallrecentplayers']![
+                                                                  i][
+                                                              'Bowlers${i + 1}']
                                                           .map<Widget>(
                                                               (recentplayer) =>
                                                                   TextButton(

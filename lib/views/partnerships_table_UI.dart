@@ -1,7 +1,6 @@
 import 'package:datascrap/analysis.dart';
 import 'package:datascrap/models/bowling_class.dart';
 import 'package:datascrap/models/partnership_class.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:datascrap/models/batting_class.dart';
 import 'package:datascrap/team_results.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +11,11 @@ import 'package:datascrap/globals.dart' as globals;
 class widgetpartnership extends StatefulWidget {
   final snapshot;
 
-  const widgetpartnership({Key key, this.snapshot}) : super(key: key);
+  const widgetpartnership({Key? key, this.snapshot}) : super(key: key);
 
   @override
   State<widgetpartnership> createState() =>
-      _widgetpartnershipState(this.snapshot);
+      _widgetpartnershipState(snapshot);
 }
 
 class _widgetpartnershipState extends State<widgetpartnership> {
@@ -44,7 +43,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                   ? TextButton(
                       onPressed: () {
                         setState(() {
-                          List team1_partnershipfantasy = [];
+                          List team1Partnershipfantasy = [];
                           print(
                               'assa11end1 ${dataGridController.selectedRows}');
 
@@ -53,18 +52,16 @@ class _widgetpartnershipState extends State<widgetpartnership> {
 
                             print(
                                 'assa11end1 ${acc[0].value} &${acc[1].value}');
-                            team1_partnershipfantasy
+                            team1Partnershipfantasy
                                 .add('${acc[0].value} &${acc[1].value}');
                           }
-                          Analysis.partnershipsmap[globals.league_page +
+                          Analysis.partnershipsmap[
+                                  '${'${globals.league_page +
                               '_' +
                               globals.team1_name +
                               'vs' +
-                              globals.team2_name +
-                              '_' +
-                              globals.team1_name +
-                              '_partnership'] = team1_partnershipfantasy;
-                          ;
+                              globals.team2_name}_' + globals.team1_name}_partnership'] =
+                              team1Partnershipfantasy;
                           print('assa11end12 ${Analysis.partnershipsmap}');
                         });
                       },
@@ -77,7 +74,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           ))),
                       child: const Text('+Add to Fantasy',
                           style: TextStyle(
-                            fontFamily: 'Cocosharp',
+                            fontFamily: 'Montserrat-Black',
                             fontSize: 15,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -87,23 +84,22 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                       onPressed: () {
                         print('assa11end1 ${dataGridController1.selectedRows}');
                         setState(() {
-                          List team2_partnershipfantasy = [];
+                          List team2Partnershipfantasy = [];
                           for (var k in dataGridController1.selectedRows) {
                             var acc = k.getCells();
 
                             print(
                                 'assa11end1 ${acc[0].value} &${acc[1].value}}');
-                            team2_partnershipfantasy
+                            team2Partnershipfantasy
                                 .add('${acc[0].value} &${acc[1].value}');
                           }
-                          Analysis.partnershipsmap[globals.league_page +
+                          Analysis.partnershipsmap[
+                                  '${'${globals.league_page +
                               '_' +
                               globals.team1_name +
                               'vs' +
-                              globals.team2_name +
-                              '_' +
-                              globals.team2_name +
-                              '_partnership'] = team2_partnershipfantasy;
+                              globals.team2_name}_' + globals.team2_name}_partnership'] =
+                              team2Partnershipfantasy;
                           print('assa11end12 ${Analysis.partnershipsmap}');
                         });
                       },
@@ -116,7 +112,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                           ))),
                       child: const Text('+Add to Fantasy',
                           style: TextStyle(
-                            fontFamily: 'Cocosharp',
+                            fontFamily: 'Montserrat-Black',
                             fontSize: 15,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -142,16 +138,16 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                             height: 32,
                           )
                         : IconButton(
-                            icon: Image.asset('logos/team' +
-                                (teamnames.indexOf(i) + 1).toString() +
-                                '.png'),
+                            icon: Image.asset(
+                                'logos/team${teamnames.indexOf(i) + 1}.png'),
                             onPressed: null),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (BuildContext context) => team_results(),
+                              builder: (BuildContext context) =>
+                                  const team_results(),
                             ));
                       },
                       child: SizedBox(
@@ -160,10 +156,10 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                         child: Padding(
                           padding: const EdgeInsets.all(6.0),
                           child: Text(
-                            '$i',
+                            i,
                             textAlign: TextAlign.left,
                             style: const TextStyle(
-                              fontFamily: 'Cocosharp',
+                              fontFamily: 'Montserrat-Black',
                               fontSize: 20.0,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -175,9 +171,7 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                   ],
                 ),
               ),
-              (snapshot == null ||
-                      snapshot.item3 == null ||
-                      snapshot.item3.item2 == null)
+              (snapshot.item3 == null)
                   ? const Text('No partnerships so far')
                   : SfDataGrid(
                       verticalScrollPhysics:
@@ -210,7 +204,8 @@ class _widgetpartnershipState extends State<widgetpartnership> {
                                 alignment: Alignment.center,
                                 child: Text(
                                   globals.capitalize(headings),
-                                  style: const TextStyle(fontFamily: 'Litsans'),
+                                  style: const TextStyle(
+                                      fontFamily: 'Montserrat-Black'),
                                 )));
                       }).toList()),
               const SizedBox(

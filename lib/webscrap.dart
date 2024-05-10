@@ -1,31 +1,27 @@
+// ignore_for_file: dead_code, prefer_const_constructors
+
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:datascrap/analysis.dart';
 import 'package:datascrap/skeleton.dart';
 import 'package:datascrap/typeofstats.dart';
 import 'package:flutter/material.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:get/get_navigation/src/routes/default_transitions.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:tuple/tuple.dart';
 import 'globals.dart' as globals;
 import 'package:skeletons/skeletons.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-import 'models/points_table_class.dart';
 import 'views/points_table_UI.dart';
 
 class datascrap extends StatefulWidget {
-  const datascrap({Key key}) : super(key: key);
+  const datascrap({Key? key}) : super(key: key);
   @override
   State<datascrap> createState() => _datascrapState();
 }
@@ -87,7 +83,7 @@ class _datascrapState extends State<datascrap> {
   @override
   void initState() {
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => _refreshIndicator.currentState.show());
+        .addPostFrameCallback((_) => _refreshIndicator.currentState!.show());
 
     super.initState();
     getlivematches(globals.league_page).then((value) {
@@ -102,7 +98,7 @@ class _datascrapState extends State<datascrap> {
         .get(Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
     dom.Document document = parser.parse(response.body);
     List matchesdata =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+        json.decode(document.getElementById('__NEXT_DATA__')!.text)['props']
             ['editionDetails']['trendingMatches']['matches'];
 
     List<Map<String, String>> matcheso = []; //
@@ -123,11 +119,10 @@ class _datascrapState extends State<datascrap> {
             ', ' +
             i['series']['name'];
         for (var team in i['teams']) {
-          iplmatcho['Team' + (i['teams'].indexOf(team) + 1).toString()] =
+          iplmatcho['Team${i['teams'].indexOf(team) + 1}'] =
               team['team']['longName'];
-          iplmatcho['Team' +
-              (i['teams'].indexOf(team) + 1).toString() +
-              '_short'] = team['team']['name'];
+          iplmatcho['Team${i['teams'].indexOf(team) + 1}_short'] =
+              team['team']['name'];
           var teamscore;
           if (team['scoreinfo'] == null && team['score'] == null) {
             teamscore = '';
@@ -139,22 +134,16 @@ class _datascrapState extends State<datascrap> {
             teamscore = (team['scoreInfo'] + team['score']);
           }
 
-          iplmatcho['team' +
-              (i['teams'].indexOf(team) + 1).toString() +
-              '_score'] = teamscore;
-          iplmatcho['team' +
-              (i['teams'].indexOf(team) + 1).toString() +
-              'logo'] = team['team']['imageUrl'];
+          iplmatcho['team${i['teams'].indexOf(team) + 1}_score'] = teamscore;
+          iplmatcho['team${i['teams'].indexOf(team) + 1}logo'] =
+              team['team']['imageUrl'];
         }
 
-        String pointstable = 'series/' +
-            i['series']['slug'] +
-            '-' +
-            i['series']['objectId'].toString() +
-            '/points-table-standings';
+        String pointstable =
+            '${'series/' + i['series']['slug']}-${i['series']['objectId']}/points-table-standings';
         var response = await http.Client()
-            .get(Uri.parse('https://www.espncricinfo.com/' + pointstable));
-        print(('https://www.espncricinfo.com/' + pointstable));
+            .get(Uri.parse('https://www.espncricinfo.com/$pointstable'));
+        print(('https://www.espncricinfo.com/$pointstable'));
         dom.Document pointsdoc = parser.parse(response.body);
 
         print(pointsdoc.getElementsByClassName('ds-grow').first.text);
@@ -170,7 +159,7 @@ class _datascrapState extends State<datascrap> {
           setState(() {
             tableshow = true;
             globals.league_page_address =
-                'https://www.espncricinfo.com/' + pointstable;
+                'https://www.espncricinfo.com/$pointstable';
           });
         }
         iplmatcho['Ground'] = i['ground']['smallName'];
@@ -180,13 +169,11 @@ class _datascrapState extends State<datascrap> {
                 ? 'Match starts at ' + UTCtoLocal(i['startTime'])
                 : i['statusText'];
         var changedroot = '/records/tournament/';
-        var link1update = changedroot +
-            i['series']['slug'] +
-            '-' +
-            i['series']['id'].toString();
+        var link1update =
+            '${changedroot + i['series']['slug']}-${i['series']['id']}';
 
         var teamstats = await http.Client()
-            .get(Uri.parse('https://www.espncricinfo.com' + link1update));
+            .get(Uri.parse('https://www.espncricinfo.com$link1update'));
 
         // ('assa1 ' + link3.toList()[0].attributes["href"].toString());
         dom.Document teamstatsdoc = parser.parse(teamstats.body);
@@ -196,21 +183,21 @@ class _datascrapState extends State<datascrap> {
                 'ds-flex ds-items-center ds-cursor-pointer ds-px-4 ds-py-3')
             .where((element) => element.text == 'Records by team');
         if (recordsbyteam.isNotEmpty) {
-          var teamrec1 = recordsbyteam.first.parentNode.children.last
+          var teamrec1 = recordsbyteam.first.parentNode!.children.last
               .getElementsByTagName('li')
               .where((element) => (element.text == iplmatcho["Team1"] ||
                   element.text == iplmatcho["Team1_short"]));
-          var teamrec2 = recordsbyteam.first.parentNode.children.last
+          var teamrec2 = recordsbyteam.first.parentNode!.children.last
               .getElementsByTagName('li')
               .where((element) => (element.text == iplmatcho["Team2"] ||
                   element.text == iplmatcho["Team2_short"]));
           print('rec1 $teamrec1 rec2 $teamrec2');
           if (teamrec1.isNotEmpty && teamrec2.isNotEmpty) {
             iplmatcho['team1_stats_link'] =
-                teamrec1.first.getElementsByTagName('a')[0].attributes['href'];
+                teamrec1.first.getElementsByTagName('a')[0].attributes['href']!;
             // print('rec1 ${rec1.first.attributes["href"]}');
             iplmatcho['team2_stats_link'] =
-                teamrec2.first.getElementsByTagName('a')[0].attributes['href'];
+                teamrec2.first.getElementsByTagName('a')[0].attributes['href']!;
             matcheso.add(iplmatcho);
             print(
                 'rec11 ${teamrec1.first.text} ${teamrec1.first.getElementsByTagName('a')[0].attributes['href']} ');
@@ -314,16 +301,16 @@ class _datascrapState extends State<datascrap> {
         var link1 = matchdetails.querySelectorAll('a')[0];
 
         var link1update = link1.attributes["href"].toString();
-        print('link1update1.0 ${link1update}');
+        print('link1update1.0 $link1update');
 
-        var matchaddress = 'https://www.espncricinfo.com' + link1update;
+        var matchaddress = 'https://www.espncricinfo.com$link1update';
         link1update = link1update.replaceAll(
-            link1update.split('/')[3] + '/' + link1update.split('/').last, '');
-        print('link1update1 ${link1update}');
+            '${link1update.split('/')[3]}/${link1update.split('/').last}', '');
+        print('link1update1 $link1update');
 
-        var link2address = 'https://www.espncricinfo.com' + link1update;
+        var link2address = 'https://www.espncricinfo.com$link1update';
         var forlink2 = await http.Client().get(Uri.parse(link2address));
-        dom.Document link2doc = parser.parse(forlink2.body);
+        parser.parse(forlink2.body);
 
         var formatch2 = await http.Client().get(Uri.parse(matchaddress));
         dom.Document match2doc = parser.parse(formatch2.body);
@@ -345,7 +332,7 @@ class _datascrapState extends State<datascrap> {
         }
 
         var forlink3 = await http.Client()
-            .get(Uri.parse('https://www.espncricinfo.com' + link1update));
+            .get(Uri.parse('https://www.espncricinfo.com$link1update'));
         dom.Document link3doc = parser.parse(forlink3.body);
 
         var link3 = link3doc
@@ -364,12 +351,12 @@ class _datascrapState extends State<datascrap> {
             var teams1 = y
                 .getElementsByClassName(
                     'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[0]
-                .querySelector('p')
+                .querySelector('p')!
                 .text; //team1 name Mumbai Indians Women
             var teams2 = y
                 .getElementsByClassName(
                     'ci-team-score ds-flex ds-justify-between ds-items-center ds-text-typo ds-my-1')[1]
-                .querySelector('p')
+                .querySelector('p')!
                 .text; //team2 name Gujarat Giants Women
             var teamscore = y.getElementsByClassName(
                 'ds-text-compact-s ds-text-typo ds-text-right ds-whitespace-nowrap');
@@ -389,10 +376,10 @@ class _datascrapState extends State<datascrap> {
                 Uri.parse('https://www.espncricinfo.com/live-cricket-score'));
             dom.Document document1 = parser.parse(response1.body);
             List imglogosdata = json.decode(
-                    document1.getElementById('__NEXT_DATA__').text)['props']
+                    document1.getElementById('__NEXT_DATA__')!.text)['props']
                 ['editionDetails']['trendingMatches']['matches'];
             List imglogosdata1 = json.decode(
-                    document1.getElementById('__NEXT_DATA__').text)['props']
+                    document1.getElementById('__NEXT_DATA__')!.text)['props']
                 ['appPageProps']['data']['content']['matches'];
             List takethisimglogosdata = List.from(imglogosdata)
               ..addAll(imglogosdata1);
@@ -409,9 +396,9 @@ class _datascrapState extends State<datascrap> {
                     i['teams'][1]['team']['longName'].toString();
                 if (i['teams'][0]['team']['image'] == null ||
                     i['teams'][1]['team']['image'] == null) {
-                  iplmatch['team1logo'] = null;
+                  iplmatch['team1logo'] = [] as String;
 
-                  iplmatch['team2logo'] = null;
+                  iplmatch['team2logo'] = [] as String;
                 } else {
                   iplmatch['team1logo'] =
                       i['teams'][0]['team']['image']['url'].toString();
@@ -431,9 +418,9 @@ class _datascrapState extends State<datascrap> {
 
                   if (i['teams'][0]['team']['image'] == null ||
                       i['teams'][1]['team']['image'] == null) {
-                    iplmatch['team1logo'] = null;
+                    iplmatch['team1logo'] = [] as String;
 
-                    iplmatch['team2logo'] = null;
+                    iplmatch['team2logo'] = [] as String;
                   } else {
                     iplmatch['team1logo'] =
                         i['teams'][0]['team']['image']['url'].toString();
@@ -464,16 +451,16 @@ class _datascrapState extends State<datascrap> {
             //getting current month name like January, February...
             var detailslist = matchDet1.text.split(',');
 
-            print('bass' + detailslist.toString());
+            print('bass$detailslist');
             for (var k in detailslist) {
-              print('bass' + k.toString());
+              print('bass$k');
               if (k.contains(format2.format(today).toString())) {
                 iplmatch['Ground'] =
                     detailslist[detailslist.indexOf(k) - 1].trim();
                 //taking the ground name from the list which is the one before Date details
               } else {}
             }
-            print('assa1' + iplmatch.toString());
+            print('assa1$iplmatch');
 
             if (teamscore.length == 2) {
               iplmatch['team1_score'] = teamscore[0].text.trim();
@@ -497,8 +484,7 @@ class _datascrapState extends State<datascrap> {
         }
         if (link3.toList().isNotEmpty) {
           var teamstats = await http.Client().get(Uri.parse(
-              'https://www.espncricinfo.com' +
-                  link3.toList()[0].attributes["href"].toString()));
+              'https://www.espncricinfo.com${link3.toList()[0].attributes["href"]}'));
           dom.Document viewstatsdoc = parser.parse(teamstats.body);
           var viewstats = viewstatsdoc
               .getElementsByClassName('ds-flex')
@@ -510,8 +496,7 @@ class _datascrapState extends State<datascrap> {
                 .get(Uri.parse(viewstats.last.attributes['href'].toString()));
           } else {
             teamstats = await http.Client().get(Uri.parse(
-                'https://www.espncricinfo.com' +
-                    viewstats.last.attributes['href'].toString()));
+                'https://www.espncricinfo.com${viewstats.last.attributes['href']}'));
             print('viewstast ${viewstats.last.attributes['href'].toString()}');
           }
           // ('assa1 ' + link3.toList()[0].attributes["href"].toString());
@@ -523,11 +508,11 @@ class _datascrapState extends State<datascrap> {
               .where((element) => element.text == 'Records by team');
 
           if (recordsbyteam.isNotEmpty) {
-            var teamrec1 = recordsbyteam.first.parentNode.children.last
+            var teamrec1 = recordsbyteam.first.parentNode!.children.last
                 .getElementsByTagName('li')
                 .where((element) => (element.text == iplmatch["Team1"] ||
                     element.text == iplmatch["Team1_short"]));
-            var teamrec2 = recordsbyteam.first.parentNode.children.last
+            var teamrec2 = recordsbyteam.first.parentNode!.children.last
                 .getElementsByTagName('li')
                 .where((element) => (element.text == iplmatch["Team2"] ||
                     element.text == iplmatch["Team2_short"]));
@@ -535,11 +520,11 @@ class _datascrapState extends State<datascrap> {
             if (teamrec1.isNotEmpty && teamrec2.isNotEmpty) {
               iplmatch['team1_stats_link'] = teamrec1.first
                   .getElementsByTagName('a')[0]
-                  .attributes['href'];
+                  .attributes['href']!;
               // print('rec1 ${rec1.first.attributes["href"]}');
               iplmatch['team2_stats_link'] = teamrec2.first
                   .getElementsByTagName('a')[0]
-                  .attributes['href'];
+                  .attributes['href']!;
               matches.add(iplmatch);
               print(
                   'rec11 ${teamrec1.first.text} ${teamrec1.first.getElementsByTagName('a')[0].attributes['href']} ');
@@ -568,7 +553,7 @@ class _datascrapState extends State<datascrap> {
     double screenheight = MediaQuery.of(context).size.height;
 
     // UTCtoLocal('Today, 3:15 am');
-    Future<void> _refresh() async {
+    Future<void> refresh() async {
       snapshot = [];
       await Future.delayed(const Duration(milliseconds: 5));
       getlivematches(globals.league_page).then((value) {
@@ -600,7 +585,7 @@ class _datascrapState extends State<datascrap> {
             key: _refreshIndicator,
             color: const Color(0xffFFB72B),
             backgroundColor: const Color(0xff2B2B28),
-            onRefresh: _refresh,
+            onRefresh: refresh,
             child: SingleChildScrollView(
               child: Container(
                 color: const Color(0xff2B2B28),
@@ -683,7 +668,7 @@ class _datascrapState extends State<datascrap> {
                                       shrinkWrap: true,
                                       itemCount: 5,
                                       itemBuilder: (context, index) =>
-                                          NewsCardSkelton(),
+                                          const NewsCardSkelton(),
                                     )))
                             : snapshot == null
                                 ? Container(
@@ -810,29 +795,29 @@ class _datascrapState extends State<datascrap> {
                                                             setState(() {
                                                               globals.team1_name =
                                                                   e['Team1']
-                                                                      .trim();
+                                                                      ?.trim();
                                                               globals.team2_name =
                                                                   e['Team2']
-                                                                      .trim();
+                                                                      ?.trim();
                                                               globals.team1__short_name =
                                                                   e['Team1_short']
-                                                                      .trim();
+                                                                      ?.trim();
                                                               globals.team2__short_name =
                                                                   e['Team2_short']
-                                                                      .trim();
+                                                                      ?.trim();
                                                               globals.team1_stats_link =
-                                                                  e['team1_stats_link'];
+                                                                  e['team1_stats_link']!;
                                                               globals.team2_stats_link =
-                                                                  e['team2_stats_link'];
+                                                                  e['team2_stats_link']!;
                                                               globals
                                                                   .ground = e[
                                                                       'Ground']
                                                                   .toString()
                                                                   .trim();
                                                               globals.team1logo =
-                                                                  e['team1logo'];
+                                                                  e['team1logo']!;
                                                               globals.team2logo =
-                                                                  e['team2logo'];
+                                                                  e['team2logo']!;
                                                               globals.ontap = e[
                                                                   'linkaddress'];
                                                             });
@@ -860,8 +845,7 @@ class _datascrapState extends State<datascrap> {
                                                               mainAxisSize:
                                                                   MainAxisSize
                                                                       .min,
-                                                              children: <
-                                                                  Widget>[
+                                                              children: <Widget>[
                                                                 Row(
                                                                   mainAxisAlignment:
                                                                       MainAxisAlignment
@@ -872,12 +856,12 @@ class _datascrapState extends State<datascrap> {
                                                                               .size
                                                                               .width -
                                                                           30,
-                                                                      padding:
-                                                                          const EdgeInsets.all(
-                                                                              5.0),
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          5.0),
                                                                       child: Text(
                                                                           e[
-                                                                              'Details'],
+                                                                              'Details']!,
                                                                           textAlign: TextAlign
                                                                               .center,
                                                                           style:
@@ -911,13 +895,13 @@ class _datascrapState extends State<datascrap> {
                                                                                 null
                                                                             ? IconButton(
                                                                                 icon: CachedNetworkImage(
-                                                                                  imageUrl: rootLogo + e['team1logo'],
+                                                                                  imageUrl: rootLogo + e['team1logo']!, width: 30
                                                                                 ),
                                                                                 onPressed: null)
                                                                             : IconButton(icon: Image.asset('logos/team1.png'), onPressed: null),
                                                                         Flexible(
                                                                           child: Text(
-                                                                              e['Team1'],
+                                                                              e['Team1']!,
                                                                               style: TextStyle(
                                                                                 fontFamily: 'Litsans',
                                                                                 fontSize: 15.0,
@@ -934,7 +918,7 @@ class _datascrapState extends State<datascrap> {
                                                                         ),
                                                                         Flexible(
                                                                           child: Text(
-                                                                              e['team1_score'],
+                                                                              e['team1_score']!,
                                                                               style: globals.Litsanswhite),
                                                                         )
                                                                       ],
@@ -945,13 +929,12 @@ class _datascrapState extends State<datascrap> {
                                                                                 null
                                                                             ? IconButton(
                                                                                 icon: CachedNetworkImage(
-                                                                                  imageUrl: rootLogo + e['team2logo'],
-                                                                                ),
+                                                                                  imageUrl: rootLogo + e['team2logo']!, width: 30),
                                                                                 onPressed: null)
                                                                             : IconButton(icon: Image.asset('logos/team2.png'), onPressed: null),
                                                                         Flexible(
                                                                           child: Text(
-                                                                              e['Team2'].trim(),
+                                                                              e['Team2']!.trim(),
                                                                               style: TextStyle(
                                                                                 fontFamily: 'Litsans',
                                                                                 fontSize: 15.0,
@@ -967,7 +950,7 @@ class _datascrapState extends State<datascrap> {
                                                                               )),
                                                                         ),
                                                                         Text(
-                                                                          e['team2_score'],
+                                                                          e['team2_score']!,
                                                                           style:
                                                                               globals.Litsanswhite,
                                                                         )
@@ -975,47 +958,41 @@ class _datascrapState extends State<datascrap> {
                                                                     )
                                                                   ],
                                                                 ),
-                                                                const SizedBox(
-                                                                  height: 20,
-                                                                ),
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .all(
-                                                                          10.0),
-                                                                  child: (e['MatchStarts']
-                                                                          .toString()
-                                                                          .contains(
-                                                                              'won'))
-                                                                      ? Text(
-                                                                          e[
-                                                                              'MatchStarts'],
-                                                                          textAlign: TextAlign
-                                                                              .center,
-                                                                          style:
-                                                                              const TextStyle(
-                                                                            fontFamily:
-                                                                                'Litsans',
-                                                                            fontSize:
-                                                                                20.0,
-                                                                            color:
-                                                                                Colors.greenAccent,
-                                                                          ))
-                                                                      : Text(
-                                                                          e[
-                                                                              'MatchStarts'],
-                                                                          textAlign: TextAlign
-                                                                              .center,
-                                                                          style:
-                                                                              const TextStyle(
-                                                                            fontFamily:
-                                                                                'Litsans',
-                                                                            fontSize:
-                                                                                20.0,
-                                                                            color:
-                                                                                Colors.amberAccent,
-                                                                          )),
-                                                                )
+                                                                
+                                                                (e['MatchStarts']
+                                                                        .toString()
+                                                                        .contains(
+                                                                            'won'))
+                                                                    ? Text(
+                                                                        e[
+                                                                            'MatchStarts']!,
+                                                                        textAlign:
+                                                                            TextAlign
+                                                                                .center,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontFamily:
+                                                                              'Litsans',
+                                                                          fontSize:
+                                                                              20.0,
+                                                                          color:
+                                                                              Colors.greenAccent,
+                                                                        ))
+                                                                    : Text(
+                                                                        e[
+                                                                            'MatchStarts']!,
+                                                                        textAlign:
+                                                                            TextAlign
+                                                                                .center,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontFamily:
+                                                                              'Litsans',
+                                                                          fontSize:
+                                                                              20.0,
+                                                                          color:
+                                                                              Colors.amberAccent,
+                                                                        ))
                                                               ],
                                                             ),
                                                           ),
@@ -1033,7 +1010,7 @@ class _datascrapState extends State<datascrap> {
                             ? Container(
                                 // height: screenheight,
                                 color: const Color(0xff2B2B28),
-                                child: const pointsTableUI())
+                                child: pointsTableUI())
                             : Container()
                       ],
                     ),

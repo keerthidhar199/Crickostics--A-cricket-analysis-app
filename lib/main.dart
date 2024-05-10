@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_const
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -18,7 +20,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +29,14 @@ class MyApp extends StatelessWidget {
 }
 
 class Homepage extends StatefulWidget {
-  const Homepage({Key key}) : super(key: key);
+  const Homepage({Key? key}) : super(key: key);
 
   @override
   State<Homepage> createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
-  String website;
+  late String website;
   String route = 'https://www.espncricinfo.com';
   var linkdetails = [];
   List match_leagues = [];
@@ -52,10 +54,10 @@ class _HomepageState extends State<Homepage> {
 
     dom.Document document = parser.parse(response.body);
     List imglogosdata =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+        json.decode(document.getElementById('__NEXT_DATA__')!.text)['props']
             ['editionDetails']['trendingMatches']['matches'];
     List imglogosdata1 =
-        json.decode(document.getElementById('__NEXT_DATA__').text)['props']
+        json.decode(document.getElementById('__NEXT_DATA__')!.text)['props']
             ['appPageProps']['data']['content']['matches'];
     List takethisimglogosdata = List.from(imglogosdata)..addAll(imglogosdata1);
 
@@ -113,15 +115,15 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     List<BorderSide> borderside = List.filled(3, BorderSide.none);
-    List<List<dynamic>> match_leagues_refresh1 = [];
+    List<List<dynamic>> matchLeaguesRefresh1 = [];
 
-    Future<void> _refresh() async {
+    Future<void> refresh() async {
       await Future.delayed(const Duration(seconds: 1));
       getValidMatches().then((value) {
         setState(() {
           _refreshIndicator = GlobalKey<RefreshIndicatorState>();
-          match_leagues_refresh1 = value;
-          match_leagues_refresh = match_leagues_refresh1;
+          matchLeaguesRefresh1 = value;
+          match_leagues_refresh = matchLeaguesRefresh1;
         });
       });
       // return
@@ -132,7 +134,8 @@ class _HomepageState extends State<Homepage> {
           backgroundColor: const Color(0xffFFB72B),
           title: const Text(
             'Playing Leagues',
-            style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
+            style: TextStyle(
+                fontFamily: 'Montserrat-Black', color: Colors.black87),
           ),
           actions: [
             TextButton(
@@ -153,7 +156,7 @@ class _HomepageState extends State<Homepage> {
                     const Text(
                       'Your Fantasy',
                       style: TextStyle(
-                          fontFamily: 'Cocosharp', color: Colors.white),
+                          fontFamily: 'Montserrat-Black', color: Colors.white),
                     ),
                     const SizedBox(
                       width: 5,
@@ -173,7 +176,7 @@ class _HomepageState extends State<Homepage> {
             key: _refreshIndicator,
             color: const Color(0xffFFB72B),
             backgroundColor: const Color(0xff2B2B28),
-            onRefresh: _refresh,
+            onRefresh: refresh,
             child: match_leagues_refresh.isEmpty
                 ? Container(
                     color: const Color(0xff2B2B28),
@@ -188,7 +191,7 @@ class _HomepageState extends State<Homepage> {
                         child: ListView.builder(
                           itemCount: 10,
                           itemBuilder: (context, index) =>
-                              PlayingLeaguesSkelton(),
+                              const PlayingLeaguesSkelton(),
                         )))
                 : Container(
                     color: const Color(0xff2B2B28),
@@ -210,7 +213,7 @@ class _HomepageState extends State<Homepage> {
                                         children: [
                                           const Text('  Oh My CrickOh! ',
                                               style: TextStyle(
-                                                fontFamily: 'Cocosharp',
+                                                fontFamily: 'Montserrat-Black',
                                                 fontSize: 20.0,
                                                 color: Colors.white,
                                               )),
@@ -228,7 +231,8 @@ class _HomepageState extends State<Homepage> {
                                                 child: Text(
                                                     'No Scheduled matches as of now. Matches appear before 10-12hr of the match start time.',
                                                     style: TextStyle(
-                                                      fontFamily: 'Litsans',
+                                                      fontFamily:
+                                                          'Montserrat-Black',
                                                       fontSize: 17.0,
                                                       color: Colors.white,
                                                     )),
@@ -250,7 +254,7 @@ class _HomepageState extends State<Homepage> {
                                               'Choose your league',
                                               textAlign: TextAlign.left,
                                               style: TextStyle(
-                                                fontFamily: 'Cocosharp',
+                                                fontFamily: 'Montserrat-Black',
                                                 fontSize: 20.0,
                                                 color: Colors.white,
                                               ),
@@ -308,7 +312,7 @@ class _HomepageState extends State<Homepage> {
                                                               TextAlign.left,
                                                           style: TextStyle(
                                                             fontFamily:
-                                                                'Cocosharp',
+                                                                'Montserrat-Black',
                                                             fontSize: 15.0,
                                                             color: Colors
                                                                 .grey.shade700,
@@ -356,7 +360,7 @@ class _HomepageState extends State<Homepage> {
                                                               FadeInAnimation(
                                                             curve: Curves
                                                                 .easeInExpo,
-                                                            child: Container(
+                                                            child: SizedBox(
                                                               height: MediaQuery.of(
                                                                           context)
                                                                       .size
@@ -388,7 +392,7 @@ class _HomepageState extends State<Homepage> {
                                                                         context,
                                                                         MaterialPageRoute(
                                                                           builder: (context) =>
-                                                                              const datascrap(),
+                                                                              datascrap(),
                                                                         ));
                                                                   },
                                                                   child: Container(
@@ -415,7 +419,7 @@ class _HomepageState extends State<Homepage> {
                                                                           style:
                                                                               const TextStyle(
                                                                             fontFamily:
-                                                                                'Litsans',
+                                                                                'Montserrat-Black',
                                                                             fontSize:
                                                                                 20.0,
                                                                             color:

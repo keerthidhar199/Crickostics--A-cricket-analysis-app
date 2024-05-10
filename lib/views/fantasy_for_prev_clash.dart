@@ -8,14 +8,14 @@ class FantasyAnalysis extends StatelessWidget {
   final previous_clashes;
 
   const FantasyAnalysis(
-      {Key key, this.fantasydata, this.e, this.Color1, this.previous_clashes})
+      {Key? key, this.fantasydata, this.e, this.Color1, this.previous_clashes})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List teamsplit = e.toString().split('_')[1].split('vs');
     String vs = teamsplit[0] + ' vs ' + teamsplit[1];
-    String root_logo =
+    String rootLogo =
         'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
     print(previous_clashes);
     return Scaffold(
@@ -24,7 +24,7 @@ class FantasyAnalysis extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Fantasy Analysis',
             style: TextStyle(
-              fontFamily: 'Cocosharp',
+              fontFamily: 'Montserrat-Black',
               fontSize: 20.0,
               color: Colors.black,
             )),
@@ -56,7 +56,7 @@ class FantasyAnalysis extends StatelessWidget {
                 children: [
                   Text(
                     teamsplit[fantasydata[e].toList().indexOf(eachteam)],
-                    style: globals.noble,
+                    style: globals.cocosharp,
                   ), //Team1 and team2  title
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
@@ -80,7 +80,7 @@ class FantasyAnalysis extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              padding: EdgeInsets.all(3),
+                              padding: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20.0),
                                   border:
@@ -93,7 +93,7 @@ class FantasyAnalysis extends StatelessWidget {
                                   )),
                               child: Text(
                                 'Your Selection',
-                                style: globals.noble,
+                                style: globals.cocosharp,
                               ),
                             ),
                             for (var as in eachteam.keys)
@@ -107,9 +107,7 @@ class FantasyAnalysis extends StatelessWidget {
                                               shape: BoxShape.circle,
                                             ),
                                             child: Image.asset(
-                                              'logos/' +
-                                                  as.toString().toLowerCase() +
-                                                  '.png',
+                                              'logos/${as.toString().toLowerCase()}.png',
                                               color: Colors.white,
                                               width: 30,
                                               height: 30,
@@ -223,11 +221,9 @@ class FantasyAnalysis extends StatelessWidget {
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: Image.asset(
-                                                  'logos/' +
-                                                      as
+                                                  'logos/${as
                                                           .toString()
-                                                          .toLowerCase() +
-                                                      '.png',
+                                                          .toLowerCase()}.png',
                                                   color: Color1,
                                                   width: 30,
                                                   height: 30,
@@ -277,14 +273,11 @@ class FantasyAnalysis extends StatelessWidget {
                                                                   .width /
                                                               1.5,
                                                           child: Text(
-                                                            eachteam[as][i]
-                                                                    .toString() +
-                                                                ', ' +
-                                                                eachteam[as]
+                                                            '${eachteam[as][i]}, ${eachteam[as]
                                                                         [i + 1]
                                                                     .toString()
                                                                     .split(
-                                                                        '&')[0],
+                                                                        '&')[0]}',
                                                             //  + player.toString().split('&')[1][0],
 
                                                             style:
@@ -355,7 +348,7 @@ class FantasyAnalysis extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: EdgeInsets.all(3),
+                            padding: const EdgeInsets.all(3),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20.0),
                                 border:
@@ -368,7 +361,7 @@ class FantasyAnalysis extends StatelessWidget {
                                 )),
                             child: Text(
                               'Your Selection',
-                              style: globals.noble,
+                              style: globals.cocosharp,
                             ),
                           ),
                           for (var as in previous_clashes['headtohead'][0].keys)
@@ -382,9 +375,7 @@ class FantasyAnalysis extends StatelessWidget {
                                             shape: BoxShape.circle,
                                           ),
                                           child: Image.asset(
-                                            'logos/' +
-                                                as.toString().toLowerCase() +
-                                                '.png',
+                                            'logos/${as.toString().toLowerCase()}.png',
                                             color: Colors.white,
                                             width: 30,
                                             height: 30,
@@ -500,11 +491,9 @@ class FantasyAnalysis extends StatelessWidget {
                                                 shape: BoxShape.circle,
                                               ),
                                               child: Image.asset(
-                                                'logos/' +
-                                                    as
+                                                'logos/${as
                                                         .toString()
-                                                        .toLowerCase() +
-                                                    '.png',
+                                                        .toLowerCase()}.png',
                                                 color: Color1,
                                                 width: 30,
                                                 height: 30,
@@ -556,18 +545,15 @@ class FantasyAnalysis extends StatelessWidget {
                                                                 .width /
                                                             1.5,
                                                         child: Text(
-                                                          previous_clashes[
+                                                          '${previous_clashes[
                                                                           'headtohead']
-                                                                      [as][i]
-                                                                  .toString() +
-                                                              ', ' +
-                                                              previous_clashes[
+                                                                      [as][i]}, ${previous_clashes[
                                                                           'headtohead']
                                                                       [
                                                                       as][i + 1]
                                                                   .toString()
                                                                   .split(
-                                                                      '&')[0],
+                                                                      '&')[0]}',
                                                           //  + player.toString().split('&')[1][0],
 
                                                           style:

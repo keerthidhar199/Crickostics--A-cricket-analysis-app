@@ -1,14 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:datascrap/analysis.dart';
-import 'package:external_path/external_path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:csv/csv.dart';
 import 'package:datascrap/globals.dart' as globals;
 
-class exportcsv {
+class ExportCsv {
   static Future<void> getcsv() async {
     List<Map<String, List<dynamic>>> associateList1 = [
       Analysis.battersmap,
@@ -25,28 +22,28 @@ class exportcsv {
     print('ik1 $finalMap');
 
     List<List<dynamic>> rows = [];
-    Set distinct_teams = {};
+    Set<String> distinctTeams = {};
     Map<String, List<dynamic>> mapteamwise = {};
     List<dynamic> row = [];
-    List<String> teamlogos = [globals.team1logo, globals.team2logo];
+    List<String?> teamlogos = [globals.team1logo, globals.team2logo];
     row.add("Team");
     row.add('Player Stats');
     row.add('Teamlogo');
     rows.add(row);
     for (var j in finalMap.keys) {
-      var league, team, vs;
+      String league, team, vs;
       print(j);
       league = j.toString().split('_')[0];
       vs = j.toString().split('_')[1];
       team = j.toString().split('_')[2];
-      distinct_teams.add(league + '_' + vs + '_' + team);
+      distinctTeams.add('${league}_${vs}_$team');
     }
-    for (var k in distinct_teams) {
+    for (var k in distinctTeams) {
       List teamwise = [];
       List<dynamic> row = [];
       for (var j in finalMap.keys) {
         if (j.toString().contains(k)) {
-          var category;
+          String category;
 
           category = j.toString().split('_')[3][0].toUpperCase() +
               j.toString().split('_')[3].substring(1).toLowerCase();
@@ -66,14 +63,13 @@ class exportcsv {
     bool ifavail = prefs.containsKey('FantasyData');
     if (ifavail) {
       Map<String, dynamic> sp = {};
-      var fields1 = jsonDecode(prefs.getString('FantasyData'));
+      var fields1 = jsonDecode(prefs.getString('FantasyData') ?? '{}');
       print('SP $fields1');
-      for (int i = 0; i < fields1.keys.length; i++) {
-        print('SP ${fields1.keys.toList()}');
-        sp[fields1.keys.toList()[i]] = fields1[fields1.keys.toList()[i]];
+      for (var key in fields1.keys) {
+        sp[key] = fields1[key];
       }
-      String counter = (fields1.keys.length + 1).toString();
-      sp['Result' + counter] = rows;
+      String counter = (fields1.length + 1).toString();
+      sp['Result$counter'] = rows;
       String encodedata;
       print('SP $sp');
       encodedata = jsonEncode(sp);

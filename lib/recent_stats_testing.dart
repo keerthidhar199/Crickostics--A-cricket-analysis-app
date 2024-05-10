@@ -1,5 +1,6 @@
+// ignore_for_file: unused_local_variable, unnecessary_null_comparison, camel_case_types
+
 import 'dart:async';
-import 'dart:convert';
 import 'package:datascrap/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +10,7 @@ import 'globals.dart' as globals;
 import 'package:skeletons/skeletons.dart';
 
 class recentmatchtestdata extends StatefulWidget {
-  const recentmatchtestdata({Key key}) : super(key: key);
+  const recentmatchtestdata({Key? key}) : super(key: key);
   @override
   State<recentmatchtestdata> createState() => _recentmatchtestdataState();
 }
@@ -35,138 +36,133 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
             'ds-text-tight-m ds-font-regular ds-text-typo-mid3')
         .toList()
         .isNotEmpty) {
-      var recent_perform =
+      var recentPerform =
           link2doc.getElementsByClassName('ds-p-0')[1].querySelector('table');
 
       // recent_perform.querySelectorAll('tbody')[1].clone(true);
 
-      var team1_recent = recent_perform.querySelectorAll('tbody>tr')[0];
-      var team1_recentname = team1_recent
+      var team1Recent = recentPerform!.querySelectorAll('tbody>tr')[0];
+      var team1Recentname = team1Recent
           .querySelector(
-              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
+              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')!
           .text;
-      print('team1_recentname $team1_recentname');
+      print('team1_recentname $team1Recentname');
 
-      print('asa11 ${team1_recentname}');
-      var team1_recentform = team1_recent.querySelectorAll(
+      print('asa11 $team1Recentname');
+      var team1Recentform = team1Recent.querySelectorAll(
           'td>div > div.ReactCollapse--collapse > div > div > a');
-      var winsloss1 = team1_recent
+      var winsloss1 = team1Recent
           .querySelector(
-              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
+              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')!
           .children;
 
-      List team1_winsloss = [];
+      List team1Winsloss = [];
       String d = '';
       for (var i = 0; i < winsloss1.length; i++) {
-        team1_winsloss.add(winsloss1[i].text.trim());
+        team1Winsloss.add(winsloss1[i].text.trim());
       }
-      var team2_recent = recent_perform.querySelectorAll('tbody>tr')[1];
-      var team2_recentname = team2_recent
+      var team2Recent = recentPerform.querySelectorAll('tbody>tr')[1];
+      var team2Recentname = team2Recent
           .querySelector(
-              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')
+              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-col.ds-grow.ds-justify-center > span > span')!
           .text;
-      print('asa12 ${team2_recentname}');
+      print('asa12 $team2Recentname');
 
-      var team2_recentform = team2_recent.querySelectorAll(
+      var team2Recentform = team2Recent.querySelectorAll(
           'tr>td>div > div.ReactCollapse--collapse > div > div > a');
-      var winsloss2 = team2_recent
+      var winsloss2 = team2Recent
           .querySelector(
-              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')
+              'tr>td > div > div.ds-flex.ds-items-center.ds-cursor-pointer > div.ds-grow > div > div.ds-flex.ds-flex-row.ds-items-center > span > div')!
           .children;
 
       print('winlloss $winsloss1 $winsloss2');
-      List team2_winsloss = [];
+      List team2Winsloss = [];
       for (var i = 0; i < winsloss2.length; i++) {
-        team2_winsloss.add(winsloss2[i].text.trim());
+        team2Winsloss.add(winsloss2[i].text.trim());
       }
-      if (team1_recentname != null && team2_recentname != null) {
-        List<String> matches_played_details1 = [];
-        List<String> matches_played_links1 = [];
-        List<String> match_winner1 = [];
-        List<String> matches_played_details2 = [];
-        List<String> matches_played_links2 = [];
-        List<String> match_winner2 = [];
+      List<String> matchesPlayedDetails1 = [];
+      List<String> matchesPlayedLinks1 = [];
+      List<String> matchWinner1 = [];
+      List<String> matchesPlayedDetails2 = [];
+      List<String> matchesPlayedLinks2 = [];
+      List<String> matchWinner2 = [];
 
-        team1['Name'] = [team1_recentname];
-        team1['winsloss'] = [
-          team1_winsloss
-              .toString()
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .replaceAll(' ', '')
-        ];
-        team2['Name'] = [team2_recentname];
-        team2['winsloss'] = [
-          team2_winsloss
-              .toString()
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .replaceAll(' ', '')
-        ];
+      team1['Name'] = [team1Recentname];
+      team1['winsloss'] = [
+        team1Winsloss
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .replaceAll(' ', '')
+      ];
+      team2['Name'] = [team2Recentname];
+      team2['winsloss'] = [
+        team2Winsloss
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .replaceAll(' ', '')
+      ];
 
-        for (int i = 0; i < team1_recentform.length; i++) {
-          var justanothevar = team1_recentform[i].querySelector(
-              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
-          var justanothevar1 = team1_recentform[i].querySelector(
-              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-typo-mid3.ds-text-left");
+      for (int i = 0; i < team1Recentform.length; i++) {
+        var justanothevar = team1Recentform[i].querySelector(
+            "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
+        var justanothevar1 = team1Recentform[i].querySelector(
+            "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-text-typo-mid3.ds-text-left");
 
-          matches_played_details1.add(justanothevar.text.split(',').last +
-              ', ' +
-              justanothevar.text
-                  .replaceAll((justanothevar.text.split(',').last), ''));
+        matchesPlayedDetails1.add(
+            '${justanothevar!.text.split(',').last}, ${justanothevar.text.replaceAll((justanothevar.text.split(',').last), '')}');
 
-          match_winner1.add(justanothevar1.text);
+        matchWinner1.add(justanothevar1!.text);
 
-          matches_played_links1.add(team1_recentform[i].attributes['href']);
-        }
-        team1['matches_details'] = matches_played_details1;
-        team1['scoreboard_for_matches_links'] = matches_played_links1;
-        team1['match_winner'] = match_winner1;
-
-        for (int i = 0; i < team2_recentform.length; i++) {
-          var justanothevar = team2_recentform[i].querySelector(
-              "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
-          var justanothevar1 = team2_recentform[i]
-              .getElementsByClassName(
-                  'ds-text-compact-xs ds-text-typo-mid3 ds-text-left')[0]
-              .text;
-          print('justanothevar1 $justanothevar1');
-          matches_played_details2.add(justanothevar.text.split(',').last +
-              ', ' +
-              justanothevar.text
-                  .replaceAll((justanothevar.text.split(',').last), ''));
-
-          match_winner2.add(justanothevar1);
-          matches_played_links2.add(team2_recentform[i].attributes['href']);
-        }
-        team2['matches_details'] = matches_played_details2;
-        team2['scoreboard_for_matches_links'] = matches_played_links2;
-        team2['match_winner'] = match_winner2;
+        matchesPlayedLinks1.add(team1Recentform[i].attributes['href']!);
       }
+      team1['matches_details'] = matchesPlayedDetails1;
+      team1['scoreboard_for_matches_links'] = matchesPlayedLinks1;
+      team1['match_winner'] = matchWinner1;
+
+      for (int i = 0; i < team2Recentform.length; i++) {
+        var justanothevar = team2Recentform[i].querySelector(
+            "div > div.ds-flex.ds-flex-col > span.ds-text-compact-xs.ds-font-medium");
+        var justanothevar1 = team2Recentform[i]
+            .getElementsByClassName(
+                'ds-text-compact-xs ds-text-typo-mid3 ds-text-left')[0]
+            .text;
+        print('justanothevar1 $justanothevar1');
+        matchesPlayedDetails2.add(
+            '${justanothevar!.text.split(',').last}, ${justanothevar.text.replaceAll((justanothevar.text.split(',').last), '')}');
+
+        matchWinner2.add(justanothevar1);
+        matchesPlayedLinks2.add(team2Recentform[i].attributes['href']!);
+      }
+      team2['matches_details'] = matchesPlayedDetails2;
+      team2['scoreboard_for_matches_links'] = matchesPlayedLinks2;
+      team2['match_winner'] = matchWinner2;
     }
 
     print('asa11tap ${globals.ontap}');
     bothteams.add(team1);
     bothteams.add(team2);
-    print('asa11 ${team1}'); //teamname
-    print('asa11 ${team2}'); //LWLLL
+    print('asa11 $team1'); //teamname
+    print('asa11 $team2'); //LWLLL
     return bothteams;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff2B2B28),
+      backgroundColor: const Color(0xff2B2B28),
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: Color(0xffFFB72B),
-        title: Text(
+        backgroundColor: const Color(0xffFFB72B),
+        title: const Text(
           'Recent stats',
-          style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
+          style:
+              TextStyle(fontFamily: 'Montserrat-Black', color: Colors.black87),
         ),
         leading: IconButton(
             color: Colors.black,
-            icon: Icon(Icons.keyboard_arrow_left),
+            icon: const Icon(Icons.keyboard_arrow_left),
             onPressed: () {
               Navigator.pop(context);
             }),
@@ -178,62 +174,64 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return Container(
-                  color: Color(0xff2B2B28),
+                  color: const Color(0xff2B2B28),
                   child: SkeletonTheme(
                       shimmerGradient: LinearGradient(colors: [
-                        Color(0xff1A3263).withOpacity(0.8),
-                        Color(0xff1A3263),
-                        Color(0xff1A3263),
-                        Color(0xff1A3263).withOpacity(0.8),
+                        const Color(0xff1A3263).withOpacity(0.8),
+                        const Color(0xff1A3263),
+                        const Color(0xff1A3263),
+                        const Color(0xff1A3263).withOpacity(0.8),
                       ]),
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemCount: 5,
-                        itemBuilder: (context, index) => NewsCardSkelton(),
+                        itemBuilder: (context, index) =>
+                            const NewsCardSkelton(),
                       )));
             default:
-              if (snapshot.hasError)
+              if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
-              else if (snapshot.data == null) {
+              } else if (snapshot.data == null) {
                 return Container(
-                    color: Color(0xff2B2B28),
+                    color: const Color(0xff2B2B28),
                     child: SkeletonTheme(
                         shimmerGradient: LinearGradient(colors: [
-                          Color(0xff1A3263).withOpacity(0.8),
-                          Color(0xff1A3263),
-                          Color(0xff1A3263),
-                          Color(0xff1A3263).withOpacity(0.8),
+                          const Color(0xff1A3263).withOpacity(0.8),
+                          const Color(0xff1A3263),
+                          const Color(0xff1A3263),
+                          const Color(0xff1A3263).withOpacity(0.8),
                         ]),
                         child: ListView.builder(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemCount: 5,
-                          itemBuilder: (context, index) => NewsCardSkelton(),
+                          itemBuilder: (context, index) =>
+                              const NewsCardSkelton(),
                         )));
               } else {
-                if (snapshot.data.isEmpty) {
+                if (snapshot.data!.isEmpty) {
                   return Container(
-                    color: Color(0xff2B2B28),
+                    color: const Color(0xff2B2B28),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('  Oh My CrickOh! ',
+                        const Text('  Oh My CrickOh! ',
                             style: TextStyle(
-                              fontFamily: 'Litsans',
+                              fontFamily: 'Montserrat-Black',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
-                        Text('Stats not available.',
+                        const Text('Stats not available.',
                             style: TextStyle(
-                              fontFamily: 'Litsans',
+                              fontFamily: 'Montserrat-Black',
                               fontSize: 20.0,
                               color: Colors.white,
                             )),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Row(
@@ -243,11 +241,11 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                   'logos/ball.png',
                                 ),
                                 onPressed: null),
-                            Flexible(
+                            const Flexible(
                               child: Text(
                                   'The league might have started recently due to which enough data is not found.',
                                   style: TextStyle(
-                                    fontFamily: 'Litsans',
+                                    fontFamily: 'Montserrat-Black',
                                     fontSize: 15.0,
                                     color: Colors.white,
                                   )),
@@ -258,7 +256,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                     ),
                   );
                 } else {
-                  String root_logo =
+                  String rootLogo =
                       'https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_80/lsci';
                   List<String> teamnames = [
                     globals.team1_name,
@@ -273,11 +271,11 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                   return SingleChildScrollView(
                     child: Container(
                       child: Column(
-                          children: snapshot.data.map((e) {
+                          children: snapshot.data!.map((e) {
                         return Column(
                           children: [
                             Container(
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   gradient: LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -291,21 +289,19 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      teamlogos[snapshot.data.indexOf(e)] !=
+                                      teamlogos[snapshot.data!.indexOf(e)] !=
                                               null
                                           ? Image.network(
-                                              root_logo +
-                                                  teamlogos[snapshot.data
+                                              rootLogo +
+                                                  teamlogos[snapshot.data!
                                                           .indexOf(e)]
                                                       .toString(),
                                               width: 32,
                                               height: 32,
                                             )
                                           : IconButton(
-                                              icon: Image.asset('logos/team' +
-                                                  (snapshot.data.indexOf(e) + 1)
-                                                      .toString() +
-                                                  '.png'),
+                                              icon: Image.asset(
+                                                  'logos/team${snapshot.data!.indexOf(e) + 1}.png'),
                                               onPressed: null),
                                       GestureDetector(
                                         onTap: () {},
@@ -314,11 +310,11 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(6.0),
                                             child: Text(
-                                              '${e['Name'][0].trim()}',
+                                              e['Name']![0].trim(),
                                               textAlign: TextAlign.left,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 20.0,
-                                                fontFamily: 'Cocosharp',
+                                                fontFamily: 'Montserrat-Black',
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -331,23 +327,15 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                   Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: e['winsloss'][0]
+                                      children: e['winsloss']![0]
                                           .toString()
                                           .split(',')
                                           .map((character) => Row(
                                                 children: [
-                                                  Text('-'),
+                                                  const Text('-'),
                                                   Container(
-                                                    child: Text(
-                                                      '${character}',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Cocosharp',
-                                                        fontSize: 20.0,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
                                                     decoration:
-                                                        new BoxDecoration(
+                                                        BoxDecoration(
                                                       shape: BoxShape.circle,
                                                       color: character == 'W'
                                                           ? Colors.green
@@ -356,9 +344,19 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                                               : Colors.grey,
                                                     ),
                                                     padding:
-                                                        new EdgeInsets.all(10),
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: Text(
+                                                      character,
+                                                      style: const TextStyle(
+                                                        fontFamily:
+                                                            'Montserrat-Black',
+                                                        fontSize: 20.0,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
                                                   ),
-                                                  Text('-'),
+                                                  const Text('-'),
                                                   // SizedBox(
                                                   //   width:
                                                   //       MediaQuery.of(context)
@@ -378,14 +376,14 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                               //   color: Colors.yellow.shade300,
                               //   size: 25,
                               // ),
-                              title: Text("More details",
+                              title: Text("More 1details",
                                   style: TextStyle(
-                                    fontFamily: 'Cocosharp',
+                                    fontFamily: 'Montserrat-Black',
                                     color: Colors.yellow.shade300,
                                   )),
                               children: [
                                 for (var i = 0;
-                                    i < e['matches_details'].length;
+                                    i < e['matches_details']!.length;
                                     i++)
                                   Column(
                                     children: [
@@ -399,23 +397,24 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                             children: [
                                               //Faceoff
                                               Container(
-                                                decoration: new BoxDecoration(
+                                                decoration: const BoxDecoration(
                                                     borderRadius:
-                                                        new BorderRadius.all(
-                                                            new Radius.circular(
+                                                        BorderRadius.all(
+                                                            Radius.circular(
                                                                 10.0)),
                                                     color: Colors.white60),
                                                 padding:
                                                     const EdgeInsets.all(5.0),
                                                 child: TextButton(
                                                   child: Text(
-                                                    e['matches_details'][i]
+                                                    e['matches_details']![i]
                                                         .toString()
                                                         .split(',')
                                                         .first,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 15.0,
-                                                      fontFamily: 'Cocosharp',
+                                                      fontFamily:
+                                                          'Montserrat-Black',
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -425,7 +424,7 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                                   ),
                                                   onPressed: () {
                                                     print(
-                                                        e['scoreboard_for_matches_links']
+                                                        e['scoreboard_for_matches_links']!
                                                                 [i]
                                                             .toString());
                                                   },
@@ -436,8 +435,16 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                                 padding:
                                                     const EdgeInsets.all(8.0),
                                                 child: Text(
-                                                  "${e['matches_details'][i].replaceAll(e['matches_details'][i].split(',').first, '').substring(1).trim()}",
-                                                  style: TextStyle(
+                                                  e['matches_details']![i]
+                                                      .replaceAll(
+                                                          e['matches_details']![
+                                                                  i]
+                                                              .split(',')
+                                                              .first,
+                                                          '')
+                                                      .substring(1)
+                                                      .trim(),
+                                                  style: const TextStyle(
                                                     fontSize: 10.0,
                                                     color: Colors.white70,
                                                     fontWeight: FontWeight.bold,
@@ -449,9 +456,9 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                                 padding:
                                                     const EdgeInsets.all(10.0),
                                                 child: Text(
-                                                  e['match_winner'][i]
+                                                  e['match_winner']![i]
                                                       .toString(),
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontSize: 12.0,
                                                       color: Colors.teal,
                                                       fontWeight:
@@ -463,22 +470,14 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                               ),
                                             ],
                                           ),
-                                          e['winsloss'][0]
+                                          e['winsloss']![0]
                                               .split(',')
                                               .map((character) {
                                             return Padding(
                                               padding:
                                                   const EdgeInsets.all(8.0),
                                               child: Container(
-                                                child: Text(
-                                                  '${character}',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Cocosharp',
-                                                    fontSize: 20.0,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                                decoration: new BoxDecoration(
+                                                decoration: BoxDecoration(
                                                   shape: BoxShape.circle,
                                                   color: character == 'W'
                                                       ? Colors.green
@@ -486,13 +485,23 @@ class _recentmatchtestdataState extends State<recentmatchtestdata> {
                                                           ? Colors.red
                                                           : Colors.grey,
                                                 ),
-                                                padding: new EdgeInsets.all(10),
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                child: Text(
+                                                  character,
+                                                  style: const TextStyle(
+                                                    fontFamily:
+                                                        'Montserrat-Black',
+                                                    fontSize: 20.0,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
                                               ),
                                             );
                                           }).toList()[i]
                                         ],
                                       ),
-                                      Divider(
+                                      const Divider(
                                         color: Colors.white,
                                       ),
                                     ],

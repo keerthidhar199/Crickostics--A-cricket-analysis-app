@@ -25,8 +25,9 @@ class Partnership {
 /// is used to map the employee data to the datagrid widget.
 class PartnershipDataSource extends DataGridSource {
   /// Creates the employee data source class with required details.
-  PartnershipDataSource({List<Partnership> Data}) {
-    _Data = Data.map<DataGridRow>((e) => DataGridRow(cells: [
+  PartnershipDataSource({List<Partnership>? Data}) {
+    _Data = Data!
+        .map<DataGridRow>((e) => DataGridRow(cells: [
           DataGridCell<String>(columnName: 'partners', value: e.partners),
           DataGridCell<int>(columnName: 'runs', value: e.runs),
           DataGridCell<String>(columnName: 'wkts', value: e.wkts),
@@ -48,20 +49,20 @@ class PartnershipDataSource extends DataGridSource {
         cells: row.getCells().map<Widget>((e) {
       return Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Text(
           e.value.toString(),
-          style: TextStyle(fontFamily: 'Litsans'),
+          style: const TextStyle(fontFamily: 'Montserrat-Black'),
         ),
       );
     }).toList());
   }
 }
 
-partnership_teams_info(var team_info, String team1_name) async {
+partnership_teams_info(var teamInfo, String team1Name) async {
   List<List<String>> allplayers = [];
   List<String> headings = [];
-  dom.Document document1 = parser.parse(team_info.body);
+  dom.Document document1 = parser.parse(teamInfo.body);
   // print(document
   //     .querySelectorAll('table.engineTable>tbody')[1]
   //     .text
@@ -69,7 +70,7 @@ partnership_teams_info(var team_info, String team1_name) async {
   print(document1.text.toString());
   var headers1 = document1.querySelectorAll('table>thead>tr')[0];
   var titles1 = headers1.querySelectorAll('th');
-  titles1.removeWhere((element) => element.text.length == 0);
+  titles1.removeWhere((element) => element.text.isEmpty);
   for (int i = 0; i < titles1.length; i++) {
     print(titles1[i].text.toString().trim());
     headings.add(titles1[i].text.toString().trim());
@@ -78,15 +79,15 @@ partnership_teams_info(var team_info, String team1_name) async {
 
   var element = document1.querySelectorAll('table>tbody')[0];
   var data = element.querySelectorAll('tr');
-  data.removeWhere((element) => element.text.length == 0);
+  data.removeWhere((element) => element.text.isEmpty);
   for (int i = 0; i < data.length; i++) {
     List<String> playerwise = [];
     for (int j = 0; j < data[i].children.length; j++) {
-      if (data[i].children[j].text.length != 0) {
+      if (data[i].children[j].text.isNotEmpty) {
         playerwise.add(data[i].children[j].text.toString().trim());
       }
     }
-    playerwise.insert(playerwise.length, team1_name);
+    playerwise.insert(playerwise.length, team1Name);
     allplayers.add(playerwise);
   }
 

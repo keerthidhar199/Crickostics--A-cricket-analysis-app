@@ -1,23 +1,21 @@
-import 'package:cached_network_image/cached_network_image.dart';
+// ignore_for_file: prefer_const_constructors, duplicate_ignore, library_private_types_in_public_api
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:datascrap/models/batting_class.dart';
 import 'package:datascrap/models/bowling_class.dart';
 import 'package:datascrap/models/partnership_class.dart';
-import 'package:datascrap/services/exportcsv.dart';
 import 'package:datascrap/services/get_player_pic.dart';
 import 'package:datascrap/views/previous_clashes_UI.dart';
-import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'globals.dart' as globals;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
+import 'dream11_team.dart';
 
 import 'views/batting_table_UI.dart';
 import 'views/bowling_table_UI.dart';
-import 'views/partnerships_table_UI.dart';
 
 class Analysis extends StatefulWidget {
   static Map<String, List> battersmap = {};
@@ -29,19 +27,18 @@ class Analysis extends StatefulWidget {
   static Map<String, List> previousmatchmap = {};
 
   /// Creates the home page.
-  Analysis({Key key}) : super(key: key);
+  const Analysis({Key? key}) : super(key: key);
 
   @override
   _AnalysisState createState() => _AnalysisState();
 }
 
 class _AnalysisState extends State<Analysis> {
-  bool _isButtonDisabled;
-  bool addtofantasyteam;
+  late bool addtofantasyteam;
   Tuple3<
       Tuple2<List<String>, List<Batting_player>>,
       Tuple2<List<String>, List<Player>>,
-      Tuple2<List<String>, List<Partnership>>> snapshot;
+      Tuple2<List<String>, List<Partnership>>>? snapshot;
   List<List<String>> topBatters = [];
   int topbat = 0;
   int tophthbat = 0;
@@ -59,157 +56,154 @@ class _AnalysisState extends State<Analysis> {
   @override
   void initState() {
     getData().then((value) {
-      if (value == null) {
-        snapshot = null;
-      } else {
-        setState(() {
-          snapshot = value;
-        });
-        Map<String, List<String>> playerRuns = {};
-        Map<String, List<String>> playerRunshth = {};
+      setState(() {
+        snapshot = value;
+      });
+      Map<String, List<String>> playerRuns = {};
+      Map<String, List<String>> playerRunshth = {};
 
-        for (var i in snapshot.item1.item2) {
-          print('batters ${i.ground} ${globals.ground}');
-          if (((globals.team1_name.contains(i.team)) &&
-                  ((globals.team2_name)
-                          .contains(i.opposition.replaceAll('v', '').trim()) ||
-                      globals.team2__short_name.contains(
-                          i.opposition.replaceAll('v', '').trim()))) ||
-              (globals.team2_name.contains(i.team) &&
-                      (globals.team1_name.contains(
-                              i.opposition.replaceAll('v', '').trim()) ||
-                          globals.team1__short_name.contains(
-                              i.opposition.replaceAll('v', '').trim()))) &&
-                  tophthbat < 4) {
-            List<String> headtoheadbatters = [];
-            headtoheadbatters.add(i.player);
-            headtoheadbatters.add(i.runs.toString());
-            headtoheadbatters.add(i.balls.toString());
-            headtoheadbatters.add(i.sr.toString());
-            headtoheadbatters.add(i.player_link);
-            print('headtoheadbatters $headtoheadbatters');
-            topheadtoheadbatters.add(headtoheadbatters);
-            for (var item in topheadtoheadbatters) {
-              if (!playerRunshth.containsKey(item[0])) {
-                tophthbat += 1;
+      for (var i in snapshot!.item1.item2) {
+        print('batters ${i.team} ${globals.ground}');
+        if ((((globals.team1_name.contains(i.team)) ||
+                    globals.team1__short_name.contains(i.team)) &&
+                ((globals.team2_name)
+                        .contains(i.opposition.replaceAll('v', '').trim()) ||
+                    globals.team2__short_name
+                        .contains(i.opposition.replaceAll('v', '').trim()))) ||
+            ((globals.team2_name.contains(i.team) ||
+                        globals.team2__short_name.contains(i.team)) &&
+                    (globals.team1_name.contains(
+                            i.opposition.replaceAll('v', '').trim()) ||
+                        globals.team1__short_name.contains(
+                            i.opposition.replaceAll('v', '').trim()))) &&
+                tophthbat < 4) {
+          List<String> headtoheadbatters = [];
+          headtoheadbatters.add(i.player);
+          headtoheadbatters.add(i.runs.toString());
+          headtoheadbatters.add(i.balls.toString());
+          headtoheadbatters.add(i.sr.toString());
+          headtoheadbatters.add(i.player_link);
+          print('headtoheadbatters $headtoheadbatters');
+          topheadtoheadbatters.add(headtoheadbatters);
+          for (var item in topheadtoheadbatters) {
+            if (!playerRunshth.containsKey(item[0])) {
+              tophthbat += 1;
+              playerRunshth[item[0]] = item;
+            } else {
+              if (int.parse(item[1]) > int.parse(playerRunshth[item[0]]![1])) {
                 playerRunshth[item[0]] = item;
-              } else {
-                if (int.parse(item[1]) > int.parse(playerRunshth[item[0]][1])) {
-                  playerRunshth[item[0]] = item;
-                }
               }
             }
-            topheadtoheadbatters = playerRunshth.values.toList();
           }
-          if (i.ground == globals.ground && topbat < 4) {
-            List<String> batters = [];
-            batters.add(i.player);
-            batters.add(i.runs.toString());
-            batters.add(i.balls.toString());
-            batters.add(i.sr.toString());
-            batters.add(i.player_link);
-            print('batters $batters');
-            topBatters.add(batters);
-            topBatters.forEach((item) {
-              if (!playerRuns.containsKey(item[0])) {
-                topbat += 1;
+          topheadtoheadbatters = playerRunshth.values.toList();
+        }
+        if (i.ground == globals.ground && topbat < 5) {
+          List<String> batters = [];
+          batters.add(i.player);
+          batters.add(i.runs.toString());
+          batters.add(i.balls.toString());
+          batters.add(i.sr.toString());
+          batters.add(i.player_link);
+          print('batters $batters');
+          topBatters.add(batters);
+          for (var item in topBatters) {
+            if (!playerRuns.containsKey(item[0])) {
+              topbat += 1;
+              playerRuns[item[0]] = item;
+            } else {
+              if (int.parse(item[1]) > int.parse(playerRuns[item[0]]![1])) {
                 playerRuns[item[0]] = item;
-              } else {
-                if (int.parse(item[1]) > int.parse(playerRuns[item[0]][1])) {
-                  playerRuns[item[0]] = item;
-                }
               }
-            });
-            topBatters = playerRuns.values.toList();
+            }
           }
+          topBatters = playerRuns.values.toList();
         }
-        Map<String, List<String>> playerWicketshth = {};
-        Map<String, List<String>> playerWickets = {};
-
-        for (var i in snapshot.item2.item2) {
-          if (((globals.team1_name.contains(i.team)) &&
-                  ((globals.team2_name)
-                          .contains(i.opposition.replaceAll('v', '').trim()) ||
-                      globals.team2__short_name.contains(
-                          i.opposition.replaceAll('v', '').trim()))) ||
-              (globals.team2_name.contains(i.team) &&
-                      (globals.team1_name.contains(
-                              i.opposition.replaceAll('v', '').trim()) ||
-                          globals.team1__short_name.contains(
-                              i.opposition.replaceAll('v', '').trim()))) &&
-                  tophthbowl < 4) {
-            List<String> headtoheadbowlers = [];
-            headtoheadbowlers.add(i.player);
-            headtoheadbowlers.add(i.runs.toString());
-            headtoheadbowlers.add(i.wickets.toString());
-            headtoheadbowlers.add(i.econ.toString());
-            headtoheadbowlers.add(i.player_link);
-            topheadtoheadbowlers.add(headtoheadbowlers);
-            topheadtoheadbowlers.forEach((item) {
-              if (!playerWicketshth.containsKey(item[0])) {
-                tophthbowl += 1;
-                playerWicketshth[item[0]] = item;
-              } else {
-                if (double.parse(item[3]) >
-                    double.parse(playerWicketshth[item[0]][3])) {
-                  playerWicketshth[item[0]] = item;
-                }
-              }
-            });
-            topheadtoheadbowlers = playerWicketshth.values.toList();
-          }
-          print('topheadtoheadbowlers $topheadtoheadbowlers');
-
-          print('bowlers ${i.ground} ${globals.ground}');
-
-          if (i.ground == globals.ground && topbowl < 4) {
-            List<String> bowlers = [];
-            bowlers.add(i.player);
-            bowlers.add(i.runs.toString());
-            bowlers.add(i.wickets.toString());
-            bowlers.add(i.econ.toString());
-            bowlers.add(i.player_link);
-            topBowlers.add(bowlers);
-            topBowlers.forEach((item) {
-              if (!playerWickets.containsKey(item[0])) {
-                topbowl += 1;
-                playerWickets[item[0]] = item;
-              } else {
-                if (double.parse(item[3]) >
-                    double.parse(playerWickets[item[0]][3])) {
-                  playerWickets[item[0]] = item;
-                }
-              }
-            });
-            topBowlers = playerWickets.values.toList();
-          }
-        }
-
-        get_players_pics(topBowlers).then((value) {
-          setState(() {
-            topBowlers = value;
-          });
-        });
-        get_players_pics(topBatters).then((value) {
-          setState(() {
-            topBatters = value;
-          });
-        });
-        get_players_pics(topheadtoheadbatters).then((value) {
-          topheadtoheadbatters = value;
-        });
-
-        get_players_pics(topheadtoheadbowlers).then((value) {
-          topheadtoheadbowlers = value;
-        });
       }
+      Map<String, List<String>> playerWicketshth = {};
+      Map<String, List<String>> playerWickets = {};
+
+      for (var i in snapshot!.item2.item2) {
+        if (((globals.team1_name.contains(i.team)) &&
+                ((globals.team2_name)
+                        .contains(i.opposition.replaceAll('v', '').trim()) ||
+                    globals.team2__short_name
+                        .contains(i.opposition.replaceAll('v', '').trim()))) ||
+            (globals.team2_name.contains(i.team) &&
+                    (globals.team1_name.contains(
+                            i.opposition.replaceAll('v', '').trim()) ||
+                        globals.team1__short_name.contains(
+                            i.opposition.replaceAll('v', '').trim()))) &&
+                tophthbowl < 4) {
+          List<String> headtoheadbowlers = [];
+          headtoheadbowlers.add(i.player);
+          headtoheadbowlers.add(i.runs.toString());
+          headtoheadbowlers.add(i.wickets.toString());
+          headtoheadbowlers.add(i.econ.toString());
+          headtoheadbowlers.add(i.player_link);
+          topheadtoheadbowlers.add(headtoheadbowlers);
+          for (var item in topheadtoheadbowlers) {
+            if (!playerWicketshth.containsKey(item[0])) {
+              tophthbowl += 1;
+              playerWicketshth[item[0]] = item;
+            } else {
+              if (double.parse(item[3]) >
+                  double.parse(playerWicketshth[item[0]]![3])) {
+                playerWicketshth[item[0]] = item;
+              }
+            }
+          }
+          topheadtoheadbowlers = playerWicketshth.values.toList();
+        }
+        print('topheadtoheadbowlers $topheadtoheadbowlers');
+
+        print('bowlers ${i.ground} ${globals.ground}');
+
+        if (i.ground == globals.ground && topbowl < 5) {
+          List<String> bowlers = [];
+          bowlers.add(i.player);
+          bowlers.add(i.runs.toString());
+          bowlers.add(i.wickets.toString());
+          bowlers.add(i.econ.toString());
+          bowlers.add(i.player_link);
+          topBowlers.add(bowlers);
+          for (var item in topBowlers) {
+            if (!playerWickets.containsKey(item[0])) {
+              topbowl += 1;
+              playerWickets[item[0]] = item;
+            } else {
+              if (double.parse(item[3]) >
+                  double.parse(playerWickets[item[0]]![3])) {
+                playerWickets[item[0]] = item;
+              }
+            }
+          }
+          topBowlers = playerWickets.values.toList();
+        }
+      }
+
+      get_players_pics(topBowlers).then((value) {
+        setState(() {
+          topBowlers = value;
+        });
+      });
+      get_players_pics(topBatters).then((value) {
+        setState(() {
+          topBatters = value;
+        });
+      });
+      get_players_pics(topheadtoheadbatters).then((value) {
+        topheadtoheadbatters = value;
+      });
+
+      get_players_pics(topheadtoheadbowlers).then((value) {
+        topheadtoheadbowlers = value;
+      });
     });
 
-    _isButtonDisabled = true;
     super.initState();
   }
 
-  bowlingDataSource bowlingData;
+  late bowlingDataSource bowlingData;
 
   List<String> names = [
     'batting',
@@ -226,13 +220,137 @@ class _AnalysisState extends State<Analysis> {
 
   @override
   Widget build(BuildContext context) {
-    print('assa11endva ${Analysis.battersmap}');
+    print('assa11endva ${snapshot}');
     Analysis.battersmap.clear();
     Analysis.bowlersmap.clear();
     Analysis.partnershipsmap.clear();
     Analysis.previousmatchmap.clear();
-    if (snapshot == null) {
-      return Scaffold(
+    Widget batting = widgetbatting(
+      snapshot: snapshot,
+    );
+    Widget bowling = widgetbowling(
+      snapshot: snapshot,
+    );
+    // Widget partnership = widgetpartnership(
+    //   snapshot: snapshot,
+    // );
+
+    List<Widget> categories = [
+      batting,
+      bowling,
+      // partnership,
+      pastmatches(
+        snapshot: snapshot,
+      )
+    ];
+
+    print('stop $topBowlers $topBatters');
+
+    List<Widget> list = categories
+        .map(
+          (e) => Column(
+            children: [
+              const SizedBox(
+                height: 70,
+              ),
+              (topBatters.isEmpty && topBowlers.isEmpty)
+                  ? Container()
+                  : Column(
+                      children: [
+                        Container(
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey.shade700,
+                            ),
+                            child: Text('Top Performers at this Venue',
+                                textAlign: TextAlign.center,
+                                style: globals.cocosharp)),
+                        player_pic(
+                          categories: categories,
+                          e: e,
+                          topBatters: topBatters,
+                          topBowlers: topBowlers,
+                          topheadtoheadbatters: topheadtoheadbatters,
+                          topheadtoheadbowlers: topheadtoheadbowlers,
+                        ),
+                      ],
+                    ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                    "Once all players are selected, Click Submit on the top to save all your selected players.",
+                    style: globals.smallcocosharp),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width - 15,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  color: Colors.white,
+                  elevation: 10,
+                  // shadowColor: Colors.blue,
+                  child: Column(
+                    children: [
+                      categories.indexOf(e) == 2
+                          ? previous_clashes_header()
+                          : Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Colors.white38,
+                                      Colors.white60,
+                                    ],
+                                  )),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '${globals.capitalize(names[categories.indexOf(e)])}',
+                                        style: const TextStyle(
+                                          fontFamily: 'Cocosharp',
+                                          fontSize: 15.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Image.asset(
+                                        'logos/${names[categories.indexOf(e)]}.png',
+                                        color: Colors.black,
+                                        width: 100,
+                                        height: 100,
+                                      ),
+                                      Text(
+                                        'In ${globals.ground}',
+                                        style: const TextStyle(
+                                          fontFamily: 'Cocosharp',
+                                          fontSize: 15.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                      e
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+        .toList();
+
+    return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: const Color(0xffFFB72B),
@@ -251,287 +369,123 @@ class _AnalysisState extends State<Analysis> {
                 color: Colors.black,
                 icon: const Icon(Icons.done_all),
                 onPressed: () {
-                  exportcsv.getcsv().then((value) => null);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        duration: const Duration(seconds: 3),
-                        behavior: SnackBarBehavior.floating,
-                        content: Row(children: [
-                          Image.asset(
-                            'logos/my_fantasy.png',
-                            width: 50,
-                            height: 50,
-                          ),
-                          Text(
-                              "Cricked !!\n"
-                              "Added to your Fantasy lot\n"
-                              "You can view these in 'Your Fantasy' tab.",
-                              style: globals.nobleblack),
-                        ]),
-                        backgroundColor: Colors.amberAccent,
-                        padding: const EdgeInsets.all(8),
-                        margin: EdgeInsetsDirectional.only(
-                          bottom: MediaQuery.of(context).size.height / 2,
-                        )),
+                  // Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //             builder: (context) => Dream11TeamGenerator(batsmen: snapshot!.item1.item2
+                  //               .where((element) =>
+                  //                   element.team == globals.team1__short_name &&
+                  //                   element.ground == globals.ground)
+                  //               .toList(),),
+                  //           ));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Dream11TeamGenerator(
+                              batters: topBatters,
+                              bowlers: topBowlers,
+                            )),
                   );
+
+                  // ExportCsv.getcsv().then((value) => null);
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(
+                  //       duration: const Duration(seconds: 3),
+                  //       behavior: SnackBarBehavior.floating,
+                  //       content: Row(children: [
+                  //         Image.asset(
+                  //           'logos/my_fantasy.png',
+                  //           width: 50,
+                  //           height: 50,
+                  //         ),
+                  //         Text(
+                  //             "Cricked !!\n"
+                  //             "Added to your Fantasy lot\n"
+                  //             "You can view these in 'Your Fantasy' tab.",
+                  //             style: globals.cocosharpblack),
+                  //       ]),
+                  //       backgroundColor: Colors.amberAccent,
+                  //       padding: const EdgeInsets.all(8),
+                  //       margin: EdgeInsetsDirectional.only(
+                  //         bottom: MediaQuery.of(context).size.height / 2,
+                  //       )),
+                  // );
                 }),
           ],
         ),
-        body: Container(
-            color: const Color(0xff2B2B28),
-            height: MediaQuery.of(context).size.height,
-            child: Center(
-                child: Container(
-              color: const Color(0xff2B2B28),
-              child: Lottie.asset(
-                'logos/loading_anim.json',
-                filterQuality: FilterQuality.high,
-              ),
-            ))),
-      );
-    } else {
-      Widget batting = widgetbatting(
-        snapshot: snapshot,
-      );
-      Widget bowling = widgetbowling(
-        snapshot: snapshot,
-      );
-      // Widget partnership = widgetpartnership(
-      //   snapshot: snapshot,
-      // );
-
-      List<Widget> categories = [
-        batting,
-        bowling,
-        // partnership,
-        pastmatches(
-          snapshot: snapshot,
-        )
-      ];
-
-      print('stop $topBowlers $topBatters');
-
-      List<Widget> list = categories
-          .map(
-            (e) => Column(
-              children: [
-                const SizedBox(
-                  height: 70,
-                ),
-                (topBatters.isEmpty && topBowlers.isEmpty)
-                    ? Container()
-                    : Column(
-                        children: [
-                          Container(
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.grey.shade700,
-                              ),
-                              child: Text('Top Performers at this Venue',
-                                  textAlign: TextAlign.center,
-                                  style: globals.noble)),
-                          player_pic(
-                            categories: categories,
-                            e: e,
-                            topBatters: topBatters,
-                            topBowlers: topBowlers,
-                            topheadtoheadbatters: topheadtoheadbatters,
-                            topheadtoheadbowlers: topheadtoheadbowlers,
-                          ),
-                        ],
-                      ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                      "Once all players are selected, Click Submit on the top to save all your selected players.",
-                      style: globals.smallnoble),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 15,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        side: const BorderSide(
-                          color: Colors.black,
-                          width: 2.0,
-                        )),
-                    color: Colors.white,
-                    elevation: 10,
-                    shadowColor: Colors.blue,
-                    child: Container(
-                      child: Column(
-                        children: [
-                          categories.indexOf(e) == 2
-                              ? const previous_clashes_header()
-                              : Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20.0),
-                                      gradient: const LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Colors.white38,
-                                          Colors.white60,
-                                        ],
-                                      )),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            '${globals.capitalize(names[categories.indexOf(e)])}',
-                                            style: const TextStyle(
-                                              fontFamily: 'Cocosharp',
-                                              fontSize: 15.0,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Image.asset(
-                                            'logos/' +
-                                                '${names[categories.indexOf(e)]}' +
-                                                '.png',
-                                            color: Colors.black,
-                                            width: 100,
-                                            height: 100,
-                                          ),
-                                          Text(
-                                            'In ${globals.ground}',
-                                            style: const TextStyle(
-                                              fontFamily: 'Cocosharp',
-                                              fontSize: 15.0,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                          e
-                        ],
-                      ),
-                    ),
+        body: snapshot?.item1 == null
+            ? Container(
+                color: const Color(0xff2B2B28),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: const Color(0xffFFB72B),
                   ),
                 ),
-              ],
-            ),
-          )
-          .toList();
-
-      return Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            backgroundColor: const Color(0xffFFB72B),
-            title: const Text(
-              'Stack',
-              style: TextStyle(fontFamily: 'Cocosharp', color: Colors.black87),
-            ),
-            leading: IconButton(
-                color: Colors.black,
-                icon: const Icon(Icons.keyboard_arrow_left),
-                onPressed: () {
-                  Navigator.pop(context);
-                }),
-            actions: [
-              IconButton(
-                  color: Colors.black,
-                  icon: const Icon(Icons.done_all),
-                  onPressed: () {
-                    exportcsv.getcsv().then((value) => null);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          duration: const Duration(seconds: 3),
-                          behavior: SnackBarBehavior.floating,
-                          content: Row(children: [
-                            Image.asset(
-                              'logos/my_fantasy.png',
-                              width: 50,
-                              height: 50,
-                            ),
-                            Text(
-                                "Cricked !!\n"
-                                "Added to your Fantasy lot\n"
-                                "You can view these in 'Your Fantasy' tab.",
-                                style: globals.nobleblack),
-                          ]),
-                          backgroundColor: Colors.amberAccent,
-                          padding: const EdgeInsets.all(8),
-                          margin: EdgeInsetsDirectional.only(
-                            bottom: MediaQuery.of(context).size.height / 2,
-                          )),
-                    );
-                  }),
-            ],
-          ),
-          body: Stack(children: [
-            SingleChildScrollView(
-              child: Container(
-                  color: const Color(0xff2B2B28),
-                  height: MediaQuery.of(context).size.height * 3,
-                  child: CarouselSlider(
-                    carouselController: _controller,
-                    options: CarouselOptions(
-                      aspectRatio: 2,
+              )
+            : Stack(children: [
+                SingleChildScrollView(
+                  child: Container(
+                      color: const Color(0xff2B2B28),
                       height: MediaQuery.of(context).size.height * 3,
-                      viewportFraction: 1.0,
-                      enlargeCenterPage: false,
-                      // autoPlay: false,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _currentSlide = index;
-                        });
-                      },
-                    ),
-                    items: list,
-                  )),
-            ),
-            Container(
-              color: const Color(0xff2B2B28),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: matchstatetitle
-                      .map(
-                        (e) => Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                            bottom: _currentSlide == matchstatetitle.indexOf(e)
-                                ? const BorderSide(
-                                    //                   <--- right side
-                                    color: Colors.white,
-                                    width: 3.0,
-                                  )
-                                : BorderSide.none,
-                          )),
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextButton(
-                            onPressed: () {
-                              _controller
-                                  .jumpToPage(matchstatetitle.indexOf(e));
-                              setState(() {
-                                _currentSlide = matchstatetitle.indexOf(e);
-                              });
-                            },
-                            child: Text(
-                              e.toString(),
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontFamily: 'Cocosharp',
-                                fontSize: 15.0,
-                                color: Colors.grey.shade700,
+                      child: CarouselSlider(
+                        carouselController: _controller,
+                        options: CarouselOptions(
+                          aspectRatio: 2,
+                          height: MediaQuery.of(context).size.height * 3,
+                          viewportFraction: 1.0,
+                          enlargeCenterPage: false,
+                          // autoPlay: false,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              _currentSlide = index;
+                            });
+                          },
+                        ),
+                        items: list,
+                      )),
+                ),
+                Container(
+                  color: const Color(0xff2B2B28),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: matchstatetitle
+                          .map(
+                            (e) => Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                bottom:
+                                    _currentSlide == matchstatetitle.indexOf(e)
+                                        ? const BorderSide(
+                                            //                   <--- right side
+                                            color: Colors.white,
+                                            width: 3.0,
+                                          )
+                                        : BorderSide.none,
+                              )),
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextButton(
+                                onPressed: () {
+                                  _controller
+                                      .jumpToPage(matchstatetitle.indexOf(e));
+                                  setState(() {
+                                    _currentSlide = matchstatetitle.indexOf(e);
+                                  });
+                                },
+                                child: Text(
+                                  e.toString(),
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontFamily: 'Cocosharp',
+                                    fontSize: 15.0,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      )
-                      .toList()),
-            ),
-          ]));
-    }
+                          )
+                          .toList()),
+                ),
+              ]));
   }
 
   Future<
@@ -542,123 +496,118 @@ class _AnalysisState extends State<Analysis> {
     var bowling = 'bowling-best-figures-innings';
     var batting = 'batting-highest-strike-rate-innings';
     var partnership = 'fow-highest-partnerships-for-any-wicket';
-    List<List<String>> teams_bowling = [];
-    List<String> teams_bowling_headings = [];
-    List<List<String>> teams_batting = [];
-    List<String> teams_batting_headings = [];
-    List<List<String>> partnerships = [];
-    List<String> partnerships_headings = [];
+    List<List<String>> teamsBowling = [];
+    List<String> teamsBowlingHeadings = [];
+    List<List<String>> teamsBatting = [];
+    List<String> teamsBattingHeadings = [];
 
 //BATTING*******************************************************
     print('Manali ${globals.team1_stats_link}');
     var root = 'https://www.espncricinfo.com';
     dom.Document document;
-    String containing;
     Tuple3<
         Tuple2<List<String>, List<Batting_player>>,
         Tuple2<List<String>, List<Player>>,
-        Tuple2<List<String>, List<Partnership>>> overall_data;
+        Tuple2<List<String>, List<Partnership>>> overallData;
     //TEAM1
-    var response_team1;
+    http.Response responseTeam1;
     if (globals.team1_stats_link.startsWith('https')) {
-      response_team1 =
+      responseTeam1 =
           await http.Client().get(Uri.parse(globals.team1_stats_link));
-      document = parser.parse(response_team1.body);
+      document = parser.parse(responseTeam1.body);
     } else {
-      response_team1 =
+      responseTeam1 =
           await http.Client().get(Uri.parse(root + globals.team1_stats_link));
-      document = parser.parse(response_team1.body);
+      document = parser.parse(responseTeam1.body);
     }
 
-    var team1_batting_table = document.querySelectorAll('li').where((element) =>
+    var team1BattingTable = document.querySelectorAll('li').where((element) =>
         element
             .getElementsByTagName('a')[0]
-            .attributes['href']
+            .attributes['href']!
             .contains(batting));
     print(
-        'team1_batting_table1 ${team1_batting_table.first.getElementsByTagName('a')[0].attributes['href']}');
-    var team1_bowling_table = document.querySelectorAll('li').where((element) =>
+        'team1_batting_table1 ${team1BattingTable.first.getElementsByTagName('a')[0].attributes['href']}');
+    var team1BowlingTable = document.querySelectorAll('li').where((element) =>
         element
             .getElementsByTagName('a')[0]
             .attributes['href']
             .toString()
             .contains(bowling));
     print(
-        'team1_bowling_table ${team1_bowling_table.first.getElementsByTagName('a')[0].attributes['href']}');
+        'team1_bowling_table ${team1BowlingTable.first.getElementsByTagName('a')[0].attributes['href']}');
 
-    var team1_partnership_table = document.querySelectorAll('li').where(
+    var team1PartnershipTable = document.querySelectorAll('li').where(
         (element) => element
             .getElementsByTagName('a')[0]
             .attributes['href']
             .toString()
             .contains(partnership));
 
-    if (team1_batting_table.isEmpty ||
-        team1_bowling_table.isEmpty ||
-        team1_partnership_table.isEmpty) {
-      overall_data = const Tuple3(null, null, null);
-      return overall_data;
+    if (team1BattingTable.isEmpty ||
+        team1BowlingTable.isEmpty ||
+        team1PartnershipTable.isEmpty) {
+      // ignore: prefer_const_constructors
+      overallData = Tuple3<
+              Tuple2<List<String>, List<Batting_player>>,
+              Tuple2<List<String>, List<Player>>,
+              Tuple2<List<String>, List<Partnership>>>(
+          Tuple2<List<String>, List<Batting_player>>([], []),
+          Tuple2<List<String>, List<Player>>([], []),
+          Tuple2<List<String>, List<Partnership>>([], []));
+      return overallData;
     }
     //TEAM2
     dom.Document document1;
 
-    var response_team2;
+    http.Response responseTeam2;
     if (globals.team2_stats_link.startsWith('https')) {
-      response_team2 =
+      responseTeam2 =
           await http.Client().get(Uri.parse(globals.team2_stats_link));
-      document1 = parser.parse(response_team2.body);
+      document1 = parser.parse(responseTeam2.body);
     } else {
-      response_team2 =
+      responseTeam2 =
           await http.Client().get(Uri.parse(root + globals.team2_stats_link));
-      document1 = parser.parse(response_team2.body);
+      document1 = parser.parse(responseTeam2.body);
     }
 
-    var team2_batting_table = document1.querySelectorAll('li').where(
-        (element) => element
+    var team2BattingTable = document1.querySelectorAll('li').where((element) =>
+        element
             .getElementsByTagName('a')[0]
-            .attributes['href']
+            .attributes['href']!
             .contains(batting));
-    var team2_bowling_table = document1.querySelectorAll('li').where(
-        (element) => element
+    var team2BowlingTable = document1.querySelectorAll('li').where((element) =>
+        element
             .getElementsByTagName('a')[0]
             .attributes['href']
             .toString()
             .contains(bowling));
 
-    var team2_partnership_table = document1.querySelectorAll('li').where(
-        (element) => element
-            .getElementsByTagName('a')[0]
-            .attributes['href']
-            .toString()
-            .contains(partnership));
-    if (team2_batting_table.isEmpty == null ||
-        team2_bowling_table.isEmpty == null ||
-        team2_partnership_table.isEmpty == null) {
-      overall_data = const Tuple3(null, null, null);
-      return overall_data;
-    }
+    document1.querySelectorAll('li').where((element) => element
+        .getElementsByTagName('a')[0]
+        .attributes['href']
+        .toString()
+        .contains(partnership));
 
-    var team1_info_batting = await http.Client().get(Uri.parse(root +
-        team1_batting_table.first
+    var team1InfoBatting = await http.Client().get(Uri.parse(root +
+        team1BattingTable.first
             .getElementsByTagName('a')[0]
-            .attributes['href']));
-    var team2_info_batting = await http.Client().get(Uri.parse(root +
-        team2_batting_table.first
+            .attributes['href']!));
+    var team2InfoBatting = await http.Client().get(Uri.parse(root +
+        team2BattingTable.first
             .getElementsByTagName('a')[0]
-            .attributes['href']));
-    var value1 =
-        await batting_teams_info(team1_info_batting, globals.team1_name);
-    var value2 =
-        await batting_teams_info(team2_info_batting, globals.team2_name);
-    teams_batting_headings = value1.item1;
+            .attributes['href']!));
+    var value1 = await batting_teams_info(team1InfoBatting, globals.team1_name);
+    var value2 = await batting_teams_info(team2InfoBatting, globals.team2_name);
+    teamsBattingHeadings = value1.item1;
 
-    List<Batting_player> batting_playersdata1 = [];
+    List<Batting_player>? battingPlayersdata1 = [];
     if (value1.item1 == null || value2.item1 == null) {
-      batting_playersdata1 = null;
+      battingPlayersdata1 = null;
     } else {
-      teams_batting = List.from(value1.item2)..addAll(value2.item2);
+      teamsBatting = List.from(value1.item2)..addAll(value2.item2);
 
-      for (var i in teams_batting) {
+      for (var i in teamsBatting) {
         if (i.toString().contains('-')) {
           if (i.indexWhere((element) => element.contains('-')) !=
               11) //except the player link
@@ -667,11 +616,11 @@ class _AnalysisState extends State<Analysis> {
           }
         }
       }
-      print('teams_batting $teams_batting');
-      for (var i in teams_batting) {
+      print('teams_batting $teamsBatting');
+      for (var i in teamsBatting) {
         if (i[1].trim().contains('*')) {
-          batting_playersdata1.add(Batting_player(
-              i[0].trim() + '*',
+          battingPlayersdata1.add(Batting_player(
+              '${i[0].trim()}*',
               int.parse(i[1].replaceAll('*', '').trim()),
               int.parse(i[2].trim()),
               i[3].trim() == '0.0' ? 0 : int.parse(i[3].trim()),
@@ -684,7 +633,7 @@ class _AnalysisState extends State<Analysis> {
               i[10].trim(),
               i[11].toString()));
         } else {
-          batting_playersdata1.add(Batting_player(
+          battingPlayersdata1.add(Batting_player(
               i[0].trim(),
               int.parse(i[1].trim()),
               int.parse(i[2].trim()),
@@ -724,28 +673,26 @@ class _AnalysisState extends State<Analysis> {
 
 //BOWLING*******************************************************
 
-    var team1_info_bowling = await http.Client().get(Uri.parse(root +
-        team1_bowling_table.first
+    var team1InfoBowling = await http.Client().get(Uri.parse(root +
+        team1BowlingTable.first
             .getElementsByTagName('a')[0]
-            .attributes['href']));
-    var team2_info_bowling = await http.Client().get(Uri.parse(root +
-        team2_bowling_table.first
+            .attributes['href']!));
+    var team2InfoBowling = await http.Client().get(Uri.parse(root +
+        team2BowlingTable.first
             .getElementsByTagName('a')[0]
-            .attributes['href']));
-    var value3 =
-        await bowling_teams_info(team1_info_bowling, globals.team1_name);
-    var value4 =
-        await bowling_teams_info(team2_info_bowling, globals.team2_name);
+            .attributes['href']!));
+    var value3 = await bowling_teams_info(team1InfoBowling, globals.team1_name);
+    var value4 = await bowling_teams_info(team2InfoBowling, globals.team2_name);
 
-    teams_bowling_headings = value3.item1;
-    List<Player> bowling_playersdata1 = [];
+    teamsBowlingHeadings = value3.item1;
+    List<Player>? bowlingPlayersdata1 = [];
     if (value3.item1 == null || value4.item1 == null) {
       print('Reppa ${value3.item1}');
-      bowling_playersdata1 = null;
+      bowlingPlayersdata1 = null;
     } else {
-      teams_bowling = List.from(value3.item2)..addAll(value4.item2);
-      for (var i in teams_bowling) {
-        bowling_playersdata1.add(Player(
+      teamsBowling = List.from(value3.item2)..addAll(value4.item2);
+      for (var i in teamsBowling) {
+        bowlingPlayersdata1.add(Player(
             i[0].trim(),
             double.parse(i[1].trim()),
             int.parse(i[2].trim()),
@@ -758,7 +705,7 @@ class _AnalysisState extends State<Analysis> {
             i[9].trim(),
             i[10].trim()));
       }
-      bowling_playersdata1.forEach((element) {
+      for (var element in bowlingPlayersdata1) {
         print('playersdata ${element.player}');
         print('playersdata ${element.wickets}');
 
@@ -769,7 +716,7 @@ class _AnalysisState extends State<Analysis> {
         print('playersdata ${element.match_date}');
         print('playersdata ${element.score_card}');
         print('playersdata ${element.player_link}');
-      });
+      }
     }
 
 //PARTNERSHIPS*******************************************************
@@ -822,17 +769,17 @@ class _AnalysisState extends State<Analysis> {
     //   // return Tuple2(teams_batting_headings, batting_playersdata1);
     // }
     Tuple2<List<String>, List<Player>> bowlingdataheadings = Tuple2(
-        teams_bowling_headings, bowling_playersdata1); //bowling data overall
+        teamsBowlingHeadings, bowlingPlayersdata1!); //bowling data overall
     Tuple2<List<String>, List<Batting_player>> battingdataheadings = Tuple2(
-        teams_batting_headings, batting_playersdata1); // batting data overall
+        teamsBattingHeadings, battingPlayersdata1!); // batting data overall
     // Tuple2<List<String>, List<Partnership>> partnershipsdataheadings = Tuple2(
     //     partnerships_headings, partnership_playersdata); // partnership data overall
 
     // overall_data = Tuple3(
     //     battingdataheadings, bowlingdataheadings, partnershipsdataheadings);
-    overall_data =
+    overallData =
         Tuple3(battingdataheadings, bowlingdataheadings, const Tuple2([], []));
 
-    return overall_data; //((batting_headers_table,batting_players),(bowling_headers_table,bowling_players))
+    return overallData; //((batting_headers_table,batting_players),(bowling_headers_table,bowling_players))
   }
 }

@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
-import 'globals.dart' as globals;
 
 class gettingplayers {
   Future<List<Map<String, List<dynamic>>>> getplayersinForm(
@@ -14,16 +11,17 @@ class gettingplayers {
       String editmathclink =
           matchlink.replaceAll(matchlink.split('/').last, 'live-cricket-score');
       var response = await http.Client()
-          .get(Uri.parse('https://www.espncricinfo.com/' + editmathclink));
+          .get(Uri.parse('https://www.espncricinfo.com$editmathclink'));
 
+      print('fuic https://www.espncricinfo.com$editmathclink');
       dom.Document document = parser.parse(response.body);
       var fuic = document
           .getElementsByClassName(
-              'ds-text-tight-s ds-font-regular ds-uppercase ds-bg-fill-content-alternate ds-p-3')
+              'ds-text-tight-s ds-font-regular ds-capitalize ds-bg-fill-content-alternate ds-px-3 ds-py-1')
           .first
-          .parent
+          .parent!
           .children[1]
-          .children;
+          .children; //"Scorecard Summary" table
 
       Map<String, List<dynamic>> teamrecentplayers = {};
       List<String> team1 = [];
@@ -49,25 +47,23 @@ class gettingplayers {
         }
         for (var i in team1) {
           if (i.contains('/')) {
-            var bowler_name = i.split(RegExp(r'[0-9]')).first;
-            bowlers.add(bowler_name + i.replaceAll(bowler_name, '- ').trim());
+            var bowlerName = i.split(RegExp(r'[0-9]')).first;
+            bowlers.add(bowlerName + i.replaceAll(bowlerName, '- ').trim());
           } else {
             if (i.contains('*')) {
-              var batter_name = i.split('*').first.trim();
-              var batter_score = i.replaceAll(batter_name, '-').trim();
-              batters.add(batter_name + batter_score);
+              var batterName = i.split('*').first.trim();
+              var batterScore = i.replaceAll(batterName, '-').trim();
+              batters.add(batterName + batterScore);
             } else {
-              var batter_name = i.split(RegExp(r'[0-9]')).first.trim();
-              var batter_score = i.replaceAll(batter_name, '-').trim();
-              batters.add(batter_name + batter_score);
+              var batterName = i.split(RegExp(r'[0-9]')).first.trim();
+              var batterScore = i.replaceAll(batterName, '-').trim();
+              batters.add(batterName + batterScore);
             }
           }
         }
-        teamrecentplayers[
-                'Batters' + (allmatchlinks.indexOf(matchlink) + 1).toString()] =
+        teamrecentplayers['Batters${allmatchlinks.indexOf(matchlink) + 1}'] =
             batters.toSet().toList();
-        teamrecentplayers[
-                'Bowlers' + (allmatchlinks.indexOf(matchlink) + 1).toString()] =
+        teamrecentplayers['Bowlers${allmatchlinks.indexOf(matchlink) + 1}'] =
             bowlers.toSet().toList();
 
         print('shuffle $teamrecentplayers');
@@ -83,26 +79,24 @@ class gettingplayers {
   Map<String, int> getTopPlayers(e) {
     Map<String, int> countofplayer = {};
     for (int i = 0; i < e['matches_details'].length; i++) {
-      List<String> batters =
-          e['listofallrecentplayers'][i]['Batters' + (i + 1).toString()];
-      List<String> bowlers =
-          e['listofallrecentplayers'][i]['Bowlers' + (i + 1).toString()];
-      batters.forEach((element) {
-        var batter_name = element.split('-').first;
-        if (!countofplayer.containsKey(batter_name)) {
-          countofplayer[batter_name] = 1;
+      List<String> batters = e['listofallrecentplayers'][i]['Batters${i + 1}'];
+      List<String> bowlers = e['listofallrecentplayers'][i]['Bowlers${i + 1}'];
+      for (var element in batters) {
+        var batterName = element.split('-').first;
+        if (!countofplayer.containsKey(batterName)) {
+          countofplayer[batterName] = 1;
         } else {
-          countofplayer[batter_name] += 1;
+          countofplayer[batterName] = countofplayer[batterName]! + 1;
         }
-      });
-      bowlers.forEach((element) {
-        var bowler_name = element.split('-').first;
-        if (!countofplayer.containsKey(bowler_name)) {
-          countofplayer[bowler_name] = 1;
+      }
+      for (var element in bowlers) {
+        var bowlerName = element.split('-').first;
+        if (!countofplayer.containsKey(bowlerName)) {
+          countofplayer[bowlerName] = 1;
         } else {
-          countofplayer[bowler_name] += 1;
+          countofplayer[bowlerName] = countofplayer[bowlerName]! + 1;
         }
-      });
+      }
       countofplayer = Map.fromEntries(countofplayer.entries.toList()
         ..sort((e2, e1) => e1.value.compareTo(e2.value)));
     }

@@ -2,14 +2,13 @@ import 'dart:math';
 
 import 'package:datascrap/services/importcsv.dart';
 import 'package:datascrap/views/fantasy_for_prev_clash.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:datascrap/globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class fantasyteam extends StatefulWidget {
-  const fantasyteam({Key key}) : super(key: key);
+  const fantasyteam({Key? key}) : super(key: key);
 
   @override
   State<fantasyteam> createState() => _fantasyteamState();
@@ -36,7 +35,7 @@ class _fantasyteamState extends State<fantasyteam> {
     const Color(0xff78A6BC),
     const Color(0xff7A6DD0),
   ];
-  final _random = new Random();
+  final _random = Random();
   Future<void> removeFantasyData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove('FantasyData');
@@ -44,25 +43,25 @@ class _fantasyteamState extends State<fantasyteam> {
 
   RecheckAlert(BuildContext context) {
     // set up the buttons
-    BuildContext dialogContext;
+    BuildContext? dialogContext;
     Widget cancelButton = TextButton(
-      child: Text("Cancel", style: globals.nobleblack),
+      child: Text("Cancel", style: globals.cocosharpblack),
       onPressed: () {
-        Navigator.pop(dialogContext);
+        Navigator.pop(dialogContext!);
       },
     );
     Widget continueButton = TextButton(
-      child: Text("Proceed", style: globals.nobleblack),
+      child: Text("Proceed", style: globals.cocosharpblack),
       onPressed: () {
         removeFantasyData().then((value) {
           setState(() {
             fantasydata = {};
           });
         });
-        Navigator.pop(dialogContext);
+        Navigator.pop(dialogContext!);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              duration: Duration(seconds: 1),
+              duration: const Duration(seconds: 1),
               behavior: SnackBarBehavior.floating,
               content: Row(children: [
                 Image.asset(
@@ -70,7 +69,7 @@ class _fantasyteamState extends State<fantasyteam> {
                   width: 50,
                   height: 50,
                 ),
-                Text("Cleared your Fantasy lot", style: globals.nobleblack),
+                Text("Cleared your Fantasy lot", style: globals.cocosharpblack),
               ]),
               backgroundColor: Colors.amberAccent,
               padding: const EdgeInsets.all(8),
@@ -86,11 +85,11 @@ class _fantasyteamState extends State<fantasyteam> {
       backgroundColor: Colors.amber,
       title: Text(
         "Confirm",
-        style: globals.nobleblack,
+        style: globals.cocosharpblack,
       ),
       content: Text(
         "Are you sure you want to clear your fantasy lot ?",
-        style: globals.nobleblack,
+        style: globals.cocosharpblack,
       ),
       actions: [
         cancelButton,
@@ -109,18 +108,19 @@ class _fantasyteamState extends State<fantasyteam> {
   }
 
   _fantasyteamState() {
-    importcsv.getcsvdata().then((value) {
+    ImportCsv.getcsvdata().then((value) {
       setState(() {
         if (value != null) {
           fantasydata = value[0];
           previous_clashes = value[1];
-          print('chalega1 ${fantasydata}');
+          print('chalega1 $fantasydata');
         } else {
-          fantasydata = {};
+          // Handle the case when data is not available
         }
       });
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +131,7 @@ class _fantasyteamState extends State<fantasyteam> {
           appBar: AppBar(
             title: const Text('Fantasy',
                 style: TextStyle(
-                  fontFamily: 'Cocosharp',
+                  fontFamily: 'Montserrat-Black',
                   fontSize: 20.0,
                   color: Colors.black,
                 )),
@@ -150,7 +150,7 @@ class _fantasyteamState extends State<fantasyteam> {
               children: [
                 const Text('  Oh My CrickOh! ',
                     style: TextStyle(
-                      fontFamily: 'Litsans',
+                      fontFamily: 'Montserrat-Black',
                       fontSize: 20.0,
                       color: Colors.white,
                     )),
@@ -159,7 +159,7 @@ class _fantasyteamState extends State<fantasyteam> {
                 ),
                 const Text('No Fantasy players added !',
                     style: TextStyle(
-                      fontFamily: 'Litsans',
+                      fontFamily: 'Montserrat-Black',
                       fontSize: 20.0,
                       color: Colors.white,
                     )),
@@ -177,7 +177,7 @@ class _fantasyteamState extends State<fantasyteam> {
                       child: Text(
                           'Select your players and click on +Add to fantasy to add players in the Fantasy Lot.',
                           style: TextStyle(
-                            fontFamily: 'Litsans',
+                            fontFamily: 'Montserrat-Black',
                             fontSize: 15.0,
                             color: Colors.white,
                           )),
@@ -206,7 +206,7 @@ class _fantasyteamState extends State<fantasyteam> {
           appBar: AppBar(
             title: const Text('Fantasy',
                 style: TextStyle(
-                  fontFamily: 'Cocosharp',
+                  fontFamily: 'Montserrat-Black',
                   fontSize: 20.0,
                   color: Colors.black,
                 )),
@@ -247,7 +247,7 @@ class _fantasyteamState extends State<fantasyteam> {
                     children: [
                       Text(
                         'Clear Teams',
-                        style: globals.noble,
+                        style: globals.cocosharp,
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete_outline),
@@ -321,12 +321,12 @@ class _fantasyteamState extends State<fantasyteam> {
                                     ));
                               },
                               child: Container(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 width: double.infinity,
                                 child: Text(
                                   vs,
                                   style: const TextStyle(
-                                      fontFamily: 'Cocosharp',
+                                      fontFamily: 'Montserrat-Black',
                                       fontSize: 20,
                                       color: Colors.white),
                                 ),
